@@ -13,12 +13,12 @@ bin/
 gen/
 
 # Local configuration file ( sdk path, etc)
-com.potato.burritohunter/local.properties
-com.potato.burritohunter/project.properties
+*local.properties
+*project.properties
 
 # Eclipse project files
 .classpath
 .project
 
 # my secret string file
-com.potato.burritohunter/strings.xml
+com.potato.burritohunter/res/values/strings.xml
