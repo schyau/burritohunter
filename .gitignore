@@ -9,16 +9,16 @@
 *.class
 
 # generated files
-bin/
-gen/
+com.potato.burritohunter/bin/
+com.potato.burritohunter/gen/
 
 # Local configuration file ( sdk path, etc)
 *local.properties
 *project.properties
 
 # Eclipse project files
-.classpath
-.project
+com.potato.burritohunter/.classpath
+com.potato.burritohunter/.project
 
 # my secret string file
 com.potato.burritohunter/res/values/strings.xml
