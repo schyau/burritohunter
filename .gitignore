@@ -11,6 +11,7 @@
 # generated files
 com.potato.burritohunter/bin/
 com.potato.burritohunter/gen/
+com.potato.burritohunter/libs/
 
 # Local configuration file ( sdk path, etc)
 *local.properties
