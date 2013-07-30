@@ -43,11 +43,11 @@ public final class ADS {
 
 		Resources res = _context.getResources();
 		GOOGLE_MAPS_API_KEY = res.getString(R.string.google_maps_api_key);
-		GOOGLE_PLACES_API_KEY = res.getString(R.string.google_maps_api_key);
-		YELP_TOKEN_SECRET = res.getString(R.string.google_maps_api_key);
-		YELP_CONSUMER_KEY = res.getString(R.string.google_maps_api_key);
-		YELP_TOKEN = res.getString(R.string.google_maps_api_key);
-		YELP_CONSUMER_SECRET = res.getString(R.string.google_maps_api_key);
+		GOOGLE_PLACES_API_KEY = res.getString(R.string.google_places_api_key);
+		YELP_TOKEN_SECRET = res.getString(R.string.yelp_token_secret);
+		YELP_CONSUMER_KEY = res.getString(R.string.yelp_consumer_key);
+		YELP_TOKEN = res.getString(R.string.yelp_token);
+		YELP_CONSUMER_SECRET = res.getString(R.string.yelp_consumer_secret);
 	}
 
 	public String getGoogleMapsApiKey() {

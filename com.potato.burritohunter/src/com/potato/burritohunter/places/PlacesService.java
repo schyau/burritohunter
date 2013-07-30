@@ -25,7 +25,7 @@ public class PlacesService {
 		try {
 			HttpClient client = new DefaultHttpClient();
 			String getURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=harbour&sensor=false&key="
-					+ ADS.getInstance().getGoogleMapsApiKey();
+					+ ADS.getInstance().getGooglePlacesApiKey();
 			HttpGet get = new HttpGet(getURL);
 			HttpResponse responseGet = client.execute(get);
 			HttpEntity resEntityGet = responseGet.getEntity();

@@ -18,8 +18,7 @@ public class PlacesRequestAsyncTask extends
 	Bus _eventBus;
 
 	public PlacesRequestAsyncTask(Double lat, Double lng, String query,
-			Bus eventBus) { // TODO plz design this better, maybe pass in an
-							// object
+			Bus eventBus) { // TODO plz design this better, maybe pass in a POJO
 		_lat = lat;
 		_lng = lng;
 		_query = query;
