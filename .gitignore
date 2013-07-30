@@ -1,0 +1,24 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file ( sdk path, etc)
+com.potato.burritohunter/local.properties
+com.potato.burritohunter/project.properties
+
+# Eclipse project files
+.classpath
+.project
+
+# my secret string file
+com.potato.burritohunter/strings.xml
