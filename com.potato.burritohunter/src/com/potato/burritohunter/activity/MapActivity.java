@@ -1,5 +1,8 @@
 package com.potato.burritohunter.activity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -18,6 +21,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -26,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.places.PlacesSearchResult;
 import com.potato.burritohunter.stuff.PlacesRequestAsyncTask;
+import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.yelp.YelpSearchResult;
 import com.squareup.otto.Subscribe;
@@ -36,6 +41,12 @@ public class MapActivity extends FragmentActivity implements
 	private GoogleMap map;
 	private LocationClient mLocationClient;
 	Location mCurrentLocation;
+	
+	//TODO move this to a file that allows encapsulated global access
+	//TODO use a better data structure, what is better?	
+	private static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
+	private static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();  //TODO fetch from hashmap, then serialize
+		
 
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	private static final String TAG = MapActivity.class.getName();
@@ -46,7 +57,7 @@ public class MapActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
-        
+		
         /*
          * Create a new location client, using the enclosing class to
          * handle callbacks.
@@ -56,10 +67,32 @@ public class MapActivity extends FragmentActivity implements
 
 		// new YelpRequestAsyncTask(37.871744, -122.260963, "burritos",
 		// SomeUtil.getBus()).execute();
-		new PlacesRequestAsyncTask(37.871744, -122.260963, "burritos",
+		new PlacesRequestAsyncTask(37.871744, -122.260963, "museum",
 				SomeUtil.getBus()).execute();
 		map = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
+		
+		//should i store the marker or the pojo?
+		map.setOnMarkerClickListener(new OnMarkerClickListener(){
+
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				// TODO Auto-generated method stub
+				if(selectedSearchResults.contains(marker))
+				{
+					marker.setIcon(BitmapDescriptorFactory
+						.fromResource(R.drawable.ic_launcher));
+					selectedSearchResults.add(marker);
+				}
+				else
+				{
+					marker.setIcon(BitmapDescriptorFactory
+						.fromResource(R.drawable.ic_launcher_clicked));
+					selectedSearchResults.remove(marker);
+				}
+				return false;
+			}
+		});
 		/*
 		 * Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
 		 * .title("Hamburg"));
@@ -85,7 +118,7 @@ public class MapActivity extends FragmentActivity implements
     protected void onStart() {
         super.onStart();
         // Connect the client.
-        mLocationClient.connect();
+        //mLocationClient.connect();
     }
 
     /*
@@ -94,7 +127,7 @@ public class MapActivity extends FragmentActivity implements
     @Override
     protected void onStop() {
         // Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
+        //mLocationClient.disconnect();
         super.onStop();
     }
 	@Override
@@ -127,6 +160,21 @@ public class MapActivity extends FragmentActivity implements
 		Log.d("luls", y.getStatus());
 	}
 
+	@Subscribe
+	public void subscriberWithASillyName(ArrayList<SearchResult> searcResults) {
+		//Log.d("luls", y.getStatus());
+		for ( SearchResult s : searcResults )
+		{
+			// TODO make a big ass Marker class with its own onclicklistener
+			Marker marker = map.addMarker(new MarkerOptions()
+			.position(s._latlng)
+			.title(s._name)
+			.snippet("Kiel is cool")
+			.icon(BitmapDescriptorFactory
+					.fromResource(R.drawable.ic_launcher)));
+			currentSearchResults.put(marker, s);
+		}
+	}
 	// Define a DialogFragment that displays the error dialog
 	public static class ErrorDialogFragment extends DialogFragment {
 		// Global field to contain the error dialog

@@ -1,9 +1,14 @@
 package com.potato.burritohunter.stuff;
 
-import com.potato.burritohunter.R;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+
+import com.potato.burritohunter.R;
+import com.potato.burritohunter.places.PlacesSearchResult;
 
 public final class ADS {
 	private static final String TAG = ADS.class.getName();
@@ -74,4 +79,7 @@ public final class ADS {
 		return YELP_CONSUMER_SECRET;
 	}
 
+	
+	
+	
 }

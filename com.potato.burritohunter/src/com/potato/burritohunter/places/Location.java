@@ -2,8 +2,8 @@ package com.potato.burritohunter.places;
 
 public class Location
 {
-	private double lat;
-	private double lng;
+	private double lat = Double.MIN_VALUE;
+	private double lng = Double.MIN_VALUE;
 
 	public double getLat() {
 		return lat;

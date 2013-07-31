@@ -17,6 +17,7 @@ import com.potato.burritohunter.stuff.ADS;
 import com.potato.burritohunter.yelp.YelpService;
 
 public class PlacesService {
+	private static final String TAG = PlacesService.class.getName();
 	private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
 			FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
@@ -24,8 +25,9 @@ public class PlacesService {
 		String response = "";
 		try {
 			HttpClient client = new DefaultHttpClient();
-			String getURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=harbour&sensor=false&key="
+			String getURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lng+"&radius=5000&name="+term+"&sensor=false&key="
 					+ ADS.getInstance().getGooglePlacesApiKey();
+			Log.d(TAG, getURL);
 			HttpGet get = new HttpGet(getURL);
 			HttpResponse responseGet = client.execute(get);
 			HttpEntity resEntityGet = responseGet.getEntity();

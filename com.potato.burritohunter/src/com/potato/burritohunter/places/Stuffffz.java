@@ -1,11 +1,12 @@
 package com.potato.burritohunter.places;
 
+import java.net.URI;
 import java.util.List;
 
 public class Stuffffz
 {
 	private Geometry geometry;
-	private String icon;
+	private URI icon;
 	private String id;
 	private String name;
 	private OpeningHours openingHours;
@@ -21,10 +22,10 @@ public class Stuffffz
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
-	public String getIcon() {
+	public URI getIcon() {
 		return icon;
 	}
-	public void setIcon(String icon) {
+	public void setIcon(URI icon) {
 		this.icon = icon;
 	}
 	public String getId() {

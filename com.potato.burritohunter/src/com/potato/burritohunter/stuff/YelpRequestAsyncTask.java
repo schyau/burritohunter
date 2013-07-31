@@ -30,6 +30,8 @@ public class YelpRequestAsyncTask extends AsyncTask<Void, Void, YelpSearchResult
 
 	@Override
 	protected void onPostExecute(YelpSearchResult result) {
+		
+		//TODO turn this into a SearchResult
 		_eventBus.post(result);
 		super.onPostExecute(result);
 	}
