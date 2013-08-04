@@ -67,6 +67,7 @@ public class MapActivity extends FragmentActivity implements
 
 	private void clearMyLocationMarker() {
 		if (MY_LOCATION != null) {
+			MY_LOCATION.setVisible( false );
 			MY_LOCATION.remove();
 		}
 	}
