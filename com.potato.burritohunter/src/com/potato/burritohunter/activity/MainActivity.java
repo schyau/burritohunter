@@ -1,10 +1,11 @@
 package com.potato.burritohunter.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends Activity {
+import com.actionbarsherlock.app.SherlockActivity;
+
+public class MainActivity extends SherlockActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

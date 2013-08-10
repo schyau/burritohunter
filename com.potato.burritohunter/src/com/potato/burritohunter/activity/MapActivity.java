@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,19 +15,23 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
+import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -50,7 +55,7 @@ import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.yelp.YelpSearchResult;
 import com.squareup.otto.Subscribe;
 
-public class MapActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
+public class MapActivity extends SherlockFragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener
 {
   private GoogleMap map;
@@ -188,7 +193,7 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
           listFragment.setPoiList( list );
 
           ft.add( R.id.map_layout, listFragment, POIListFragment.class.getName() );
-          ft.remove( fm.findFragmentByTag( SupportMapFragment.class.getName() ) );
+          ft.remove( fm.findFragmentById( R.id.fragment_container) );
           ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
           ft.commit();
         }
@@ -221,9 +226,36 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
   @Override
   public boolean onCreateOptionsMenu( Menu menu )
   {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate( R.menu.main, menu );
-    return true;
+    MenuInflater inflater = this.getSupportMenuInflater();
+    inflater.inflate(R.menu.main, menu);
+
+
+    
+    // Add SearchWidget.
+    SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
+    SearchView searchView = (SearchView) menu.findItem( R.id.action_bar_search ).getActionView();
+
+    searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
+    
+
+    searchView.setSubmitButtonEnabled( true );
+    searchView.setOnQueryTextListener( new OnQueryTextListener()
+      {
+
+        @Override
+        public boolean onQueryTextChange( String newText )
+        {
+          return false;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit( String query )
+        {
+          return false;
+          
+        }
+      } );
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override

@@ -3,15 +3,21 @@ package com.potato.burritohunter.fragment;
 import java.util.List;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.potato.burritohunter.R;
 import com.potato.burritohunter.adapter.SavedListAdapter;
+import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.stuff.SearchResult;
 
-public class POIListFragment extends ListFragment
+public class POIListFragment extends SherlockListFragment
 {
   private List <SavedListItem> poiList; //make this parcelable?
   //TODO
@@ -26,8 +32,9 @@ public class POIListFragment extends ListFragment
     
     /*ArrayAdapter<String> adapter = new ArrayAdapter<String>( inflater.getContext(),
                                                              android.R.layout.simple_list_item_1, countries );*/
-    SavedListAdapter adapter = new SavedListAdapter (inflater.getContext(), poiList);
+    SavedListAdapter adapter = new SavedListAdapter (this, poiList);
     setListAdapter( adapter );
+    
 
     return super.onCreateView( inflater, container, savedInstanceState );
 
@@ -37,5 +44,23 @@ public class POIListFragment extends ListFragment
   public void setPoiList (  List <SavedListItem> poiList ) // probably considered sad shitty design, use parcelable instead 
   {
     this.poiList = poiList;
+  }
+  @Override
+  public void onListItemClick( ListView parent, View view, int position, long id )
+  {
+    SavedListItem savedListItem = poiList.get( position );
+    String foreignKey = savedListItem._id+"";
+    FragmentManager fm = getActivity().getSupportFragmentManager();
+    FragmentTransaction ft = fm.beginTransaction();
+    SinglePOIListFragment singlePOIListFragment = new SinglePOIListFragment();
+    List<SearchResult> singlePOIs = DatabaseUtil.getSingleSearchResults( foreignKey );
+    singlePOIListFragment.setSinglePOIs(singlePOIs);
+
+    ft.add( R.id.fragment_container, singlePOIListFragment, SinglePOIListFragment.class.getName() );
+    ft.remove( fm.findFragmentByTag( POIListFragment.class.getName() ) );
+
+    ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+    ft.commit();
+    
   }
 }

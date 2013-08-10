@@ -39,6 +39,7 @@ public class PlacesRequestAsyncTask extends
 	@Override
 	protected void onPostExecute(PlacesSearchResult result) {
 		super.onPostExecute(result);
+		if ( result == null ) return;
 		Log.d("luls", result.getStatus());
 		List<Stuffffz> placesResults = result.getResults();
 		
