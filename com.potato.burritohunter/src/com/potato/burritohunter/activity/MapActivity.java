@@ -76,8 +76,7 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
   {
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_map );
-    
-    
+
     //FragmentManager fm = getSupportFragmentManager();
     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
     SupportMapFragment supportMapFragment = new SupportMapFragment();
@@ -85,7 +84,7 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
     ft.add( R.id.fragment_container, supportMapFragment, SupportMapFragment.class.getName() );
     ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
     ft.commit();
-    
+
     _ctx = this;
     /*
      * Create a new location client, using the enclosing class to handle callbacks.
@@ -179,20 +178,14 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
         public void onClick( View v )
         {
           List<SavedListItem> list = DatabaseUtil.getSavedList();
-          for ( SavedListItem s : list )
-          {
-            Log.w( "asdf SavedListItem", s._id + ", " + s._title );
-          }
-
-          List<SearchResult> searchResultList = DatabaseUtil.getSingleSearchResults( "1" );
-          for ( SearchResult s : searchResultList )
-          {
-            Log.w( "asdf searchResult", s._name + ", " + s._latlng.toString() );
-          }
+          //for ( SavedListItem s : list ) { Log.w( "asdf SavedListItem", s._id + ", " + s._title ); }
+          //List<SearchResult> searchResultList = DatabaseUtil.getSingleSearchResults( "1" );
+          //for ( SearchResult s : searchResultList ){Log.w( "asdf searchResult", s._name + ", " + s._latlng.toString() );}
 
           FragmentManager fm = getSupportFragmentManager();
           FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
           POIListFragment listFragment = new POIListFragment();
+          listFragment.setPoiList( list );
 
           ft.add( R.id.map_layout, listFragment, POIListFragment.class.getName() );
           ft.remove( fm.findFragmentByTag( SupportMapFragment.class.getName() ) );
@@ -247,7 +240,8 @@ public class MapActivity extends FragmentActivity implements GooglePlayServicesC
     // new YelpRequestAsyncTask(37.871744, -122.260963, "burritos",
     // SomeUtil.getBus()).execute();
     new PlacesRequestAsyncTask( 37.871744, -122.260963, "museum", SomeUtil.getBus() ).execute();
-    map = ( (SupportMapFragment) getSupportFragmentManager().findFragmentByTag( SupportMapFragment.class.getName()) ).getMap();
+    map = ( (SupportMapFragment) getSupportFragmentManager().findFragmentByTag( SupportMapFragment.class.getName() ) )
+        .getMap();
 
     // should i store the marker or the pojo?
     map.setOnMarkerClickListener( new OnMarkerClickListener()
