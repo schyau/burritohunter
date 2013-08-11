@@ -1,3 +1,5 @@
+// TODO images, currentlocation and searching pivot markers
+
 package com.potato.burritohunter.activity;
 
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.common.ConnectionResult;
@@ -70,7 +71,7 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
   private static final String TAG = MapActivity.class.getName();
 
-  private LatLng PLACE = new LatLng( 37.871744, -122.260963 );
+  private LatLng PIVOT = new LatLng( 37.871744, -122.260963 );
   private static Marker MY_LOCATION; // TODO serialize last location and put
   // it in here on app startup.
 
@@ -81,6 +82,7 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
   {
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_map );
+    // should i store the marker or the pojo?
 
     //FragmentManager fm = getSupportFragmentManager();
     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -116,7 +118,6 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
           {
             Toast.makeText( _ctx, "can't get current location sry", Toast.LENGTH_SHORT ).show();
           }
-
         }
 
       } );
@@ -193,11 +194,10 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
           listFragment.setPoiList( list );
 
           ft.add( R.id.map_layout, listFragment, POIListFragment.class.getName() );
-          ft.remove( fm.findFragmentById( R.id.fragment_container) );
+          ft.remove( fm.findFragmentById( R.id.fragment_container ) );
           ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
           ft.commit();
         }
-
       } );
   }
 
@@ -227,21 +227,16 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
   public boolean onCreateOptionsMenu( Menu menu )
   {
     MenuInflater inflater = this.getSupportMenuInflater();
-    inflater.inflate(R.menu.main, menu);
+    inflater.inflate( R.menu.main, menu );
 
-
-    
     // Add SearchWidget.
     SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
     SearchView searchView = (SearchView) menu.findItem( R.id.action_bar_search ).getActionView();
 
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
-    
-
     searchView.setSubmitButtonEnabled( true );
     searchView.setOnQueryTextListener( new OnQueryTextListener()
       {
-
         @Override
         public boolean onQueryTextChange( String newText )
         {
@@ -251,11 +246,11 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
         @Override
         public boolean onQueryTextSubmit( String query )
         {
+          new PlacesRequestAsyncTask( PIVOT.latitude, PIVOT.longitude, query, SomeUtil.getBus() ).execute();
           return false;
-          
         }
       } );
-    return super.onCreateOptionsMenu(menu);
+    return super.onCreateOptionsMenu( menu );
   }
 
   @Override
@@ -271,33 +266,10 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
     super.onResume();
     // new YelpRequestAsyncTask(37.871744, -122.260963, "burritos",
     // SomeUtil.getBus()).execute();
-    new PlacesRequestAsyncTask( 37.871744, -122.260963, "museum", SomeUtil.getBus() ).execute();
-    map = ( (SupportMapFragment) getSupportFragmentManager().findFragmentByTag( SupportMapFragment.class.getName() ) )
-        .getMap();
-
-    // should i store the marker or the pojo?
-    map.setOnMarkerClickListener( new OnMarkerClickListener()
-      {
-        @Override
-        public boolean onMarkerClick( Marker marker )
-        {
-          // TODO Auto-generated method stub
-          if ( selectedSearchResults.contains( marker ) )
-          {
-            marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
-            selectedSearchResults.remove( marker );
-          }
-          else
-          {
-            marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
-            selectedSearchResults.add( marker );
-          }
-          return false;
-        }
-      } );
+    setUpMapIfNeeded();
 
     // Move the camera instantly to hamburg with a zoom of 15.
-    map.moveCamera( CameraUpdateFactory.newLatLngZoom( PLACE, 15 ) );
+    map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 15 ) );
 
     // Zoom in, animating the camera.
     map.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
@@ -381,6 +353,60 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
     }
   }
 
+  private void setUpMapIfNeeded()
+  {
+    if ( map == null )
+    {
+      map = ( (SupportMapFragment) getSupportFragmentManager().findFragmentByTag( SupportMapFragment.class.getName() ) )
+          .getMap();
+      if ( map != null )
+      {
+        map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 10 ) );
+        map.setOnMarkerClickListener( new OnMarkerClickListener()
+          {
+            @Override
+            public boolean onMarkerClick( Marker marker )
+            {
+              // TODO Auto-generated method stub
+              if ( selectedSearchResults.contains( marker ) )
+              {
+                marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
+                selectedSearchResults.remove( marker );
+              }
+              else
+              {
+                marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+                selectedSearchResults.add( marker );
+              }
+              return false;
+            }
+          } );
+      }
+    }
+  }
+
+  private void movePivotToMyLocation()
+  {
+    getCurrentLocation();
+    if ( mCurrentLocation != null )
+    {
+      clearMyLocationMarker();
+      MY_LOCATION = map.addMarker( new MarkerOptions().position( new LatLng( mCurrentLocation.getLatitude(),
+                                                                             mCurrentLocation.getLongitude() ) ) );
+    }
+    else
+    {
+      Toast.makeText( _ctx, "can't get current location sry", Toast.LENGTH_SHORT ).show();
+      //TODO save last location and use that one
+      //TODO default to the middle of the world?
+    }
+    LatLng latLng = MY_LOCATION == null ? new LatLng( 37.871744, -122.260963 ) : MY_LOCATION.getPosition();
+    double lat = latLng.latitude;
+    double lng = latLng.longitude;
+
+    PIVOT = new LatLng( lat, lng );
+  }
+
   private boolean servicesConnected()
   {
     // Check that Google Play services is available
@@ -462,6 +488,7 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
           .snippet( "Kiel is cool" ).icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
     }
 
+    movePivotToMyLocation(); //TODO this should be in some onclick func
   }
 
   @Override
@@ -485,7 +512,10 @@ public class MapActivity extends SherlockFragmentActivity implements GooglePlayS
   {
     if ( mLocationClient != null )
     {
-      mCurrentLocation = mLocationClient.getLastLocation();
+      if ( servicesConnected() )
+      {
+        mCurrentLocation = mLocationClient.getLastLocation();
+      }
     }
     else
     {

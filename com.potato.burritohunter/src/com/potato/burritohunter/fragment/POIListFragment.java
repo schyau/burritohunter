@@ -17,34 +17,28 @@ import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.stuff.SearchResult;
 
+// funfax: every fragment must have a default ctor so don't override that
+//TODO http://marakana.com/s/post/1250/android_fragments_tutorial
+
+//use this to make a new adapter
+//http://theopentutorials.com/tutorials/android/listview/android-custom-listview-with-image-and-text-using-baseadapter/
 public class POIListFragment extends SherlockListFragment
 {
   private List <SavedListItem> poiList; //make this parcelable?
-  //TODO
-  //please read this http://marakana.com/s/post/1250/android_fragments_tutorial
-  String[] countries = new String[] { "India", "Pakistan", "Sri Lanka", "China", "Bangladesh", "Nepal", "Afghanistan",
-                                     "North Korea", "South Korea", "Japan" };
-  // every fragment must have a default ctor so don't override that
-  
+
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
-    
-    /*ArrayAdapter<String> adapter = new ArrayAdapter<String>( inflater.getContext(),
-                                                             android.R.layout.simple_list_item_1, countries );*/
     SavedListAdapter adapter = new SavedListAdapter (this, poiList);
     setListAdapter( adapter );
-    
 
     return super.onCreateView( inflater, container, savedInstanceState );
-
-    //use this to make a new adapter
-    //http://theopentutorials.com/tutorials/android/listview/android-custom-listview-with-image-and-text-using-baseadapter/
   }
-  public void setPoiList (  List <SavedListItem> poiList ) // probably considered sad shitty design, use parcelable instead 
-  {
+  public void setPoiList (  List <SavedListItem> poiList )
+  { //this is sad shitty design, TODO use parcelable instead 
     this.poiList = poiList;
   }
+
   @Override
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
@@ -61,6 +55,5 @@ public class POIListFragment extends SherlockListFragment
 
     ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
     ft.commit();
-    
   }
 }
