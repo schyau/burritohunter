@@ -4,13 +4,13 @@ package com.potato.burritohunter.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.widget.Button;
 
@@ -18,54 +18,87 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.adapter.ViewPagerAdapter;
+import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.fragment.MyMapFragment;
+import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.places.PlacesSearchResult;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
-import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
-import com.potato.burritohunter.stuff.MyLocationHelper;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.yelp.YelpSearchResult;
 import com.squareup.otto.Subscribe;
 
-public class MapActivity extends SherlockFragmentActivity
+public class MapActivity extends BaseActivity
 {
   private LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
   public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
   public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
+  ViewPagerAdapter viewPagerAdapter;
+  ViewPager viewPager;
 
   private GoogleMap map;
-  private MyLocationHelper myLocationHelper;
+  
 
   @Override
-  protected void onCreate( Bundle savedInstanceState )
+  public void onCreate( Bundle savedInstanceState )
   {
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_map );
 
-    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-    SupportMapFragment supportMapFragment = new SupportMapFragment();
+    MyMapFragment mapFragment = MyMapFragment.newInstance( PIVOT );
 
-    ft.add( R.id.fragment_container, supportMapFragment, SupportMapFragment.class.getName() );
+    POIListFragment listFragment = new POIListFragment();
+    List<SavedListItem> list = DatabaseUtil.getSavedList();
+    listFragment.setPoiList( list );
+    
+    viewPager=(ViewPager)findViewById(R.id.pager);
+    viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+    viewPagerAdapter.addFragment( mapFragment );
+    viewPagerAdapter.addFragment( listFragment );
+    
+    viewPager.setAdapter(viewPagerAdapter);
+    /*ft.add( R.id.fragment_container, supportMapFragment, SupportMapFragment.class.getName() );
     ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-    ft.commit();
+    ft.commit();*/
+    viewPager.setOnPageChangeListener(new OnPageChangeListener() {
+      @Override
+      public void onPageScrollStateChanged(int arg0) { }
 
-    myLocationHelper = new MyLocationHelper( this );
+      @Override
+      public void onPageScrolled(int arg0, float arg1, int arg2) { }
+
+      @Override
+      public void onPageSelected(int position) {
+          switch (position) {
+          case 0:
+              getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+              break;
+          default:
+              getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+              break;
+          }
+      }
+
+  });
+    viewPager.setCurrentItem(0);
+    getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
     Button findMe = (Button) findViewById( R.id.find_me );
     Button save = (Button) findViewById( R.id.save );
     Button saved = (Button) findViewById( R.id.saved );
 
-    findMe.setOnClickListener( new BurritoClickListeners.FindMe( myLocationHelper ) );
+    //findMe.setOnClickListener( new BurritoClickListeners.FindMe( ) );
     save.setOnClickListener( new BurritoClickListeners.Save( this ) );
     saved.setOnClickListener( new BurritoClickListeners.Saved( this ) );
   }
@@ -76,7 +109,6 @@ public class MapActivity extends SherlockFragmentActivity
   {
     super.onStart();
     // Connect the client.
-    myLocationHelper.connectClient();
   }
 
   // Called when the Activity is no longer visible.
@@ -113,44 +145,8 @@ public class MapActivity extends SherlockFragmentActivity
   public void onResume()
   {
     super.onResume();
-    setUpMapIfNeeded();
-
-    map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 15 ) ); //zoom to 15
-    map.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
 
     SomeUtil.getBus().register( this );
-  }
-
-  //Handle results returned to the FragmentActivity by Google Play services
-  @Override
-  protected void onActivityResult( int requestCode, int resultCode, Intent data )
-  {
-    // Decide what to do based on the original request code
-    switch ( requestCode )
-    {
-      case MyLocationHelper.CONNECTION_FAILURE_RESOLUTION_REQUEST:
-        switch ( resultCode )
-        // If the result code is Activity.RESULT_OK, try to connect again
-        {
-          case Activity.RESULT_OK: //Try the request again
-            break;
-        }
-    }
-  }
-
-  private void setUpMapIfNeeded()
-  {
-    if ( map == null )
-    {
-      map = ( (SupportMapFragment) getSupportFragmentManager().findFragmentByTag( SupportMapFragment.class.getName() ) )
-          .getMap();
-      if ( map != null )
-      {
-        map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 10 ) );
-        map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
-        myLocationHelper.setMap( map );
-      }
-    }
   }
 
   @Subscribe
@@ -178,4 +174,17 @@ public class MapActivity extends SherlockFragmentActivity
       currentSearchResults.put( marker, s );
     }
   }
+  
+  @Override
+  public void onBackPressed() {
+      if (viewPager.getCurrentItem() == 0) {
+          // If the user is currently looking at the first step, allow the system to handle the
+          // Back button. This calls finish() on this activity and pops the back stack.
+          super.onBackPressed();
+      } else {
+          // Otherwise, select the previous step.
+        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      }
+  }
+
 }
