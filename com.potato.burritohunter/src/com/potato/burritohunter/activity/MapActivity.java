@@ -48,7 +48,6 @@ public class MapActivity extends BaseActivity
   ViewPager viewPager;
 
   private GoogleMap map;
-  
 
   @Override
   public void onCreate( Bundle savedInstanceState )
