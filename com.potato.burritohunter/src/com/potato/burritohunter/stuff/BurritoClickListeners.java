@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseUtil;
@@ -31,7 +33,8 @@ public class BurritoClickListeners
   public static class Saved implements OnClickListener
   {
     FragmentActivity _activity;
-    public Saved (FragmentActivity activity) 
+
+    public Saved( FragmentActivity activity )
     {
       _activity = activity;
     }
@@ -123,7 +126,8 @@ public class BurritoClickListeners
   public static class FindMe implements OnClickListener
   {
     private MyLocationHelper myLocationHelper;
-    public FindMe(MyLocationHelper myLocationHelper )
+
+    public FindMe( MyLocationHelper myLocationHelper )
     {
       this.myLocationHelper = myLocationHelper;
     }
@@ -134,7 +138,6 @@ public class BurritoClickListeners
       myLocationHelper.setMyLocation();
     }
   }
-  
 
   public static class SearchViewOnQueryTextListener implements OnQueryTextListener
   {
@@ -147,12 +150,14 @@ public class BurritoClickListeners
     @Override
     public boolean onQueryTextSubmit( String query )
     {
-      new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();  // need to get this info
+      // TODO change this to a fragment loading?
+      new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
+      
+      // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
       return false;
     }
   }
-  
-  
+
   public static class MapOnMarkerClickListener implements OnMarkerClickListener
   {
     @Override
@@ -172,5 +177,38 @@ public class BurritoClickListeners
       return false;
     }
   }
-  
+
+  public static class ViewPagerOnPageChangeListener implements OnPageChangeListener
+  {
+    private SlidingMenu _slidingMenu;
+
+    public ViewPagerOnPageChangeListener( SlidingMenu slidingMenu )
+    {
+      _slidingMenu = slidingMenu;
+    }
+
+    @Override
+    public void onPageScrollStateChanged( int arg0 )
+    {
+    }
+
+    @Override
+    public void onPageScrolled( int arg0, float arg1, int arg2 )
+    {
+    }
+
+    @Override
+    public void onPageSelected( int position )
+    {
+      switch ( position )
+      {
+        case 0:
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN );
+          break;
+        default:
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
+          break;
+      }
+    }
+  }
 }

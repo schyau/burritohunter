@@ -10,11 +10,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.widget.Button;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
@@ -33,6 +31,7 @@ import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.places.PlacesSearchResult;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
+import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.yelp.YelpSearchResult;
@@ -70,26 +69,7 @@ public class MapActivity extends BaseActivity
     /*ft.add( R.id.fragment_container, supportMapFragment, SupportMapFragment.class.getName() );
     ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
     ft.commit();*/
-    viewPager.setOnPageChangeListener(new OnPageChangeListener() {
-      @Override
-      public void onPageScrollStateChanged(int arg0) { }
-
-      @Override
-      public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-      @Override
-      public void onPageSelected(int position) {
-          switch (position) {
-          case 0:
-              getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-              break;
-          default:
-              getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-              break;
-          }
-      }
-
-  });
+    viewPager.setOnPageChangeListener(new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
     viewPager.setCurrentItem(0);
     getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
