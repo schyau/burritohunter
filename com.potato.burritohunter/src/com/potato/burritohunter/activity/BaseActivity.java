@@ -1,5 +1,7 @@
 package com.potato.burritohunter.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -16,11 +18,12 @@ public class BaseActivity extends SlidingFragmentActivity {
 
 
     protected ListFragment mFrag;
+    private Context _context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        _context = this;
 
         // set the Behind View
         setBehindContentView(R.layout.menu_frame);
@@ -34,7 +37,7 @@ public class BaseActivity extends SlidingFragmentActivity {
                 @Override
                 public void onClick( View v )
                 {
-                  
+                  startActivity(new Intent(_context, EditPreferencesHC.class));
                 }
               } );
             t.commit();

@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Settings" >
+        <CheckBoxPreference
+            android:key="DragMode"
+            android:summary="Tap and drag to search"
+            android:title="Enable Drag Mode" />
+
+        <com.potato.burritohunter.activity.SeekBarPreference
+            android:defaultValue="10"
+            android:key="SearchRadius"
+            android:title="Search Radius" />
+    </PreferenceCategory>
+
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:summary="Big props to these guys, so we don&apos;t get sued"
+        android:title="Open Source Licenses" >
+        <intent android:action=".activity.About" />
+    </PreferenceScreen>
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="About" >
+        <intent android:action=".activity.About" />
+    </PreferenceScreen>
+
+</PreferenceScreen>
