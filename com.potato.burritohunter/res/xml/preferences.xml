@@ -1,14 +1,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="Settings" >
-        <CheckBoxPreference
-            android:key="DragMode"
-            android:summary="Tap and drag to search"
-            android:title="Enable Drag Mode" />
+        <com.potato.burritohunter.activity.SearchLimitSeekBarPreference
+            android:defaultValue="10"
+            android:key="MaxSearches"
+            android:title="Max searches"
+            android:summary="Drag to set maximum searches returned" />
 
         <com.potato.burritohunter.activity.SeekBarPreference
             android:defaultValue="10"
             android:key="SearchRadius"
+            android:summary="Drag to set search radius (in miles)"
             android:title="Search Radius" />
     </PreferenceCategory>
 

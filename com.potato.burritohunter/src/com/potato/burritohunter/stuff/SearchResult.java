@@ -20,3 +20,7 @@ public class SearchResult
 	}
 }
 
+
+//check to see if it's in db, if not add.
+// if yes, check timestamp, if > 30days replace
+// logic to grab specific 

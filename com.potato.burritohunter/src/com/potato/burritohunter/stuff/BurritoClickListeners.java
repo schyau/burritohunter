@@ -151,8 +151,8 @@ public class BurritoClickListeners
     public boolean onQueryTextSubmit( String query )
     {
       // TODO change this to a fragment loading?
-      new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
-      
+      //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
+      new FoursquareRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
       // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
       return false;
     }

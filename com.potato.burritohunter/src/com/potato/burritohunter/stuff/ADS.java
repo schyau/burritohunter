@@ -21,6 +21,8 @@ public final class ADS
   private static String YELP_CONSUMER_KEY = "";
   private static String YELP_TOKEN = "";
   private static String YELP_CONSUMER_SECRET = "";
+  private static String FOURSQUARE_CLIENT_ID;
+  private static String FOURSQUARE_CLIENT_SECRET;
   private static DatabaseHelper dbHelper;
 
   private ADS()
@@ -60,6 +62,8 @@ public final class ADS
     YELP_CONSUMER_KEY = res.getString( R.string.yelp_consumer_key );
     YELP_TOKEN = res.getString( R.string.yelp_token );
     YELP_CONSUMER_SECRET = res.getString( R.string.yelp_consumer_secret );
+    FOURSQUARE_CLIENT_ID = res.getString( R.string.foursquare_client_id );
+    FOURSQUARE_CLIENT_SECRET = res.getString( R.string.foursquare_client_secret );
   }
 
   public String getGoogleMapsApiKey()
@@ -97,4 +101,13 @@ public final class ADS
     return dbHelper;
   }
 
+  public String getFoursquareClientId()
+  {
+    return FOURSQUARE_CLIENT_ID;
+  }
+
+  public String getFoursquareClientSecret()
+  {
+    return FOURSQUARE_CLIENT_SECRET;
+  }
 }
