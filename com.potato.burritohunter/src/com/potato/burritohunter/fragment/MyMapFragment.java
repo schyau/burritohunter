@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -48,5 +49,9 @@ public class MyMapFragment extends SupportMapFragment
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, 16));
         getMap().addMarker(new MarkerOptions().position(latLon).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
         getMap().setOnMarkerClickListener( new MapOnMarkerClickListener() );
+    }
+    public GoogleMap getMAP()
+    {
+      return getMap();
     }
 }

@@ -20,6 +20,12 @@ public class DatabaseUtil
     }
   }
 
+  public static DatabaseHelper getDatabaseHelper()
+  {
+    return _dbHelper;
+  }
+  
+  
   /* retrieves all search results for screen 3 */
   public static List<SearchResult> getSingleSearchResults(String foreignKey)
   {
@@ -37,7 +43,8 @@ public class DatabaseUtil
         searchResult._name = cursor.getString( nameIndex );
         double lat = Double.parseDouble( cursor.getString( latIndex ) );
         double lng = Double.parseDouble( cursor.getString( lngIndex ) );
-        searchResult._latlng = new LatLng( lat, lng );
+        searchResult._lat = lat;
+        searchResult._lng = lng;
         list.add( searchResult );
       } while ( cursor.moveToNext() );
     }

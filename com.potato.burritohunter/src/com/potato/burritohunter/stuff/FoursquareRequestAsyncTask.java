@@ -40,15 +40,6 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
     super.onPostExecute( result );
     if ( result == null )
       return;
-    Response response = result.getResponse();
-    List<Venue> venues = response.getVenues();
-    for (Venue venue : venues )
-    {
-      SearchResult searchResult = new SearchResult();
-      
-    }
-
-    
+    _eventBus.post( result );
   }
-  
 }

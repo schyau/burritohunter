@@ -10,13 +10,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.widget.Button;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -24,17 +24,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.adapter.ViewPagerAdapter;
+import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.foursquare.FoursquareSearchResult;
+import com.potato.burritohunter.foursquare.Location;
+import com.potato.burritohunter.foursquare.Response;
+import com.potato.burritohunter.foursquare.Venue;
 import com.potato.burritohunter.fragment.MyMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
-import com.potato.burritohunter.places.PlacesSearchResult;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
-import com.potato.burritohunter.yelp.YelpSearchResult;
 import com.squareup.otto.Subscribe;
 
 public class MapActivity extends BaseActivity
@@ -46,7 +49,7 @@ public class MapActivity extends BaseActivity
   ViewPagerAdapter viewPagerAdapter;
   ViewPager viewPager;
 
-  private GoogleMap map;
+  MyMapFragment _mapFragment;
 
   @Override
   public void onCreate( Bundle savedInstanceState )
@@ -54,7 +57,7 @@ public class MapActivity extends BaseActivity
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_map );
 
-    MyMapFragment mapFragment = MyMapFragment.newInstance( PIVOT );
+    _mapFragment = MyMapFragment.newInstance( PIVOT );
 
     POIListFragment listFragment = new POIListFragment();
     List<SavedListItem> list = DatabaseUtil.getSavedList();
@@ -62,7 +65,7 @@ public class MapActivity extends BaseActivity
     
     viewPager=(ViewPager)findViewById(R.id.pager);
     viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-    viewPagerAdapter.addFragment( mapFragment );
+    viewPagerAdapter.addFragment( _mapFragment );
     viewPagerAdapter.addFragment( listFragment );
     
     viewPager.setAdapter(viewPagerAdapter);
@@ -127,30 +130,34 @@ public class MapActivity extends BaseActivity
 
     SomeUtil.getBus().register( this );
   }
-
+  
   @Subscribe
-  public void subscriberWithASillyName( PlacesSearchResult y )
+  public void subscriberWithASillyName ( FoursquareSearchResult searchResult )
   {
-    Log.d( "luls", y.getStatus() );
-  }
-
-  @Subscribe
-  public void subscriberWithASillyName( YelpSearchResult y )
-  {
-    Log.d( "luls", y.toString() );
-
-  }
-
-  @Subscribe
-  public void subscriberWithASillyName( ArrayList<SearchResult> searcResults )
-  {
-    // Log.d("luls", y.getStatus());
-    for ( SearchResult s : searcResults )
+    Response r = searchResult.getResponse();
+    List<Venue> venues = r.getVenues();
+    for ( Venue venue : venues )
     {
+      Location location = venue.getLocation();
+      String id = venue.getId();
+      String name = venue.getName();
+      if (location == null || id == null || name == null ) continue;
+      double lat = location.getLat();
+      double lng = location.getLng();
+      String address = location.getAddress();
+      if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE ) continue;
+      SearchResult mySearchResult = new SearchResult();
+      mySearchResult._lat= lat;
+      mySearchResult._lng = lng;
+      mySearchResult._name = name;
+      mySearchResult.address = address;
+      mySearchResult.id = id;
+      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+      dbHelper.insertPoint( mySearchResult );
+      LatLng pos = new LatLng (mySearchResult._lat, mySearchResult._lng );
       // TODO make a big ass Marker class with its own onclicklistener
-      Marker marker = map.addMarker( new MarkerOptions().position( s._latlng ).title( s._name )
+      Marker marker = _mapFragment.getMAP().addMarker( new MarkerOptions().position( pos ).title( mySearchResult._name )
           .snippet( "Kiel is cool" ).icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
-      currentSearchResults.put( marker, s );
     }
   }
   

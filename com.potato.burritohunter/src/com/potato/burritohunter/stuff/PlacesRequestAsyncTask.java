@@ -68,7 +68,8 @@ public class PlacesRequestAsyncTask extends
 				continue;
 			
 			SearchResult searchResult = new SearchResult(); //TODO please use a builder, encapsulate some error checking in there
-			searchResult._latlng = new LatLng(lat, lng);
+			searchResult._lat = lat;
+			searchResult._lng = lng;
 			searchResult._name = name;
 			placesSearchResults.add(searchResult);
 		}

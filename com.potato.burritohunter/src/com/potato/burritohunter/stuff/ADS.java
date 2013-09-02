@@ -23,7 +23,6 @@ public final class ADS
   private static String YELP_CONSUMER_SECRET = "";
   private static String FOURSQUARE_CLIENT_ID;
   private static String FOURSQUARE_CLIENT_SECRET;
-  private static DatabaseHelper dbHelper;
 
   private ADS()
   {
@@ -94,11 +93,6 @@ public final class ADS
   public String getYelpConsumerSecret()
   {
     return YELP_CONSUMER_SECRET;
-  }
-
-  public DatabaseHelper getDbHelper()
-  {
-    return dbHelper;
   }
 
   public String getFoursquareClientId()

@@ -5,8 +5,8 @@ public class Location
   private String address;
   private String crossStreet;
   private String city;
-  private double lat;
-  private double lng;
+  private double lat = Double.MIN_VALUE;
+  private double lng = Double.MIN_VALUE;
   private int distance;
   private int postalCode;
   private String state;
