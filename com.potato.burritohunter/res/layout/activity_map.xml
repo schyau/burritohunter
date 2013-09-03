@@ -4,46 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapActivity" >
-
-    <!-- <include layout="@layout/map_frag" /> -->
     <FrameLayout
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff" >
+        android:layout_height="match_parent" >
+
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </android.support.v4.view.ViewPager>
+
+        <!-- hack to fix ugly black artefact with maps v2 -->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
     </FrameLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save" 
-            android:layout_weight="2"/>
-
-        <Button
-            android:id="@+id/saved"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Saved" />
-
-        <Button
-            android:id="@+id/find_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="find_me!" />
-    </LinearLayout>
-    
-    
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/pager"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-</android.support.v4.view.ViewPager>
 
 </FrameLayout>

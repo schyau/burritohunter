@@ -14,9 +14,8 @@ import android.widget.Button;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,10 +42,10 @@ import com.squareup.otto.Subscribe;
 public class MapActivity extends BaseActivity
 {
   private LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
-  public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
+  public static final HashMap<Marker, String> currentSearchResults = new HashMap<Marker, String>();
   public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
-  ViewPagerAdapter viewPagerAdapter;
+  public static ViewPagerAdapter viewPagerAdapter;
   ViewPager viewPager;
 
   MyMapFragment _mapFragment;
@@ -62,27 +61,24 @@ public class MapActivity extends BaseActivity
     POIListFragment listFragment = new POIListFragment();
     List<SavedListItem> list = DatabaseUtil.getSavedList();
     listFragment.setPoiList( list );
-    
-    viewPager=(ViewPager)findViewById(R.id.pager);
-    viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+    viewPager = (ViewPager) findViewById( R.id.pager );
+    viewPagerAdapter = new ViewPagerAdapter( getSupportFragmentManager() );
     viewPagerAdapter.addFragment( _mapFragment );
     viewPagerAdapter.addFragment( listFragment );
-    
-    viewPager.setAdapter(viewPagerAdapter);
-    /*ft.add( R.id.fragment_container, supportMapFragment, SupportMapFragment.class.getName() );
-    ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-    ft.commit();*/
-    viewPager.setOnPageChangeListener(new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
-    viewPager.setCurrentItem(0);
-    getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+
+    viewPager.setAdapter( viewPagerAdapter );
+    viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
+    viewPager.setCurrentItem( 0 );
+    getSlidingMenu().setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN );
 
     Button findMe = (Button) findViewById( R.id.find_me );
-    Button save = (Button) findViewById( R.id.save );
-    Button saved = (Button) findViewById( R.id.saved );
-
-    //findMe.setOnClickListener( new BurritoClickListeners.FindMe( ) );
-    save.setOnClickListener( new BurritoClickListeners.Save( this ) );
-    saved.setOnClickListener( new BurritoClickListeners.Saved( this ) );
+    /*
+     * Button save = (Button) findViewById( R.id.save ); Button saved = (Button) findViewById( R.id.saved );
+     * 
+     * //findMe.setOnClickListener( new BurritoClickListeners.FindMe( ) ); save.setOnClickListener( new
+     * BurritoClickListeners.Save( this ) ); saved.setOnClickListener( new BurritoClickListeners.Saved( viewPager ) );
+     */
   }
 
   //Called when the Activity becomes visible.
@@ -113,6 +109,9 @@ public class MapActivity extends BaseActivity
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
     searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener() );
+
+    menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
+    menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );
     return super.onCreateOptionsMenu( menu );
   }
 
@@ -130,9 +129,9 @@ public class MapActivity extends BaseActivity
 
     SomeUtil.getBus().register( this );
   }
-  
+
   @Subscribe
-  public void subscriberWithASillyName ( FoursquareSearchResult searchResult )
+  public void subscriberWithASillyName( FoursquareSearchResult searchResult )
   {
     Response r = searchResult.getResponse();
     List<Venue> venues = r.getVenues();
@@ -141,36 +140,66 @@ public class MapActivity extends BaseActivity
       Location location = venue.getLocation();
       String id = venue.getId();
       String name = venue.getName();
-      if (location == null || id == null || name == null ) continue;
+      if ( location == null || id == null || name == null )
+        continue;
       double lat = location.getLat();
       double lng = location.getLng();
       String address = location.getAddress();
-      if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE ) continue;
+      if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
+        continue;
       SearchResult mySearchResult = new SearchResult();
-      mySearchResult._lat= lat;
+      mySearchResult._lat = lat;
       mySearchResult._lng = lng;
       mySearchResult._name = name;
       mySearchResult.address = address;
       mySearchResult.id = id;
       DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
       dbHelper.insertPoint( mySearchResult );
-      LatLng pos = new LatLng (mySearchResult._lat, mySearchResult._lng );
+      LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
       // TODO make a big ass Marker class with its own onclicklistener
-      Marker marker = _mapFragment.getMAP().addMarker( new MarkerOptions().position( pos ).title( mySearchResult._name )
-          .snippet( "Kiel is cool" ).icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
+      Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                           .position( pos )
+                                                           .title( mySearchResult._name )
+                                                           .snippet( "Kiel is cool" )
+                                                           .icon( BitmapDescriptorFactory
+                                                                      .fromResource( R.drawable.ic_launcher ) ) );
+      currentSearchResults.put( marker, id );
     }
   }
-  
+
   @Override
-  public void onBackPressed() {
-      if (viewPager.getCurrentItem() == 0) {
-          // If the user is currently looking at the first step, allow the system to handle the
-          // Back button. This calls finish() on this activity and pops the back stack.
-          super.onBackPressed();
-      } else {
-          // Otherwise, select the previous step.
-        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-      }
+  public void onBackPressed()
+  {
+    if ( viewPager.getCurrentItem() == 0 )
+    {
+      // If the user is currently looking at the first step, allow the system to handle the
+      // Back button. This calls finish() on this activity and pops the back stack.
+      super.onBackPressed();
+    }
+    else
+    {
+      // Otherwise, select the previous step.
+      viewPager.setCurrentItem( viewPager.getCurrentItem() - 1 );
+    }
   }
 
+  public static final int MENU_ADD = Menu.FIRST;
+  public static final int MENU_DELETE = Menu.FIRST + 1;
+
+  @Override
+  public boolean onOptionsItemSelected( MenuItem item )
+  {
+    switch ( item.getItemId() )
+    {
+      case MENU_ADD:
+        BurritoClickListeners.displayDialogs(this);
+        return true;
+      case MENU_DELETE:
+        //DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey );
+
+        return true;
+      default:
+        return super.onOptionsItemSelected( item );
+    }
+  }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import android.database.Cursor;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.SearchResult;
 
 public class DatabaseUtil
@@ -29,7 +30,7 @@ public class DatabaseUtil
   /* retrieves all search results for screen 3 */
   public static List<SearchResult> getSingleSearchResults(String foreignKey)
   {
-    Cursor cursor = _dbHelper.querySinglePOIForeignKey( foreignKey );
+    /*Cursor cursor = _dbHelper.retrievePoints( foreignKey );
     List<SearchResult> list = new ArrayList<SearchResult>();
     // looping through all rows and adding to list
     if ( cursor.moveToFirst() )
@@ -48,7 +49,7 @@ public class DatabaseUtil
         list.add( searchResult );
       } while ( cursor.moveToNext() );
     }
-    return list;
+    return list;*/return null;
   }
 
   public static List<SavedListItem> getSavedList()
@@ -74,6 +75,13 @@ public class DatabaseUtil
   {
     _dbHelper.addPOIList( listName, poiList );
   }
-  
 
+  public static void addList ( String listName, List<String> ids )
+  {
+    long rowid = _dbHelper.saveList( listName );
+    for( String id : ids )
+    {
+      _dbHelper.saveForeignKey( id, rowid );
+    }
+  }
 }

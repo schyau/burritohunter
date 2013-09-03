@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -32,30 +33,17 @@ public class BurritoClickListeners
 {
   public static class Saved implements OnClickListener
   {
-    FragmentActivity _activity;
+    ViewPager _viewPager;
 
-    public Saved( FragmentActivity activity )
+    public Saved( ViewPager viewPager )
     {
-      _activity = activity;
+      this._viewPager = viewPager;
     }
 
     @Override
     public void onClick( View v )
     {
-      List<SavedListItem> list = DatabaseUtil.getSavedList();
-      //for ( SavedListItem s : list ) { Log.w( "asdf SavedListItem", s._id + ", " + s._title ); }
-      //List<SearchResult> searchResultList = DatabaseUtil.getSingleSearchResults( "1" );
-      //for ( SearchResult s : searchResultList ){Log.w( "asdf searchResult", s._name + ", " + s._latlng.toString() );}
-
-      FragmentManager fm = _activity.getSupportFragmentManager();
-      FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
-      POIListFragment listFragment = new POIListFragment();
-      listFragment.setPoiList( list );
-
-      ft.add( R.id.map_layout, listFragment, POIListFragment.class.getName() );
-      ft.remove( fm.findFragmentById( R.id.fragment_container ) );
-      ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
-      ft.commit();
+      _viewPager.setCurrentItem( 1 );
     }
   }
 
@@ -96,13 +84,17 @@ public class BurritoClickListeners
                   }
                   else
                   {
-                    ArrayList<SearchResult> poiList = new ArrayList<SearchResult>();
-                    for ( Marker key : MapActivity.selectedSearchResults ) // gotta get this somehow, maybe put this in its own class data structure
-                    {
-                      poiList.add( MapActivity.currentSearchResults.get( key ) );
-                    }
-                    //add markers into db
-                    DatabaseUtil.addPOIList( name, poiList ); //TODO should be async
+                    /*
+                     * ArrayList<SearchResult> poiList = new ArrayList<SearchResult>(); for ( Marker key :
+                     * MapActivity.selectedSearchResults ) // gotta get this somehow, maybe put this in its own class
+                     * data structure { poiList.add( MapActivity.currentSearchResults.get( key ) ); } //add markers into
+                     * db DatabaseUtil.addPOIList( name, poiList ); //TODO should be async
+                     */
+
+                    //^old way of doing it, new way is to:
+                    // add name and foreign_key to list_table
+                    // use marker to look up id from currentSearchResults
+                    // add id and foreign_key to foreign_key_table
                     Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
                   }
                 }
@@ -210,5 +202,69 @@ public class BurritoClickListeners
           break;
       }
     }
+  }
+
+  public static void displayDialogs( final Context _ctx )
+  {
+    LayoutInflater factory = LayoutInflater.from( _ctx );
+    final View textEntryView = factory.inflate( R.layout.save_dialog, null );
+    final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
+    if ( MapActivity.selectedSearchResults.size() == 0 )
+    {
+      Toast.makeText( _ctx, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
+      return;
+    }
+    new AlertDialog.Builder( _ctx )
+
+    .setMessage( "What would you like to name this trip?" ).setView( textEntryView )
+        .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
+          {
+            public void onClick( DialogInterface dialog, int whichButton )
+            {
+              Editable e = editText.getText();
+              if ( e != null )
+              {
+                String name = e.toString();
+                if ( name == null || name.length() < 3 )
+                {
+                  Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
+                }
+                else
+                {
+                  /*
+                   * ArrayList<SearchResult> poiList = new ArrayList<SearchResult>(); for ( Marker key :
+                   * MapActivity.selectedSearchResults ) // gotta get this somehow, maybe put this in its own class data
+                   * structure { poiList.add( MapActivity.currentSearchResults.get( key ) ); } //add markers into db
+                   * DatabaseUtil.addPOIList( name, poiList ); //TODO should be async
+                   */
+
+                  //^old way of doing it, new way is to:
+                  // add name and foreign_key to list_table
+                  // use marker to look up id from currentSearchResults
+                  // add id and foreign_key to foreign_key_table
+                  ArrayList<String> ids = new ArrayList<String>();
+                  for (Marker marker : MapActivity.selectedSearchResults)
+                  {
+                    String id = MapActivity.currentSearchResults.get( marker );
+                    ids.add( id);
+                  }
+                  DatabaseUtil.addList( name, ids );
+                  Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
+                  
+                }
+              }
+              else
+              {
+                Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
+              }
+            }
+
+          } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
+          {
+            public void onClick( DialogInterface dialog, int whichButton )
+            {
+              /* User clicked cancel so do some stuff */
+            }
+          } ).create().show();
   }
 }

@@ -36,6 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public static final String KEY_LAT = "latitude";
   public static final String KEY_LNG = "longitude";
   public static final String KEY_ADDRESS = "address";
+  
+
 
   public DatabaseHelper( Context context )
   {
@@ -67,20 +69,19 @@ public class DatabaseHelper extends SQLiteOpenHelper
     //   name text, lat text, lng text, address text
     // )
     String CREATE_POI_SINGLE_TABLE = "CREATE TABLE " + TABLE_SINGLE_POI + "(" + KEY_ID
-                                     + " TEXT PRIMARY KEY NOT NULL UNIQUE, "
-                                     + KEY_NAME + " TEXT, " + KEY_LAT + " TEXT, " + KEY_LNG + " TEXT, "
-                                     + KEY_ADDRESS + " TEXT)";
+                                     + " TEXT PRIMARY KEY NOT NULL UNIQUE, " + KEY_NAME + " TEXT, " + KEY_LAT
+                                     + " TEXT, " + KEY_LNG + " TEXT, " + KEY_ADDRESS + " TEXT)";
 
-    Log.d( TAG+"XX", CREATE_POI_LIST_TABLE );
-    Log.d( TAG+"XX", CREATE_POI_SINGLE_TABLE );
-    Log.d( TAG+"XX", CREATE_FOREIGN_KEYS_TABLE );
+    Log.d( TAG + "XX", CREATE_POI_LIST_TABLE );
+    Log.d( TAG + "XX", CREATE_POI_SINGLE_TABLE );
+    Log.d( TAG + "XX", CREATE_FOREIGN_KEYS_TABLE );
 
     db.execSQL( CREATE_POI_LIST_TABLE );
     db.execSQL( CREATE_POI_SINGLE_TABLE );
     db.execSQL( CREATE_FOREIGN_KEYS_TABLE );
   }
 
-  public void insertPoint ( SearchResult searchResult )
+  public void insertPoint( SearchResult searchResult )
   {
     String lat = searchResult._lat + "";
     String lng = searchResult._lng + "";
@@ -89,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     String id = searchResult.id;
 
     ContentValues values = new ContentValues();
-    values.put( KEY_ID, id);
+    values.put( KEY_ID, id );
     values.put( KEY_LAT, lat );
     values.put( KEY_LNG, lng );
     values.put( KEY_NAME, name );
@@ -97,18 +98,60 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     SQLiteDatabase db = this.getWritableDatabase();;
     db.insert( TABLE_SINGLE_POI, null, values );
+  }
 
-    String selectQuery = "SELECT  * FROM " + TABLE_SINGLE_POI;
-    Cursor cursor = db.rawQuery( selectQuery, null );
-    System.out.println(":)");
-  }
-  public void saveList (  )
+  public long saveList( String name )
   {
+    ContentValues values = new ContentValues();
+    values.put( KEY_NAME, name );
+    SQLiteDatabase db = this.getWritableDatabase();
+    return db.insert( TABLE_LIST_POI, null, values );
+  }
+  
+  public void saveForeignKey ( String id, long foreignKey )
+  {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put( KEY_ID, id );
+    values.put( KEY_FOREIGN_KEY, foreignKey );
+    db.insert( TABLE_FOREIGN_KEY, null, values );
+  }
+
+  // pretty sure you can use a left join to make this one sql stmt
+  public List retrievePoints( String foreignKey )
+  {
+    String selectQuery = "select "+KEY_ID+" from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = " + foreignKey;
+    SQLiteDatabase db = this.getWritableDatabase();
     
-  }
-  public void retrievePoints ( String id )
-  {
-     
+    Cursor cursor = db.rawQuery( selectQuery, null );
+    
+    List<SearchResult> list = new ArrayList<SearchResult>();
+    // looping through all rows and adding to list
+    if ( cursor.moveToFirst() )
+    {
+      int idIndex = cursor.getColumnIndex( DatabaseHelper.KEY_ID );
+      do
+      {
+        String id = cursor.getString( idIndex );
+        String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI+"."+KEY_ID+"='"+id+"'";
+        Cursor cursorSingle = db.rawQuery( selectSingleQuery, null );
+        cursorSingle.moveToFirst();
+        SearchResult searchResult = new SearchResult();
+
+        int idKey = cursorSingle.getColumnIndex( KEY_ID );
+        int nameKey = cursorSingle.getColumnIndex( KEY_NAME );
+        int latKey = cursorSingle.getColumnIndex( KEY_LAT );
+        int lngKey = cursorSingle.getColumnIndex( KEY_LNG );
+        int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
+        searchResult.id = cursorSingle.getString(idKey);
+        searchResult._name = cursorSingle.getString(nameKey);
+        searchResult._lat = cursorSingle.getDouble(latKey);
+        searchResult._lng = cursorSingle.getDouble(lngKey);
+        searchResult.address = cursorSingle.getString(addressKey);
+        list.add( searchResult );
+      } while ( cursor.moveToNext() );
+    }
+    return list;
   }
 
   // Upgrading database
@@ -161,7 +204,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
                          + "=" + foreignKey;
     SQLiteDatabase db = this.getWritableDatabase();
     return db.rawQuery( selectQuery, null );
-
   }
 
   public Cursor queryAllListPOIs()

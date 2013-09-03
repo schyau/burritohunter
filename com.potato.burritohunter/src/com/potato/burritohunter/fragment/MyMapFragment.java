@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
-import com.potato.burritohunter.stuff.MyLocationHelper;
 
 public class MyMapFragment extends SupportMapFragment
 {
@@ -37,7 +36,10 @@ public class MyMapFragment extends SupportMapFragment
     {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         initMap();
-        return v;
+        RelativeLayout lytContainer = (RelativeLayout) View.inflate(
+                                                                getActivity(), R.layout.buttons, null);
+        lytContainer.addView( v );
+        return lytContainer;
     }
 
     private void initMap()
@@ -49,9 +51,5 @@ public class MyMapFragment extends SupportMapFragment
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, 16));
         getMap().addMarker(new MarkerOptions().position(latLon).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
         getMap().setOnMarkerClickListener( new MapOnMarkerClickListener() );
-    }
-    public GoogleMap getMAP()
-    {
-      return getMap();
     }
 }
