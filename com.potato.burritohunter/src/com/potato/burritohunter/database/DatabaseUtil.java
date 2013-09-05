@@ -62,7 +62,7 @@ public class DatabaseUtil
       int nameIndex = cursor.getColumnIndex( DatabaseHelper.KEY_NAME );
       do
       {
-        int id = cursor.getInt( idIndex );
+        long id = cursor.getInt( idIndex );
         String name = cursor.getString( nameIndex );
         listOfListItems.add(new SavedListItem( id, name));
         

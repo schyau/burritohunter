@@ -27,8 +27,7 @@ public class SinglePOIListFragment extends ListFragment
     
     /*ArrayAdapter<String> adapter = new ArrayAdapter<String>( inflater.getContext(),
                                                              android.R.layout.simple_list_item_1, countries );*/
-    SinglePOIListAdapter adapter = new SinglePOIListAdapter (this, singlePOIs);
-    setListAdapter( adapter );
+    setAdapter();
 
     return super.onCreateView( inflater, container, savedInstanceState );
 
@@ -36,4 +35,10 @@ public class SinglePOIListFragment extends ListFragment
     //http://theopentutorials.com/tutorials/android/listview/android-custom-listview-with-image-and-text-using-baseadapter/
   }
   
+  //remove from here and try to set somewhere else
+  public void setAdapter()
+  {
+    SinglePOIListAdapter adapter = new SinglePOIListAdapter (this, singlePOIs);
+    setListAdapter( adapter );
+  }
 }

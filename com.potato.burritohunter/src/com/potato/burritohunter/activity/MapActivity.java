@@ -46,7 +46,7 @@ public class MapActivity extends BaseActivity
   public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
-  ViewPager viewPager;
+  public static ViewPager viewPager;
 
   MyMapFragment _mapFragment;
 

@@ -48,8 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
   @Override
   public void onCreate( SQLiteDatabase db )
   {
-    // CREATE TABLE poi (id INTEGER PRIMARY KEY, name TEXT );
-    String CREATE_POI_LIST_TABLE = "CREATE TABLE " + TABLE_LIST_POI + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME
+    // CREATE TABLE poi (id INTEGER PRIMARY KEY UNIQUE AUTOINCREMENT, name TEXT );
+    String CREATE_POI_LIST_TABLE = "CREATE TABLE " + TABLE_LIST_POI + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_NAME
                                    + " TEXT" + ")";
 
     // create table foreign_key_table
@@ -118,11 +118,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
   }
 
   // pretty sure you can use a left join to make this one sql stmt
-  public List retrievePoints( String foreignKey )
+  public List<SearchResult> retrievePoints( String foreignKey )
   {
     String selectQuery = "select "+KEY_ID+" from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = " + foreignKey;
     SQLiteDatabase db = this.getWritableDatabase();
-    
+
     Cursor cursor = db.rawQuery( selectQuery, null );
     
     List<SearchResult> list = new ArrayList<SearchResult>();

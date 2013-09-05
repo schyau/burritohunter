@@ -2,9 +2,9 @@ package com.potato.burritohunter.database;
 public class SavedListItem
 {
   public String _title;
-  public int _id;
+  public long _id;
 
-  public SavedListItem( int id, String title )
+  public SavedListItem( long id, String title )
   {
     _title = title;
     _id = id;
@@ -20,7 +20,7 @@ public class SavedListItem
     this._title = _title;
   }
 
-  public int get_id()
+  public long get_id()
   {
     return _id;
   }
