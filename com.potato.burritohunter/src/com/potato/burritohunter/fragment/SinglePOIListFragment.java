@@ -7,8 +7,12 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SinglePOIListAdapter;
+import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.stuff.SearchResult;
 
 
@@ -40,5 +44,28 @@ public class SinglePOIListFragment extends ListFragment
   {
     SinglePOIListAdapter adapter = new SinglePOIListAdapter (this, singlePOIs);
     setListAdapter( adapter );
+  }
+
+
+  @Override
+  public void onListItemClick( ListView parent, View view, int position, long id )
+  {
+    
+    SearchResult searchResult = (SearchResult) parent.getItemAtPosition(position);
+    DetailFragment detail = new DetailFragment();
+    detail.setDetail(searchResult);
+    
+
+    // will have to expand on this when we get to the fourth one
+    if (MapActivity.viewPagerAdapter.getCount() == 4 )
+    {
+      MapActivity.viewPagerAdapter.replaceView( MapActivity.viewPager,3, detail );
+    }
+    else
+    {
+      MapActivity.viewPagerAdapter.addFragment( detail );
+    }
+    MapActivity.viewPagerAdapter.notifyDataSetChanged();
+    MapActivity.viewPager.setCurrentItem( 3 );
   }
 }

@@ -10,6 +10,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.actionbarsherlock.view.Menu;
@@ -32,6 +33,7 @@ import com.potato.burritohunter.foursquare.Response;
 import com.potato.burritohunter.foursquare.Venue;
 import com.potato.burritohunter.fragment.MyMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
+import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
@@ -47,6 +49,7 @@ public class MapActivity extends BaseActivity
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;
+  public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
 
   MyMapFragment _mapFragment;
 
@@ -72,6 +75,9 @@ public class MapActivity extends BaseActivity
     viewPager.setCurrentItem( 0 );
     getSlidingMenu().setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN );
 
+    slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter(_context);
+    mFrag.setListAdapter( slidingMenuAdapter );
+    
     Button findMe = (Button) findViewById( R.id.find_me );
     /*
      * Button save = (Button) findViewById( R.id.save ); Button saved = (Button) findViewById( R.id.saved );
@@ -135,6 +141,7 @@ public class MapActivity extends BaseActivity
   {
     Response r = searchResult.getResponse();
     List<Venue> venues = r.getVenues();
+    slidingMenuAdapter.clear();
     for ( Venue venue : venues )
     {
       Location location = venue.getLocation();
@@ -164,7 +171,10 @@ public class MapActivity extends BaseActivity
                                                            .icon( BitmapDescriptorFactory
                                                                       .fromResource( R.drawable.ic_launcher ) ) );
       currentSearchResults.put( marker, id );
+
+      slidingMenuAdapter.add( mySearchResult );
     }
+    
   }
 
   @Override

@@ -19,7 +19,7 @@ public class BaseActivity extends SlidingFragmentActivity {
 
 
     protected ListFragment mFrag;
-    private Context _context;
+    protected Context _context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

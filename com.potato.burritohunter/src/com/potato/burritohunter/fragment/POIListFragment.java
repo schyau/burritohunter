@@ -49,6 +49,10 @@ public class POIListFragment extends SherlockListFragment
     single.setAdapter();
 
     // will have to expand on this when we get to the fourth one
+    if (MapActivity.viewPagerAdapter.getCount() == 4 )
+    {
+      MapActivity.viewPagerAdapter.removeView( MapActivity.viewPager,3 );
+    }
     if (MapActivity.viewPagerAdapter.getCount() == 3 )
     {
       MapActivity.viewPagerAdapter.replaceView( MapActivity.viewPager,2, single );

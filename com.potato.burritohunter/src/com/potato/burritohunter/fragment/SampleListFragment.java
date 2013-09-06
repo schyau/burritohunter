@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.stuff.SearchResult;
 
 public class SampleListFragment extends ListFragment {
 
@@ -18,39 +19,20 @@ public class SampleListFragment extends ListFragment {
         return inflater.inflate(R.layout.list, null);
     }
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        SampleAdapter adapter = new SampleAdapter(getActivity());
-        for (int i = 0; i < 20; i++) {
-            adapter.add(new SampleItem("Sample List", android.R.drawable.ic_menu_search));
-        }
-        setListAdapter(adapter);
-    }
+    public static class SlidingMenuAdapter extends ArrayAdapter<SearchResult> {
 
-    private class SampleItem {
-        public String tag;
-        public int iconRes;
-        public SampleItem(String tag, int iconRes) {
-            this.tag = tag; 
-            this.iconRes = iconRes;
-        }
-    }
-
-    public class SampleAdapter extends ArrayAdapter<SampleItem> {
-
-        public SampleAdapter(Context context) {
+        public SlidingMenuAdapter(Context context) {
             super(context, 0);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.row, null);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.saved_list_item, null);
             }
-            ImageView icon = (ImageView) convertView.findViewById(R.id.row_icon);
-            icon.setImageResource(getItem(position).iconRes);
-            TextView title = (TextView) convertView.findViewById(R.id.row_title);
-            title.setText(getItem(position).tag);
-
+            TextView title = (TextView) convertView.findViewById(R.id.title);
+            title.setText(getItem(position)._name);
+            TextView desc = (TextView) convertView.findViewById(R.id.desc);
+            desc.setText(getItem(position).address);
             return convertView;
         }
 

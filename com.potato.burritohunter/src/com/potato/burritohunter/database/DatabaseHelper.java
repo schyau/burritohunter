@@ -121,7 +121,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public List<SearchResult> retrievePoints( String foreignKey )
   {
     String selectQuery = "select "+KEY_ID+" from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = " + foreignKey;
-    SQLiteDatabase db = this.getWritableDatabase();
+    SQLiteDatabase db = this.getReadableDatabase();
 
     Cursor cursor = db.rawQuery( selectQuery, null );
     
@@ -152,6 +152,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
       } while ( cursor.moveToNext() );
     }
     return list;
+  }
+
+  public Cursor retrieveSinglePoint( String id )
+  {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI+"."+KEY_ID+"='"+id+"'";
+    return db.rawQuery( selectSingleQuery, null );
   }
 
   // Upgrading database
@@ -195,15 +202,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
       values.put( KEY_FOREIGN_KEY, rowid );
       db.insert( TABLE_SINGLE_POI, null, values );
     }
-  }
-
-  public Cursor querySinglePOIForeignKey( String foreignKey )
-  {
-    List<SearchResult> list = new ArrayList<SearchResult>();
-    String selectQuery = "SELECT  * FROM " + TABLE_SINGLE_POI + " WHERE " + TABLE_SINGLE_POI + "." + KEY_FOREIGN_KEY
-                         + "=" + foreignKey;
-    SQLiteDatabase db = this.getWritableDatabase();
-    return db.rawQuery( selectQuery, null );
   }
 
   public Cursor queryAllListPOIs()
