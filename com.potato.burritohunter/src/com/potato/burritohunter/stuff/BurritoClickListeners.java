@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,8 +26,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 
 public class BurritoClickListeners
@@ -165,7 +168,13 @@ public class BurritoClickListeners
         marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
         MapActivity.selectedSearchResults.add( marker );
       }
-      // update list adapter (too expensive?)
+      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+      String id = MapActivity.currentSearchResults.get( marker );
+      Cursor cursorSingle = dbHelper.retrieveSinglePoint( id );
+      SearchResult sr = dbHelper.getSearchResult( cursorSingle );
+      String title = sr._name;
+      String description = sr.address;
+      MyOtherMapFragment.setTitleAndDescription( title, description );
       return false;
     }
   }

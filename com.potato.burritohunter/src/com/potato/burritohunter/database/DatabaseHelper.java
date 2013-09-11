@@ -133,27 +133,33 @@ public class DatabaseHelper extends SQLiteOpenHelper
       do
       {
         String id = cursor.getString( idIndex );
-        String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI+"."+KEY_ID+"='"+id+"'";
-        Cursor cursorSingle = db.rawQuery( selectSingleQuery, null );
-        cursorSingle.moveToFirst();
-        SearchResult searchResult = new SearchResult();
+        Cursor cursorSingle = retrieveSinglePoint( id);
+        SearchResult searchResult = getSearchResult (cursorSingle);
 
-        int idKey = cursorSingle.getColumnIndex( KEY_ID );
-        int nameKey = cursorSingle.getColumnIndex( KEY_NAME );
-        int latKey = cursorSingle.getColumnIndex( KEY_LAT );
-        int lngKey = cursorSingle.getColumnIndex( KEY_LNG );
-        int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
-        searchResult.id = cursorSingle.getString(idKey);
-        searchResult._name = cursorSingle.getString(nameKey);
-        searchResult._lat = cursorSingle.getDouble(latKey);
-        searchResult._lng = cursorSingle.getDouble(lngKey);
-        searchResult.address = cursorSingle.getString(addressKey);
         list.add( searchResult );
       } while ( cursor.moveToNext() );
     }
     return list;
   }
 
+  public SearchResult getSearchResult ( Cursor cursorSingle )
+  {
+    cursorSingle.moveToFirst();
+    SearchResult searchResult = new SearchResult();
+
+    int idKey = cursorSingle.getColumnIndex( KEY_ID );
+    int nameKey = cursorSingle.getColumnIndex( KEY_NAME );
+    int latKey = cursorSingle.getColumnIndex( KEY_LAT );
+    int lngKey = cursorSingle.getColumnIndex( KEY_LNG );
+    int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
+    searchResult.id = cursorSingle.getString(idKey);
+    searchResult._name = cursorSingle.getString(nameKey);
+    searchResult._lat = cursorSingle.getDouble(latKey);
+    searchResult._lng = cursorSingle.getDouble(lngKey);
+    searchResult.address = cursorSingle.getString(addressKey);
+    return searchResult;
+  }
+  
   public Cursor retrieveSinglePoint( String id )
   {
     SQLiteDatabase db = this.getReadableDatabase();

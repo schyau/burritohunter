@@ -31,31 +31,60 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/saved" />
 
-    
-    	<LinearLayout
-    			    android:layout_width="fill_parent" 
-        			android:layout_height="fill_parent"
-					android:orientation="vertical"
-					android:gravity="bottom"
-					android:paddingLeft="5px"
-					android:paddingTop="5px"
-					android:paddingRight="5px">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
+        android:paddingTop="5px" >
 
-		<com.potato.burritohunter.stuff.TransparentPanel
-				android:id="@+id/transparent_panel" 
-	    	    android:layout_width="fill_parent"
-	        	android:layout_height="wrap_content"
-	        	android:paddingTop="5px"
-	        	android:paddingLeft="5px"
-				android:paddingBottom="5px"
-				android:paddingRight="5px">
-		
-		    <Button android:id="@+id/button_click_me"
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:text="Click Me!"/>
-	        
-		</com.potato.burritohunter.stuff.TransparentPanel>
-		</LinearLayout>
+        <com.potato.burritohunter.stuff.TransparentPanel
+            android:id="@+id/transparent_panel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5px"
+            android:paddingLeft="5px"
+            android:paddingRight="5px"
+            android:paddingTop="5px" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                 >
+
+                <RelativeLayout
+                    android:id="@+id/trans_pane_left_rl"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:id="@+id/trans_pane_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="Tap on a Marker to view details"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/trans_pane_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/trans_pane_title"
+                        android:maxLines="2"
+                        android:text="blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah" />
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/button_click_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Click Me!"
+                    android:layout_toRightOf="@id/trans_pane_left_rl" />
+            </RelativeLayout>
+        </com.potato.burritohunter.stuff.TransparentPanel>
+    </LinearLayout>
 
 </RelativeLayout>

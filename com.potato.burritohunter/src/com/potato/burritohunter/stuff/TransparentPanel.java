@@ -8,6 +8,9 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+// code taken from here
+// http://www.androidapps.org/tag/mapview
+// tutorial 5 is a popuptutorial animation tutorial
 public class TransparentPanel extends LinearLayout 
 { 
 	private Paint	innerPaint, borderPaint ;

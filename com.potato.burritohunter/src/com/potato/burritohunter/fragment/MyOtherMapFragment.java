@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,12 +19,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 
-//this class should contain the map logic now...
+// this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
 {
   private LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
   private SupportMapFragment mMapFragment;
   private GoogleMap map;
+
+  // i kinda cringe at this being static but owell luls
+  public static TextView paneTitle;
+  public static TextView paneDescription;
 
   // solution shamelessly stolen from
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
@@ -34,6 +39,8 @@ public class MyOtherMapFragment extends SherlockFragment
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();
     initMap( map );
+    paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
+    paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
     return vw;
   }
 
@@ -42,27 +49,38 @@ public class MyOtherMapFragment extends SherlockFragment
     return map;
   }
 
-  private void initMap(GoogleMap map)
+  private void initMap( GoogleMap map )
   {
-      UiSettings settings = map.getUiSettings();
-      settings.setAllGesturesEnabled(true);
-      settings.setMyLocationButtonEnabled(true);
+    UiSettings settings = map.getUiSettings();
+    settings.setAllGesturesEnabled( true );
+    settings.setMyLocationButtonEnabled( true );
 
-      map.moveCamera(CameraUpdateFactory.newLatLngZoom(PIVOT, 16));
-      map.addMarker(new MarkerOptions().position(PIVOT).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
-      map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
+    map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 16 ) );
+    map.addMarker( new MarkerOptions().position( PIVOT ).icon( BitmapDescriptorFactory
+                                                                   .fromResource( R.drawable.ic_launcher ) ) );
+    map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
   }
 
-  public void onDestroyView() {
+  public void onDestroyView()
+  {
     super.onDestroyView();
 
-    try {
-        Fragment fragment = (getFragmentManager().findFragmentById(R.id.map_frag));  
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.remove(fragment);
-        ft.commit();
-    } catch (Exception e) {
-        e.printStackTrace();
+    try
+    {
+      Fragment fragment = ( getFragmentManager().findFragmentById( R.id.map_frag ) );
+      FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+      ft.remove( fragment );
+      ft.commit();
     }
+    catch ( Exception e )
+    {
+      e.printStackTrace();
+    }
+  }
+
+  public static void setTitleAndDescription( String title, String description )
+  {
+    paneTitle.setText( title );
+    paneDescription.setText( description );
   }
 }
