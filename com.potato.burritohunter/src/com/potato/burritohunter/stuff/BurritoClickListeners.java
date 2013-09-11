@@ -158,7 +158,8 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
-      if ( MapActivity.selectedSearchResults.contains( marker ) )
+      boolean selected = MapActivity.selectedSearchResults.contains( marker );
+      if ( selected )
       {
         marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
         MapActivity.selectedSearchResults.remove( marker );
@@ -174,7 +175,7 @@ public class BurritoClickListeners
       SearchResult sr = dbHelper.getSearchResult( cursorSingle );
       String title = sr._name;
       String description = sr.address;
-      MyOtherMapFragment.setTitleAndDescription( title, description );
+      MyOtherMapFragment.setTitleDescriptionCheckbox( title, description, !selected ); // use opposite logic, trust me!!
       return false;
     }
   }

@@ -51,8 +51,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                 >
+                android:layout_height="60dp" >
 
                 <RelativeLayout
                     android:id="@+id/trans_pane_left_rl"
@@ -77,12 +76,11 @@
                         android:text="blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah" />
                 </RelativeLayout>
 
-                <Button
-                    android:id="@+id/button_click_me"
+                <CheckBox
+                    android:id="@+id/trans_pane_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Click Me!"
-                    android:layout_toRightOf="@id/trans_pane_left_rl" />
+                    android:layout_toRightOf="@id/trans_pane_left_rl"/>
             </RelativeLayout>
         </com.potato.burritohunter.stuff.TransparentPanel>
     </LinearLayout>

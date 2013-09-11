@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -29,6 +30,7 @@ public class MyOtherMapFragment extends SherlockFragment
   // i kinda cringe at this being static but owell luls
   public static TextView paneTitle;
   public static TextView paneDescription;
+  public static CheckBox checkBox;
 
   // solution shamelessly stolen from
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
@@ -41,7 +43,9 @@ public class MyOtherMapFragment extends SherlockFragment
     initMap( map );
     paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
     paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
+    checkBox = (CheckBox) vw.findViewById( R.id.trans_pane_checkbox );
     return vw;
+    
   }
 
   public GoogleMap getMap()
@@ -78,9 +82,10 @@ public class MyOtherMapFragment extends SherlockFragment
     }
   }
 
-  public static void setTitleAndDescription( String title, String description )
+  public static void setTitleDescriptionCheckbox( String title, String description, boolean checkbox )
   {
     paneTitle.setText( title );
     paneDescription.setText( description );
+    checkBox.setChecked( checkbox );
   }
 }
