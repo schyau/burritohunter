@@ -9,8 +9,9 @@ It's been about 2 months since our original proof of concept, and we've made a t
 
 ![search](https://github.com/schyau/burritohunter/blob/master/previews/910/search.png?raw=true)
 ![slidingmenu](https://github.com/schyau/burritohunter/blob/master/previews/910/slidingmenu.png?raw=true)
-![settings](https://github.com/schyau/burritohunter/blob/master/previews/910/settings.png?raw=true)
-![lists](https://github.com/schyau/burritohunter/blob/master/previews/910/lists.png?raw=true)`
+![lists](https://github.com/schyau/burritohunter/blob/master/previews/910/lists.png?raw=true)
 ![list](https://github.com/schyau/burritohunter/blob/master/previews/910/list.png?raw=true)
+![settings](https://github.com/schyau/burritohunter/blob/master/previews/910/settings.png?raw=true)
+
 
 Still far from complete, and still an exciting challenge!  Please check back often to track the progress of BurritoHunter.
