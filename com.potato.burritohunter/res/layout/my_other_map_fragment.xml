@@ -4,11 +4,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
+
     <fragment
-    class="com.google.android.gms.maps.SupportMapFragment"
-    android:id="@+id/map_frag"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+        android:id="@+id/map_frag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
@@ -20,12 +22,40 @@
         android:id="@+id/saved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Saved" 
-        android:layout_toRightOf="@id/save"/>
+        android:layout_toRightOf="@id/save"
+        android:text="View Saved" />
 
     <Button
         android:id="@+id/find_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/saved" />
+
+    
+    	<LinearLayout
+    			    android:layout_width="fill_parent" 
+        			android:layout_height="fill_parent"
+					android:orientation="vertical"
+					android:gravity="bottom"
+					android:paddingLeft="5px"
+					android:paddingTop="5px"
+					android:paddingRight="5px">
+
+		<com.potato.burritohunter.stuff.TransparentPanel
+				android:id="@+id/transparent_panel" 
+	    	    android:layout_width="fill_parent"
+	        	android:layout_height="wrap_content"
+	        	android:paddingTop="5px"
+	        	android:paddingLeft="5px"
+				android:paddingBottom="5px"
+				android:paddingRight="5px">
+		
+		    <Button android:id="@+id/button_click_me"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:text="Click Me!"/>
+	        
+		</com.potato.burritohunter.stuff.TransparentPanel>
+		</LinearLayout>
+
 </RelativeLayout>

@@ -45,9 +45,9 @@ import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.squareup.otto.Subscribe;
 
+//should be renamed to something else, like main screen, because it holds a viewpager now instead of a map
 public class MapActivity extends BaseActivity
 {
-  private LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
   public static final HashMap<Marker, String> currentSearchResults = new HashMap<Marker, String>();
   public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
@@ -56,16 +56,7 @@ public class MapActivity extends BaseActivity
   public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
 
   MyOtherMapFragment _mapFragment;
-  private void initMap(GoogleMap map)
-  {
-      UiSettings settings = map.getUiSettings();
-      settings.setAllGesturesEnabled(true);
-      settings.setMyLocationButtonEnabled(true);
 
-      map.moveCamera(CameraUpdateFactory.newLatLngZoom(PIVOT, 16));
-      map.addMarker(new MarkerOptions().position(PIVOT).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
-      map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
-  }
   @Override
   public void onCreate( Bundle savedInstanceState )
   {

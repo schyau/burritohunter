@@ -23,6 +23,6 @@ public class StartUpActivity extends SherlockActivity {
 	     		startActivity(intent);
 	     		finish();
 	         } 
-	    }, 1000); 
+	    }, 300); 
 	}
 }
