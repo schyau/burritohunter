@@ -155,7 +155,6 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
-      // TODO Auto-generated method stub
       if ( MapActivity.selectedSearchResults.contains( marker ) )
       {
         marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
@@ -166,6 +165,7 @@ public class BurritoClickListeners
         marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
         MapActivity.selectedSearchResults.add( marker );
       }
+      // update list adapter (too expensive?)
       return false;
     }
   }
@@ -195,7 +195,7 @@ public class BurritoClickListeners
       switch ( position )
       {
         case 0:
-          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN );
+          _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
           break;
         default:
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );

@@ -36,10 +36,11 @@ public class MyMapFragment extends SupportMapFragment
     {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         initMap();
-        RelativeLayout lytContainer = (RelativeLayout) View.inflate(
-                                                                getActivity(), R.layout.buttons, null);
-        lytContainer.addView( v );
-        return lytContainer;
+        //RelativeLayout lytContainer = (RelativeLayout) View.inflate(
+           //                                                     getActivity(), R.layout.buttons, null);
+        /*lytContainer.addView( v );
+        return lytContainer;*/
+        return v;
     }
 
     private void initMap()

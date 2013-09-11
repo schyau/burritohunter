@@ -3,19 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <!-- add a line here -->
     <LinearLayout
         android:id="@+id/menu_frame2"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true" >
-
-        <Button
-            android:id="@+id/settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#00000000"
+        android:text="Settings" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        />
+        
+	</LinearLayout>
     <FrameLayout
         android:id="@+id/menu_frame"
         android:layout_width="match_parent"

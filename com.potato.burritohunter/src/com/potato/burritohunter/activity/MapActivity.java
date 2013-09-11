@@ -10,13 +10,16 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -31,10 +34,11 @@ import com.potato.burritohunter.foursquare.FoursquareSearchResult;
 import com.potato.burritohunter.foursquare.Location;
 import com.potato.burritohunter.foursquare.Response;
 import com.potato.burritohunter.foursquare.Venue;
-import com.potato.burritohunter.fragment.MyMapFragment;
+import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
+import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.SearchResult;
@@ -51,15 +55,28 @@ public class MapActivity extends BaseActivity
   public static ViewPager viewPager;
   public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
 
-  MyMapFragment _mapFragment;
+  MyOtherMapFragment _mapFragment;
+  private void initMap(GoogleMap map)
+  {
+      UiSettings settings = map.getUiSettings();
+      settings.setAllGesturesEnabled(true);
+      settings.setMyLocationButtonEnabled(true);
 
+      map.moveCamera(CameraUpdateFactory.newLatLngZoom(PIVOT, 16));
+      map.addMarker(new MarkerOptions().position(PIVOT).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+      map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
+  }
   @Override
   public void onCreate( Bundle savedInstanceState )
   {
     super.onCreate( savedInstanceState );
     setContentView( R.layout.activity_map );
 
-    _mapFragment = MyMapFragment.newInstance( PIVOT );
+    _mapFragment = new MyOtherMapFragment();
+    //_mapFragment = MyMapFragment.newInstance( PIVOT );
+    /*_mapFragment = SupportMapFragment.newInstance();
+    initMap(_mapFragment.getMap());*/
+    
 
     POIListFragment listFragment = new POIListFragment();
     List<SavedListItem> list = DatabaseUtil.getSavedList();
@@ -73,7 +90,7 @@ public class MapActivity extends BaseActivity
     viewPager.setAdapter( viewPagerAdapter );
     viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
     viewPager.setCurrentItem( 0 );
-    getSlidingMenu().setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN );
+    getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter(_context);
     mFrag.setListAdapter( slidingMenuAdapter );
@@ -175,6 +192,11 @@ public class MapActivity extends BaseActivity
       slidingMenuAdapter.add( mySearchResult );
     }
     
+  }
+  
+  public GoogleMap getMap()
+  {
+    return _mapFragment.getMap();
   }
 
   @Override
