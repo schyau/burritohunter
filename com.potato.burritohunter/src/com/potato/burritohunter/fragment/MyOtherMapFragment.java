@@ -30,7 +30,8 @@ public class MyOtherMapFragment extends SherlockFragment
   {
     return mMapFragment.getMap();
   }
-  /*public void onDestroyView() {
+
+  public void onDestroyView() {
     super.onDestroyView();
 
     try {
@@ -41,5 +42,5 @@ public class MyOtherMapFragment extends SherlockFragment
     } catch (Exception e) {
         e.printStackTrace();
     }
-}*/
+  }
 }
