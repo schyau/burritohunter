@@ -13,7 +13,4 @@ It's been about 2 months since our original proof of concept, and we've made a t
 ![list](https://github.com/schyau/burritohunter/blob/master/previews/910/list.png?raw=true)
 ![lists](https://github.com/schyau/burritohunter/blob/master/previews/910/lists.png?raw=true)
 
-
-![list](https://github.com/schyau/burritohunter/blob/master/previews/list817.png?raw=true)
-
 Still far from complete, and still an exciting challenge!  Please check back often to track the progress of BurritoHunter.
