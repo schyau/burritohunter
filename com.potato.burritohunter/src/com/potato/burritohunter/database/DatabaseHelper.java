@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -72,9 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
                                      + " TEXT PRIMARY KEY NOT NULL UNIQUE, " + KEY_NAME + " TEXT, " + KEY_LAT
                                      + " TEXT, " + KEY_LNG + " TEXT, " + KEY_ADDRESS + " TEXT)";
 
-    Log.d( TAG + "XX", CREATE_POI_LIST_TABLE );
-    Log.d( TAG + "XX", CREATE_POI_SINGLE_TABLE );
-    Log.d( TAG + "XX", CREATE_FOREIGN_KEYS_TABLE );
+    Log.d( TAG, CREATE_POI_LIST_TABLE );
+    Log.d( TAG, CREATE_POI_SINGLE_TABLE );
+    Log.d( TAG+ "XX", CREATE_FOREIGN_KEYS_TABLE );
 
     db.execSQL( CREATE_POI_LIST_TABLE );
     db.execSQL( CREATE_POI_SINGLE_TABLE );
@@ -97,7 +98,25 @@ public class DatabaseHelper extends SQLiteOpenHelper
     values.put( KEY_ADDRESS, address );
 
     SQLiteDatabase db = this.getWritableDatabase();;
-    db.insert( TABLE_SINGLE_POI, null, values );
+    try
+    {
+      db.insertOrThrow( TABLE_SINGLE_POI, null, values ) ;
+    }
+    catch (SQLException e)
+    {
+      try
+      {
+        db.replace( TABLE_SINGLE_POI, null, values ) ;
+      }
+      catch (SQLException replaceE)
+      {
+        Log.d("DatabaseHelper", "couldn't insert or update point!");
+        if (replaceE!= null)
+        {
+          replaceE.printStackTrace();
+        }
+      }
+    }
   }
 
   public long saveList( String name )
@@ -107,7 +126,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     SQLiteDatabase db = this.getWritableDatabase();
     return db.insert( TABLE_LIST_POI, null, values );
   }
-  
+
+  // should be called after saveList
   public void saveForeignKey ( String id, long foreignKey )
   {
     SQLiteDatabase db = this.getWritableDatabase();
@@ -118,6 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   }
 
   // pretty sure you can use a left join to make this one sql stmt
+  // get all points related to the list foreign key
   public List<SearchResult> retrievePoints( String foreignKey )
   {
     String selectQuery = "select "+KEY_ID+" from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = " + foreignKey;
@@ -141,7 +162,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
     return list;
   }
-
+  
+  //provide a cursor with a single item and we'll grab its column info
   public SearchResult getSearchResult ( Cursor cursorSingle )
   {
     cursorSingle.moveToFirst();

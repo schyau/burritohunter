@@ -170,9 +170,7 @@ public class BurritoClickListeners
         MapActivity.selectedSearchResults.add( marker );
       }
       DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-      String id = MapActivity.currentSearchResults.get( marker );
-      Cursor cursorSingle = dbHelper.retrieveSinglePoint( id );
-      SearchResult sr = dbHelper.getSearchResult( cursorSingle );
+      SearchResult sr = MapActivity.currentSearchResults.get( marker );
       String title = sr._name;
       String description = sr.address;
       MyOtherMapFragment.setTitleDescriptionCheckbox( title, description, !selected ); // use opposite logic, trust me!!
@@ -255,7 +253,8 @@ public class BurritoClickListeners
                   ArrayList<String> ids = new ArrayList<String>();
                   for (Marker marker : MapActivity.selectedSearchResults)
                   {
-                    String id = MapActivity.currentSearchResults.get( marker );
+                    SearchResult searchResult = MapActivity.currentSearchResults.get( marker );
+                    String id = searchResult.id;
                     ids.add( id);
                   }
                   DatabaseUtil.addList( name, ids );

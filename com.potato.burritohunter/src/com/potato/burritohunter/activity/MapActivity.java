@@ -48,7 +48,7 @@ import com.squareup.otto.Subscribe;
 //should be renamed to something else, like main screen, because it holds a viewpager now instead of a map
 public class MapActivity extends BaseActivity
 {
-  public static final HashMap<Marker, String> currentSearchResults = new HashMap<Marker, String>();
+  public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
   public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
@@ -178,9 +178,9 @@ public class MapActivity extends BaseActivity
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
                                                                       .fromResource( R.drawable.ic_launcher ) ) );
-      currentSearchResults.put( marker, id );
+      currentSearchResults.put( marker, mySearchResult );
 
-      slidingMenuAdapter.add( mySearchResult );
+      slidingMenuAdapter.add( marker );
     }
     
   }
