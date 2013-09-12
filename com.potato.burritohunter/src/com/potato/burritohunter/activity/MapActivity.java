@@ -178,6 +178,7 @@ public class MapActivity extends BaseActivity
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
                                                                       .fromResource( R.drawable.ic_launcher ) ) );
+
       currentSearchResults.put( marker, mySearchResult );
 
       slidingMenuAdapter.add( marker );

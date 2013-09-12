@@ -23,11 +23,13 @@ public class FoursquareService
 
   public static FoursquareSearchResult search( Double lat, Double lng, String term )
   {
+    int radius = 50000; //get shared prefs logic
+    int maxResults = 100; //get shared prefs logic
 
-    String getURL = "https://api.foursquare.com/v2/venues/search" + "?ll=" + lat + "," + lng + "&limit=100"
+    String getURL = "https://api.foursquare.com/v2/venues/search" + "?ll=" + lat + "," + lng + "&limit="+maxResults
                     + "&client_id=" + ADS.getInstance().getFoursquareClientId() + "&client_secret="
                     + ADS.getInstance().getFoursquareClientSecret() + "&query=" + term + "&intent=browse"
-                    + "&v=20130830" + "&radius=50000";
+                    + "&v=20130830" + "&radius="+radius;
     String response = search( getURL );
 
     Log.d( FoursquareService.class.getName(), "Response: " + response );

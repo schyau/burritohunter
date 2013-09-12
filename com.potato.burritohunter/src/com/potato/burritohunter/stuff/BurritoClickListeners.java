@@ -147,7 +147,9 @@ public class BurritoClickListeners
     {
       // TODO change this to a fragment loading?
       //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
-      new FoursquareRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
+      double lat = MyOtherMapFragment.PIVOT.latitude;
+      double lng = MyOtherMapFragment.PIVOT.longitude;
+      new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus() ).execute(); // need to get this info
       // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
       return false;
     }
@@ -158,6 +160,10 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
+      if ( marker.equals( MyOtherMapFragment.pivotMarker ) ) // why doesn't == work?
+      {
+        return true;
+      }
       boolean selected = MapActivity.selectedSearchResults.contains( marker );
       if ( selected )
       {
@@ -169,7 +175,6 @@ public class BurritoClickListeners
         marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
         MapActivity.selectedSearchResults.add( marker );
       }
-      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
       String title = sr._name;
       String description = sr.address;
@@ -251,15 +256,15 @@ public class BurritoClickListeners
                   // use marker to look up id from currentSearchResults
                   // add id and foreign_key to foreign_key_table
                   ArrayList<String> ids = new ArrayList<String>();
-                  for (Marker marker : MapActivity.selectedSearchResults)
+                  for ( Marker marker : MapActivity.selectedSearchResults )
                   {
                     SearchResult searchResult = MapActivity.currentSearchResults.get( marker );
                     String id = searchResult.id;
-                    ids.add( id);
+                    ids.add( id );
                   }
                   DatabaseUtil.addList( name, ids );
                   Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
-                  
+
                 }
               }
               else
