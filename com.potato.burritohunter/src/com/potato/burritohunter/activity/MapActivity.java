@@ -261,7 +261,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
-    searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener() );
+    searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener(this) );
 
     menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
     menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );

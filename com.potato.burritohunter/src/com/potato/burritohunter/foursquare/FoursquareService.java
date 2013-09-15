@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -21,15 +22,14 @@ public class FoursquareService
   private static Gson gson = new GsonBuilder().setFieldNamingPolicy( FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES )
       .create();
 
-  public static FoursquareSearchResult search( Double lat, Double lng, String term )
+  // use a builder for disssss
+  public static FoursquareSearchResult search( Double lat, Double lng, String term, int radius, int maxResults )
   {
-    int radius = 50000; //get shared prefs logic
-    int maxResults = 100; //get shared prefs logic
-
     String getURL = "https://api.foursquare.com/v2/venues/search" + "?ll=" + lat + "," + lng + "&limit="+maxResults
                     + "&client_id=" + ADS.getInstance().getFoursquareClientId() + "&client_secret="
                     + ADS.getInstance().getFoursquareClientSecret() + "&query=" + term + "&intent=browse"
                     + "&v=20130830" + "&radius="+radius;
+    Log.d( FoursquareService.class.getName(), "url: " + getURL );
     String response = search( getURL );
 
     Log.d( FoursquareService.class.getName(), "Response: " + response );

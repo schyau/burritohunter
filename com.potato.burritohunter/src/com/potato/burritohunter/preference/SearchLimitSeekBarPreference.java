@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class SearchLimitSeekBarPreference extends Preference implements OnSeekBarChangeListener
 {
 
-  public static int maximum = 100;
+  public static int maximum = 99;
   public static int interval = 1;
 
   private float oldValue = 50;
@@ -79,7 +79,7 @@ public class SearchLimitSeekBarPreference extends Preference implements OnSeekBa
     this.monitorBox.setTypeface( Typeface.MONOSPACE, Typeface.ITALIC );
     this.monitorBox.setLayoutParams( params3 );
     this.monitorBox.setPadding( 2, 5, 0, 0 );
-    this.monitorBox.setText( bar.getProgress() + "" );
+    this.setProressBarText ( bar.getProgress() );
 
     layout.addView( view );
     layout.addView( bar );
@@ -97,10 +97,18 @@ public class SearchLimitSeekBarPreference extends Preference implements OnSeekBa
     persistInt(progress);
     callChangeListener( progress );
     seekBar.setProgress( progress );
-    this.monitorBox.setText( progress + "" );
+    this.setProressBarText ( progress );
     updatePreference( progress );
   }
 
+  public void setProressBarText ( int progress )
+  {
+    // the '+ 1' is to account for how it can't be 0
+    String result = progress + 1 == 1 ? "result" : "results";
+    this.monitorBox.setText( progress + 1 + " " + result );
+  }
+  /* should have a static get func here that goes into sharedprefs */
+  
   @Override
   public void onStartTrackingTouch( SeekBar seekBar )
   {
@@ -115,7 +123,7 @@ public class SearchLimitSeekBarPreference extends Preference implements OnSeekBa
   protected Object onGetDefaultValue( TypedArray ta, int index )
   {
 
-    int dValue = (int) ta.getInt( index, 50 );
+    int dValue = (int) ta.getInt( index, 10 );
 
     return validateValue( dValue );
   }
@@ -151,5 +159,4 @@ public class SearchLimitSeekBarPreference extends Preference implements OnSeekBa
     editor.putInt( getKey(), newValue );
     editor.commit();
   }
-
 }

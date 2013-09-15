@@ -3,14 +3,14 @@
     <PreferenceCategory android:title="Settings" >
         <com.potato.burritohunter.preference.SearchLimitSeekBarPreference
             android:defaultValue="10"
-            android:key="MaxSearches"
-            android:title="Max searches"
+            android:key="MaxSearchResults"
+            android:title="Max Search Results"
             android:summary="Drag to set maximum searches returned" />
 
         <com.potato.burritohunter.preference.SeekBarPreference
             android:defaultValue="10"
             android:key="SearchRadius"
-            android:summary="Drag to set search radius (in miles)"
+            android:summary="Drag to set search radius (in km)"
             android:title="Search Radius" />
     </PreferenceCategory>
 

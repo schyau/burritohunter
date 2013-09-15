@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class SeekBarPreference extends Preference implements OnSeekBarChangeListener
 {
 
-  public static int maximum = 50;
+  public static int maximum = 49;
   public static int interval = 1;
 
   private float oldValue = 50;
@@ -73,13 +73,12 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
     bar.setLayoutParams( params2 );
     bar.setOnSeekBarChangeListener( this );
 
-
     this.monitorBox = new TextView( getContext() );
     this.monitorBox.setTextSize( 12 );
     this.monitorBox.setTypeface( Typeface.MONOSPACE, Typeface.ITALIC );
     this.monitorBox.setLayoutParams( params3 );
     this.monitorBox.setPadding( 2, 5, 0, 0 );
-    this.monitorBox.setText( bar.getProgress() + "" );
+    this.setProgressBarText( bar.getProgress() );
 
     layout.addView( view );
     layout.addView( bar );
@@ -94,11 +93,17 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
   {
 
     progress = Math.round( ( (float) progress ) / interval ) * interval;
-    persistInt(progress);
+    persistInt( progress );
     callChangeListener( progress );
     seekBar.setProgress( progress );
-    this.monitorBox.setText( progress + "" );
+    this.setProgressBarText( progress );
     updatePreference( progress );
+  }
+
+  public void setProgressBarText( int progress )
+  {
+    // the '+ 1' is to account for how it can't be 0
+    this.monitorBox.setText( progress + 1 + " km");
   }
 
   @Override
@@ -115,7 +120,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
   protected Object onGetDefaultValue( TypedArray ta, int index )
   {
 
-    int dValue = (int) ta.getInt( index, 50 );
+    int dValue = (int) ta.getInt( index, 10 );
 
     return validateValue( dValue );
   }
@@ -146,7 +151,6 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
 
   private void updatePreference( int newValue )
   {
-
     SharedPreferences.Editor editor = getEditor();
     editor.putInt( getKey(), newValue );
     editor.commit();

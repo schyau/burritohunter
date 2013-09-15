@@ -131,6 +131,11 @@ public class BurritoClickListeners
 
   public static class SearchViewOnQueryTextListener implements OnQueryTextListener
   {
+    private Context context;
+    public SearchViewOnQueryTextListener (Context context)
+    {
+      this.context=context;
+    }
     @Override
     public boolean onQueryTextChange( String newText )
     {
@@ -144,7 +149,7 @@ public class BurritoClickListeners
       //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
       double lat = MyOtherMapFragment.PIVOT.latitude;
       double lng = MyOtherMapFragment.PIVOT.longitude;
-      new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus() ).execute(); // need to get this info
+      new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus(), context ).execute(); // need to get this info
       // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
       return false;
     }
