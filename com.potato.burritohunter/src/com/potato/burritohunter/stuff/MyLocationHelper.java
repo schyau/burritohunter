@@ -55,7 +55,7 @@ public class MyLocationHelper implements GooglePlayServicesClient.ConnectionCall
   
   public void setMyLocation ()
   {
-    Location location = getCurrentLocation(); // find some way to get this info
+    /*Location location = getCurrentLocation(); // find some way to get this info
     if ( location != null )
     {
       if ( MY_LOCATION != null)
@@ -69,7 +69,7 @@ public class MyLocationHelper implements GooglePlayServicesClient.ConnectionCall
     else
     {
       Toast.makeText( fragmentActivity, "can't get current location sry", Toast.LENGTH_SHORT ).show();
-    }
+    }*/
   }
 
   public void setMap( GoogleMap map )
@@ -118,17 +118,6 @@ public class MyLocationHelper implements GooglePlayServicesClient.ConnectionCall
     }
   }
 
-  public Location getCurrentLocation()
-  {
-    if ( mLocationClient != null )
-    {
-      if ( servicesConnected() )
-      {
-        return mLocationClient.getLastLocation();
-      }
-    }
-    return null;
-  }
 
   private boolean servicesConnected()
   {
@@ -192,13 +181,5 @@ public class MyLocationHelper implements GooglePlayServicesClient.ConnectionCall
     }
   }
 
-  public void connectClient()
-  {
-    mLocationClient.connect();
-  }
 
-  public void disconnectClient()
-  {
-    mLocationClient.disconnect();
-  }
 }

@@ -44,6 +44,7 @@ public class SampleListFragment extends ListFragment
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
       CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
+      
       checkBox.setChecked( MapActivity.selectedSearchResults.contains( key ) );
 
       return convertView;

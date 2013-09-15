@@ -1,18 +1,14 @@
 package com.potato.burritohunter.stuff;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,16 +17,15 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
-import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
-import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
-import com.potato.burritohunter.fragment.POIListFragment;
 
 public class BurritoClickListeners
 {
@@ -281,4 +276,29 @@ public class BurritoClickListeners
             }
           } ).create().show();
   }
+
+  public static class FindMeOnClickListener implements View.OnClickListener
+  {
+    private MapActivity _mapActivity;
+    private MyOtherMapFragment _mapFragment;
+    public FindMeOnClickListener(MapActivity mapActivity, MyOtherMapFragment mapFragment )
+    {
+      _mapActivity = mapActivity;
+      _mapFragment = mapFragment;
+    }
+    @Override
+    public void onClick( View v )
+    {
+      android.location.Location location = _mapActivity.getCurrentLocation();
+      if ( location != null )
+      {
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        Log.d( "FindMe", lat + ", lng: " + lng );
+        _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
+      }
+
+    }
+  }
+
 }
