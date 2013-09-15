@@ -25,11 +25,20 @@
         android:theme="@style/Theme.Sherlock"
         android:screenOrientation="portrait" >
         <activity
-            android:name=".activity.About"
+            android:name=".activity.AboutDialog"
             android:label="label"
             android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
-                <action android:name=".activity.About" />
+                <action android:name=".activity.AboutDialog" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.OpenSourceLicenseDialog"
+            android:label="label"
+            android:theme="@android:style/Theme.Dialog" >
+            <intent-filter>
+                <action android:name=".activity.OpenSourceLicenseDialog" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

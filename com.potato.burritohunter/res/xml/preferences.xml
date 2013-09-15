@@ -18,12 +18,12 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:summary="Big props to these guys, so we don&apos;t get sued"
         android:title="Open Source Licenses" >
-        <intent android:action=".activity.About" />
+        <intent android:action=".activity.OpenSourceLicenseDialog" />
     </PreferenceScreen>
     <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:title="About" >
-        <intent android:action=".activity.About" />
+        <intent android:action=".activity.AboutDialog" />
     </PreferenceScreen>
 
 </PreferenceScreen>
