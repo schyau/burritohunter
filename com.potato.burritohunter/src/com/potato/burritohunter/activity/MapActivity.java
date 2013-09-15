@@ -301,12 +301,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       String address = location.getAddress();
       if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
         continue;
+      
+      
       SearchResult mySearchResult = new SearchResult();
       mySearchResult._lat = lat;
       mySearchResult._lng = lng;
       mySearchResult._name = name;
       mySearchResult.address = address;
       mySearchResult.id = id;
+      mySearchResult._canonicalAddress = venue.getCanonicalUrl();
       DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
       dbHelper.insertPoint( mySearchResult );
       LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );

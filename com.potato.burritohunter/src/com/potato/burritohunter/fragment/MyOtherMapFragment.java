@@ -74,7 +74,7 @@ public class MyOtherMapFragment extends SherlockFragment
       pivotMarker.remove();
     }
     pivotMarker = map.addMarker( new MarkerOptions().position( PIVOT ).draggable( true )
-        .icon( BitmapDescriptorFactory.fromResource( R.drawable.abs__ab_bottom_solid_dark_holo ) ) ); 
+        .icon( BitmapDescriptorFactory.fromResource( R.drawable.abs__ab_bottom_solid_dark_holo ) ) );
 
     pivotMarker.setPosition( PIVOT );
   }

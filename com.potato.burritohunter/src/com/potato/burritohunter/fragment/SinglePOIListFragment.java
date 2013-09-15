@@ -2,6 +2,8 @@ package com.potato.burritohunter.fragment;
 
 import java.util.List;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,18 +51,11 @@ public class SinglePOIListFragment extends SherlockListFragment
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
     SearchResult searchResult = (SearchResult) parent.getItemAtPosition(position);
-    DetailFragment detail = new DetailFragment();
-    detail.setDetail(searchResult);
+    String searchResultId = searchResult.id;
 
-    if (MapActivity.viewPagerAdapter.getCount() == 4 )
-    {
-      MapActivity.viewPagerAdapter.replaceView( MapActivity.viewPager,3, detail );
-    }
-    else
-    {
-      MapActivity.viewPagerAdapter.addFragment( detail );
-    }
-    MapActivity.viewPagerAdapter.notifyDataSetChanged();
-    MapActivity.viewPager.setCurrentItem( 3 );
+    String url = "https://foursquare.com/v/"+searchResultId;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    startActivity(i);
   }
 }

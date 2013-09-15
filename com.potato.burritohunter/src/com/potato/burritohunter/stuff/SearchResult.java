@@ -12,6 +12,7 @@ public class SearchResult
 	public String address;
 	public String _name;
 	public String id;
+	public String _canonicalAddress;
 	
 	public void serialize ( )
 	{
