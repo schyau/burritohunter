@@ -2,6 +2,7 @@ package com.potato.burritohunter.fragment;
 
 import java.util.List;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,9 @@ public class POIListFragment extends SherlockListFragment
     SavedListAdapter adapter = new SavedListAdapter (this, poiList);
     setListAdapter( adapter );
 
-    return super.onCreateView( inflater, container, savedInstanceState );
+    View vw = super.onCreateView( inflater, container, savedInstanceState );
+    vw.setBackgroundColor( Color.WHITE );
+    return vw;
   }
   public void setPoiList (  List <SavedListItem> poiList )
   { //this is sad shitty design, TODO use parcelable instead 

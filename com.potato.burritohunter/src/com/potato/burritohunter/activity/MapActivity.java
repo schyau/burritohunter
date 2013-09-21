@@ -58,7 +58,16 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     GooglePlayServicesClient.OnConnectionFailedListener
 {
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+  public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
+  public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
+  private static final String TAG = MapActivity.class.getName();
+  public static ViewPagerAdapter viewPagerAdapter;
+  public static ViewPager viewPager;
+  public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
+  public static LocationClient mLocationClient;
+  public static MapActivity instance;
 
+  MyOtherMapFragment _mapFragment;
   // request the current location or start periodic updates
 
   @Override
@@ -180,21 +189,17 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
   }
 
-  public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
-  public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
-  private static final String TAG = MapActivity.class.getName();
-  public static ViewPagerAdapter viewPagerAdapter;
-  public static ViewPager viewPager;
-  public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
-  public static LocationClient mLocationClient;
-  public static MapActivity instance;
 
-  MyOtherMapFragment _mapFragment;
 
   @Override
   public void onConnected( Bundle dataBundle )
   {
     Toast.makeText( this, "Connected", Toast.LENGTH_SHORT ).show();
+    if ( MyOtherMapFragment.shouldFindMe ){
+      double lat = mLocationClient.getLastLocation().getLatitude();
+      double lng = mLocationClient.getLastLocation().getLongitude();
+      _mapFragment.updateAndDrawPivot( new LatLng (lat, lng)  );
+    }
   }
 
   @Override
