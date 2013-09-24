@@ -1,5 +1,9 @@
 package com.potato.burritohunter.fragment;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,18 +11,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,8 +36,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.database.DatabaseHelper;
+import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
+import com.potato.burritohunter.stuff.SearchResult;
 
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
@@ -62,6 +68,10 @@ public class MyOtherMapFragment extends SherlockFragment
   private final static String CAMERA_BEARING_KEY = "CAMERA BEARING KEY";
   private final static String CAMERA_LAT_KEY = "CAMERA LAT KEY";
   private final static String CAMERA_LNG_KEY = "CAMERA LNG KEY";
+
+  private static final String SEARCH_RESULT_SERIALIZED_STRING_KEY = "SEARCH RESULT SERIALIZED STRING KEY"; // search results 
+  private static final String SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY = "SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY"; // selected search result
+  private static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
 
   public static boolean shouldFindMe = false;
 
@@ -116,6 +126,8 @@ public class MyOtherMapFragment extends SherlockFragment
     map.animateCamera( CameraUpdateFactory.newCameraPosition( CameraPosition.fromLatLngZoom( PIVOT, 12 ) ) );
   }
 
+  // inflate pivot, current search results, selected search results, query
+  // connect location client
   @Override
   public void onStart()
   {
@@ -171,15 +183,80 @@ public class MyOtherMapFragment extends SherlockFragment
       // else reload values, draw pivot and update camera
       updateAndDrawPivot( new LatLng( lat, lng ) );
     }
+
+    // inflate search results
+    String searchResultSerializedString = prefs.getString( SEARCH_RESULT_SERIALIZED_STRING_KEY, "" );
+    ArrayList<String> serializedStringArrayList = new ArrayList<String>();
+    HashMap<String, Marker> reverseSearchResultHashMap = new HashMap<String, Marker>();
+    for ( int i = 0; i < searchResultSerializedString.length(); i += 24 )
+    {
+      String id = searchResultSerializedString.substring( i, i + 24 );
+      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+      Cursor c = dbHelper.retrieveSinglePoint( id );
+      SearchResult sr = dbHelper.getSearchResult( c );
+
+      // TODO make a big ass Marker class with its own onclicklistener
+      Marker marker = getMap().addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
+                                              .title( sr._name ).snippet( "Kiel is cool" )
+                                              .icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
+
+      MapActivity.currentSearchResults.put( marker, sr );
+      reverseSearchResultHashMap.put( id, marker );
+
+    }
+
+    //inflate selected search results
+    String searchResultSelectedSerializedString = prefs.getString( SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY, "" );
+    for ( int i = 0; i < searchResultSelectedSerializedString.length(); i += 24 )
+    {
+      String id = searchResultSerializedString.substring( i, i + 24 );
+      Marker marker = reverseSearchResultHashMap.get( id );
+      MapActivity.selectedSearchResults.add( marker );
+    }
+    ArrayList<String> selectedSerializedStringArrayList = new ArrayList<String>();
+    String searchQuery = prefs.getString( SEARCH_QUERY_KEY, "" );
+
+    //TODO inflate the stored prefs here
+
+    // restore the search result that was typed
   }
 
+  // save pivot, current search results, selected search results, query, and disconnect location client
   @Override
   public void onStop()
   {
-    // Disconnecting the client invalidates it.
+    //save pivot
     savePivotToSharedPrefs();
+
+    // save current search results
+    saveSearchResultsToSharedPrefs( MapActivity.currentSearchResults.values(), SEARCH_RESULT_SERIALIZED_STRING_KEY );
+
+    //save selected points
+    ArrayList<SearchResult> selectedSearchResults = new ArrayList<SearchResult>();
+    for ( Marker m : MapActivity.selectedSearchResults )
+    {
+      selectedSearchResults.add( MapActivity.currentSearchResults.get( m ) );
+    }
+    saveSearchResultsToSharedPrefs( selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+
+    //save query
+    saveSearchQueryToSharedPrefs();
+
+    //clear maps and disconnect location client
+    MapActivity.currentSearchResults.clear();
+    MapActivity.selectedSearchResults.clear();
     MapActivity.mLocationClient.disconnect();
     super.onStop();
+  }
+
+  private void saveSearchQueryToSharedPrefs()
+  {
+    SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    prefs.edit().clear();
+
+    String value = MapActivity.searchView.getQuery().toString();
+
+    prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
   }
 
   private void initMap( GoogleMap map )
@@ -251,7 +328,7 @@ public class MyOtherMapFragment extends SherlockFragment
       String lat = PIVOT.latitude + "";
       String lng = PIVOT.longitude + "";
       prefs.edit().putString( PIVOT_LAT_KEY, lat ).commit();
-      prefs.edit().putString( PIVOT_LNG_KEY, lng ).commit(); 
+      prefs.edit().putString( PIVOT_LNG_KEY, lng ).commit();
     }
 
     float zoom = map.getCameraPosition().zoom;
@@ -267,6 +344,22 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().putString( CAMERA_LNG_KEY, longitude + "" );
 
     prefs.edit().commit();
+  }
+
+  public void saveSearchResultsToSharedPrefs( Collection<SearchResult> searchResults, String key )
+  {
+    SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    prefs.edit().clear();
+
+    // bundle up all searchresult ids
+    StringBuffer sb = new StringBuffer();
+    for ( SearchResult sr : searchResults ) // MapActivity.currentSearchResults.values() )
+    {
+      String id = sr.id;
+      sb.append( id );
+    }
+    String serializedString = sb.toString();
+    prefs.edit().putString( key, serializedString ).commit(); //SEARCH_RESULT_SERIALIZED_STRING_KEY
   }
 
   public static void setTitleDescriptionCheckbox( String title, String description, boolean checkbox )

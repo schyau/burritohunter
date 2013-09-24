@@ -66,6 +66,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
   public static LocationClient mLocationClient;
   public static MapActivity instance;
+  public static SearchView searchView;
 
   MyOtherMapFragment _mapFragment;
   // request the current location or start periodic updates
@@ -262,7 +263,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     // Add SearchWidget.
     SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
-    SearchView searchView = (SearchView) menu.findItem( R.id.action_bar_search ).getActionView();
+    searchView = (SearchView) menu.findItem( R.id.action_bar_search ).getActionView();
 
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
@@ -293,7 +294,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     Response r = searchResult.getResponse();
     List<Venue> venues = r.getVenues();
-    slidingMenuAdapter.clear();
+    slidingMenuAdapter.clear(); // you should clear currentsearchresult instead, then this should clear by itself
+    currentSearchResults.clear();
+    selectedSearchResults.clear();
     for ( Venue venue : venues )
     {
       Location location = venue.getLocation();
