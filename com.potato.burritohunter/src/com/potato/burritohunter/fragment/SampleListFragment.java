@@ -3,11 +3,12 @@ package com.potato.burritohunter.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
@@ -23,6 +24,17 @@ public class SampleListFragment extends ListFragment
     return inflater.inflate( R.layout.list, null );
   }
 
+  @Override
+  public void onListItemClick(ListView l, View v, int position, long id)
+  {
+    super.onListItemClick( l, v, position, id );
+    Marker m = (Marker)getListAdapter().getItem( position );
+    MapActivity.instance.getSlidingMenu().toggle( true );
+    MyOtherMapFragment.setTitleDescriptionCheckbox( m, true );
+    m.showInfoWindow();
+    Log.d("asdf","asdlfkja;sdf");
+  }
+  
   public static class SlidingMenuAdapter extends ArrayAdapter<Marker>
   {
 
@@ -43,12 +55,19 @@ public class SampleListFragment extends ListFragment
       title.setText( searchResult._name );
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
-      CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
-      
-      checkBox.setChecked( MapActivity.selectedSearchResults.contains( key ) );
+
+      // CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
+      //checkBox.setOnCheckedChangeListener( new OnCheckedChangeListener() { 
+      //  @Override
+      //  public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
+      //  {
+      //  }
+      //});
+      //checkBox.setChecked( MapActivity.selectedSearchResults.contains( key ) );
 
       return convertView;
     }
+    
 
   }
 }

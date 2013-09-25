@@ -12,12 +12,11 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -63,12 +62,14 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;
-  public SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
+  public static SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
   public static LocationClient mLocationClient;
   public static MapActivity instance;
   public static SearchView searchView;
+  public static SlidingMenu slidingMenu;
 
-  MyOtherMapFragment _mapFragment;
+  public static MyOtherMapFragment _mapFragment;
+
   // request the current location or start periodic updates
 
   @Override
@@ -190,16 +191,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
   }
 
-
-
   @Override
   public void onConnected( Bundle dataBundle )
   {
     Toast.makeText( this, "Connected", Toast.LENGTH_SHORT ).show();
-    if ( MyOtherMapFragment.shouldFindMe ){
+    if ( MyOtherMapFragment.shouldFindMe )
+    {
       double lat = mLocationClient.getLastLocation().getLatitude();
       double lng = mLocationClient.getLastLocation().getLongitude();
-      _mapFragment.updateAndDrawPivot( new LatLng (lat, lng)  );
+      _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
     }
   }
 
@@ -267,7 +267,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
-    searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener(this) );
+    searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener( this ) );
 
     menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
     menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );
@@ -289,14 +289,61 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     SomeUtil.getBus().register( this );
   }
 
+  //remove markers except ones that were selected.  to clear all markers, clear selected markers before calling this func
+  public static void clearSearchResults()
+  {
+    ArrayList<String> ids = new ArrayList<String>();
+    //get all ids
+    for ( Marker m : selectedSearchResults )
+    {
+      SearchResult sr = currentSearchResults.get( m );
+      String id = sr.id;
+      ids.add( id );
+    }
+    //remove markers
+    for ( Marker m : currentSearchResults.keySet() )
+    {
+      m.remove();
+    }
+
+    // clear everything
+    slidingMenuAdapter.clear();
+    currentSearchResults.clear();
+    selectedSearchResults.clear();
+
+    // restore ids, repopulate currentsearchresults and slidermenuadapter
+    DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+    for ( String id : ids )
+    {
+      Cursor c = dbHelper.retrieveSinglePoint( id );
+      SearchResult sr = dbHelper.getSearchResult( c );
+
+      LatLng pos = new LatLng( sr._lat, sr._lng );
+      Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                           .position( pos )
+                                                           .title( sr._name )
+                                                           .snippet( "Kiel is cool" )
+                                                           .icon( BitmapDescriptorFactory
+                                                                      .fromResource( R.drawable.ic_launcher ) ) );
+      //selectedSearchResults.add( marker );
+      currentSearchResults.put( marker, sr );
+      slidingMenuAdapter.add( marker );
+      MyOtherMapFragment.paneMarker = marker;
+      MyOtherMapFragment.setTitleDescriptionCheckbox( marker, false );
+    }
+    MyOtherMapFragment.paneMarker = null;
+
+  }
+
   @Subscribe
   public void subscriberWithASillyName( FoursquareSearchResult searchResult )
   {
     Response r = searchResult.getResponse();
     List<Venue> venues = r.getVenues();
-    slidingMenuAdapter.clear(); // you should clear currentsearchresult instead, then this should clear by itself
-    currentSearchResults.clear();
-    selectedSearchResults.clear();
+    // you should clear currentsearchresult instead, then this should clear by itself
+    clearSearchResults();
+    if ( venues == null )
+      return;
     for ( Venue venue : venues )
     {
       Location location = venue.getLocation();
@@ -309,8 +356,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       String address = location.getAddress();
       if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
         continue;
-      
-      
+
       SearchResult mySearchResult = new SearchResult();
       mySearchResult._lat = lat;
       mySearchResult._lng = lng;

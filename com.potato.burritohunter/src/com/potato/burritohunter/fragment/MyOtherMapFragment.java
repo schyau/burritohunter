@@ -41,6 +41,7 @@ import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.TransparentPanel;
 
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
@@ -54,7 +55,9 @@ public class MyOtherMapFragment extends SherlockFragment
   public static TextView paneTitle;
   public static TextView paneDescription;
   public static CheckBox checkBox;
+  public static Marker paneMarker;
   public static Marker pivotMarker;
+  public static TransparentPanel trasnPanel;
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -90,6 +93,16 @@ public class MyOtherMapFragment extends SherlockFragment
     paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
     paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
     checkBox = (CheckBox) vw.findViewById( R.id.trans_pane_checkbox );
+    trasnPanel = (TransparentPanel) vw.findViewById( R.id.transparent_panel );
+    checkBox.setOnClickListener( new View.OnClickListener()
+      {
+        @Override
+        public void onClick( View v )
+        {
+          //paneMarker should never be null
+          setTitleDescriptionCheckbox( paneMarker, true );
+        }
+      } );
     return vw;
   }
 
@@ -186,8 +199,8 @@ public class MyOtherMapFragment extends SherlockFragment
 
     // inflate search results
     String searchResultSerializedString = prefs.getString( SEARCH_RESULT_SERIALIZED_STRING_KEY, "" );
-    ArrayList<String> serializedStringArrayList = new ArrayList<String>();
     HashMap<String, Marker> reverseSearchResultHashMap = new HashMap<String, Marker>();
+    MapActivity.clearSearchResults();
     for ( int i = 0; i < searchResultSerializedString.length(); i += 24 )
     {
       String id = searchResultSerializedString.substring( i, i + 24 );
@@ -203,6 +216,7 @@ public class MyOtherMapFragment extends SherlockFragment
       MapActivity.currentSearchResults.put( marker, sr );
       reverseSearchResultHashMap.put( id, marker );
 
+      MapActivity.slidingMenuAdapter.add( marker );
     }
 
     //inflate selected search results
@@ -212,13 +226,13 @@ public class MyOtherMapFragment extends SherlockFragment
       String id = searchResultSerializedString.substring( i, i + 24 );
       Marker marker = reverseSearchResultHashMap.get( id );
       MapActivity.selectedSearchResults.add( marker );
+      paneMarker = marker;
+      setTitleDescriptionCheckbox ( marker, false );
     }
-    ArrayList<String> selectedSerializedStringArrayList = new ArrayList<String>();
-    String searchQuery = prefs.getString( SEARCH_QUERY_KEY, "" );
-
-    //TODO inflate the stored prefs here
-
+    paneMarker=null; //hides transpanel too
+    //TODO set save panemarker in onstop and set to last chosen panemarker here
     // restore the search result that was typed
+    String searchQuery = prefs.getString( SEARCH_QUERY_KEY, "" );
   }
 
   // save pivot, current search results, selected search results, query, and disconnect location client
@@ -243,18 +257,34 @@ public class MyOtherMapFragment extends SherlockFragment
     saveSearchQueryToSharedPrefs();
 
     //clear maps and disconnect location client
-    MapActivity.currentSearchResults.clear();
-    MapActivity.selectedSearchResults.clear();
+    MapActivity.clearSearchResults();
     MapActivity.mLocationClient.disconnect();
     super.onStop();
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    //don't check trasnPanel null, because it shouild never be, and if it is, just crash so we know
+    if ( paneMarker == null )
+    {
+      trasnPanel.setVisibility( View.GONE );
+    }
+    else
+    {
+      trasnPanel.setVisibility( View.VISIBLE );
+    }
+
   }
 
   private void saveSearchQueryToSharedPrefs()
   {
     SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
-
-    String value = MapActivity.searchView.getQuery().toString();
+    CharSequence query = MapActivity.searchView.getQuery();
+    
+    String value = query == null ? "" :  query.toString();
 
     prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
   }
@@ -362,11 +392,41 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().putString( key, serializedString ).commit(); //SEARCH_RESULT_SERIALIZED_STRING_KEY
   }
 
-  public static void setTitleDescriptionCheckbox( String title, String description, boolean checkbox )
+  public static boolean setTitleDescriptionCheckbox( Marker marker, boolean setTransPane )
   {
-    paneTitle.setText( title );
-    paneDescription.setText( description );
-    checkBox.setChecked( checkbox );
+    if ( marker.equals( MyOtherMapFragment.pivotMarker ) ) // why doesn't == work?
+    {
+      return true;
+    }
+    trasnPanel.setVisibility( View.VISIBLE );
+    boolean selected = MapActivity.selectedSearchResults.contains( marker );
+    checkBox.setChecked( selected );
+    // this checks if marker is in focus
+    if ( marker.equals( paneMarker ) )
+    {
+      if ( selected )
+      {
+        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
+        MapActivity.selectedSearchResults.remove( marker );
+      }
+      else
+      {
+        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+        MapActivity.selectedSearchResults.add( marker );
+      }
+      checkBox.setChecked( !selected );
+    }
+    if ( setTransPane )
+    {
+      paneMarker = marker;
+      SearchResult sr = MapActivity.currentSearchResults.get( marker );
+      String title = sr._name;
+      String description = sr.address;
+      paneTitle.setText( title );
+      paneDescription.setText( description );
+    }
+    
+    return false;
   }
 
   // Define a DialogFragment that displays the error dialog

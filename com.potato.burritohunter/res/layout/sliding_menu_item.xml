@@ -32,12 +32,12 @@
 
 
 
-    <CheckBox
+   <!--  <CheckBox
         android:id="@+id/sliding_menu_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/desc"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true" /> -->
  
 </RelativeLayout>
 

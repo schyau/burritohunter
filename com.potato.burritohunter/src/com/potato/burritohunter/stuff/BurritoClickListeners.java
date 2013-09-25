@@ -160,26 +160,7 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
-      if ( marker.equals( MyOtherMapFragment.pivotMarker ) ) // why doesn't == work?
-      {
-        return true;
-      }
-      boolean selected = MapActivity.selectedSearchResults.contains( marker );
-      if ( selected )
-      {
-        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
-        MapActivity.selectedSearchResults.remove( marker );
-      }
-      else
-      {
-        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
-        MapActivity.selectedSearchResults.add( marker );
-      }
-      SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      String title = sr._name;
-      String description = sr.address;
-      MyOtherMapFragment.setTitleDescriptionCheckbox( title, description, !selected ); // use opposite logic, trust me!!
-      return false;
+      return MyOtherMapFragment.setTitleDescriptionCheckbox( marker, true );
     }
   }
 
