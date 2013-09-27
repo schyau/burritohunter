@@ -236,8 +236,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
      * Button save = (Button) findViewById( R.id.save ); Button saved = (Button) findViewById( R.id.saved );
      * 
      * //findMe.setOnClickListener( new BurritoClickListeners.FindMe( ) ); save.setOnClickListener( new
-     * BurritoClickListeners.Save( this ) ); saved.setOnClickListener( new BurritoClickListeners.Saved( viewPager ) );
+     * BurritoClickListeners.Save( this ) );
      */
+
   }
 
   //Called when the Activity becomes visible.
@@ -292,7 +293,30 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   //remove markers except ones that were selected.  to clear all markers, clear selected markers before calling this func
   public static void clearSearchResults()
   {
+    // clear everything
+    slidingMenuAdapter.clear();
+    currentSearchResults.clear();
+    selectedSearchResults.clear();
+  }
+
+  @Subscribe
+  public void subscriberWithASillyName( FoursquareSearchResult searchResult )
+  {
+    Response r = searchResult.getResponse();
+    List<Venue> venues = r.getVenues();
+    // you should clear currentsearchresult instead, then this should clear by itself
+    
+    /* new */
     ArrayList<String> ids = new ArrayList<String>();
+    
+    String paneMarkerId = null;
+    Marker newPaneMarker = null; // so when it's remade, we can store the value
+    if ( MyOtherMapFragment.paneMarker != null )
+    {
+      //wow race condition.  i actually saw this.
+      Marker marker = MyOtherMapFragment.paneMarker;
+      paneMarkerId = currentSearchResults.get( marker ).id;
+    }
     //get all ids
     for ( Marker m : selectedSearchResults )
     {
@@ -305,11 +329,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     {
       m.remove();
     }
-
-    // clear everything
-    slidingMenuAdapter.clear();
-    currentSearchResults.clear();
-    selectedSearchResults.clear();
+    /* end new */
+    clearSearchResults();
+    /* new */
 
     // restore ids, repopulate currentsearchresults and slidermenuadapter
     DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
@@ -317,6 +339,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     {
       Cursor c = dbHelper.retrieveSinglePoint( id );
       SearchResult sr = dbHelper.getSearchResult( c );
+      
 
       LatLng pos = new LatLng( sr._lat, sr._lng );
       Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
@@ -325,23 +348,18 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
                                                                       .fromResource( R.drawable.ic_launcher ) ) );
-      //selectedSearchResults.add( marker );
+      if ( sr.id.equals( paneMarkerId  ) )
+      {
+        newPaneMarker = marker;
+      }
+      //selectedSearchResults.add( marker ); // this iwll be done in changemarkerstate
       currentSearchResults.put( marker, sr );
       slidingMenuAdapter.add( marker );
       MyOtherMapFragment.paneMarker = marker;
-      MyOtherMapFragment.setTitleDescriptionCheckbox( marker, false );
+      MyOtherMapFragment.changeMarkerState( marker );
     }
-    MyOtherMapFragment.paneMarker = null;
-
-  }
-
-  @Subscribe
-  public void subscriberWithASillyName( FoursquareSearchResult searchResult )
-  {
-    Response r = searchResult.getResponse();
-    List<Venue> venues = r.getVenues();
-    // you should clear currentsearchresult instead, then this should clear by itself
-    clearSearchResults();
+    MyOtherMapFragment.paneMarker = newPaneMarker;
+    /* end new */
     if ( venues == null )
       return;
     for ( Venue venue : venues )
@@ -349,6 +367,10 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       Location location = venue.getLocation();
       String id = venue.getId();
       String name = venue.getName();
+      if(ids.contains( id ))  //already accounted for
+      {
+        continue;
+      }
       if ( location == null || id == null || name == null )
         continue;
       double lat = location.getLat();
@@ -364,7 +386,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       mySearchResult.address = address;
       mySearchResult.id = id;
       mySearchResult._canonicalAddress = venue.getCanonicalUrl();
-      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
       dbHelper.insertPoint( mySearchResult );
       LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
       // TODO make a big ass Marker class with its own onclicklistener

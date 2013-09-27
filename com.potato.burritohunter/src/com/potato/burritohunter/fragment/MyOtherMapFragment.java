@@ -12,16 +12,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,7 +53,7 @@ public class MyOtherMapFragment extends SherlockFragment
   //public static LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
   public static LatLng PIVOT = new LatLng( 0, 0 );
   private SupportMapFragment mMapFragment;
-  private GoogleMap map;
+  public static GoogleMap map;
 
   // i kinda cringe at this being static but owell luls
   public static TextView paneTitle;
@@ -77,6 +81,7 @@ public class MyOtherMapFragment extends SherlockFragment
   private static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
 
   public static boolean shouldFindMe = false;
+  private static boolean ONSTOPLOCK = false; //should we skip on stop?
 
   // solution shamelessly stolen from
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
@@ -89,6 +94,8 @@ public class MyOtherMapFragment extends SherlockFragment
     map = mMapFragment.getMap();
     vw.findViewById( R.id.find_me )
         .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
+    Button saved = (Button)vw.findViewById( R.id.saved );
+    saved.setOnClickListener( new BurritoClickListeners.Saved( ) );
     initMap( map );
     paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
     paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
@@ -99,8 +106,8 @@ public class MyOtherMapFragment extends SherlockFragment
         @Override
         public void onClick( View v )
         {
-          //paneMarker should never be null
-          setTitleDescriptionCheckbox( paneMarker, true );
+          //paneMarker should not be null by the time it reaches here
+          changeMarkerState( paneMarker );
         }
       } );
     return vw;
@@ -114,7 +121,7 @@ public class MyOtherMapFragment extends SherlockFragment
     //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     /*
      * map.moveCamera( CameraUpdateFactory.newLatLngZoom( PIVOT, 16 ) ); pivotMarker = map.addMarker( new
-     * MarkerOptions().position( PIVOT ).draggable( true ) .icon( BitmapDescriptorFactory.fromResource(
+     * MarkerOptions().position( PIVOT ).dragable( true ) .icon( BitmapDescriptorFactory.fromResource(
      * R.drawable.abs__ab_bottom_solid_dark_holo ) ) );
      */
 
@@ -145,6 +152,7 @@ public class MyOtherMapFragment extends SherlockFragment
   public void onStart()
   {
     super.onStart();
+    paneMarker = null;
     // Connect the client.
     MapActivity.mLocationClient.connect();
     SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
@@ -154,6 +162,7 @@ public class MyOtherMapFragment extends SherlockFragment
     if ( lat == 181 || lng == 181 )
     { //if no, draw marker to hardcoded place, place camera there.
       updateAndDrawPivot( PIVOT );
+      final Context thisContext = getActivity();
       new AlertDialog.Builder( getActivity() )
 
       .setMessage( "Would you like to find your current location?" )
@@ -163,9 +172,16 @@ public class MyOtherMapFragment extends SherlockFragment
               {
                 if ( MapActivity.mLocationClient.isConnected() )
                 {
-                  double lat = MapActivity.mLocationClient.getLastLocation().getLatitude();
+                  Location loc = MapActivity.mLocationClient.getLastLocation();
+                  if( loc == null )
+                  {
+                    Toast.makeText (thisContext, "an error occurred, apologies", Toast.LENGTH_SHORT ).show();
+                  }
+                  else
+                    {double lat = MapActivity.mLocationClient.getLastLocation().getLatitude();
                   double lng = MapActivity.mLocationClient.getLastLocation().getLongitude();
                   updateAndDrawPivot( new LatLng( lat, lng ) );
+                    }
                 }
                 else
                 {
@@ -210,7 +226,6 @@ public class MyOtherMapFragment extends SherlockFragment
 
       // TODO make a big ass Marker class with its own onclicklistener
       Marker marker = getMap().addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-                                              .title( sr._name ).snippet( "Kiel is cool" )
                                               .icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
 
       MapActivity.currentSearchResults.put( marker, sr );
@@ -223,22 +238,31 @@ public class MyOtherMapFragment extends SherlockFragment
     String searchResultSelectedSerializedString = prefs.getString( SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY, "" );
     for ( int i = 0; i < searchResultSelectedSerializedString.length(); i += 24 )
     {
-      String id = searchResultSerializedString.substring( i, i + 24 );
+      String id = searchResultSelectedSerializedString.substring( i, i + 24 );
       Marker marker = reverseSearchResultHashMap.get( id );
       MapActivity.selectedSearchResults.add( marker );
-      paneMarker = marker;
-      setTitleDescriptionCheckbox ( marker, false );
+      //change marker state 
+      marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+      SearchResult sr = MapActivity.currentSearchResults.get( marker );
+      Log.d("com.potato.burritohunter", "Here: "+sr._name+",      id: "+id );
     }
-    paneMarker=null; //hides transpanel too
     //TODO set save panemarker in onstop and set to last chosen panemarker here
     // restore the search result that was typed
     String searchQuery = prefs.getString( SEARCH_QUERY_KEY, "" );
+    ONSTOPLOCK = false;
   }
 
   // save pivot, current search results, selected search results, query, and disconnect location client
   @Override
   public void onStop()
   {
+    // we have a problem with on stop being called twice... so this will be our ghetto solution.
+    if ( ONSTOPLOCK ) //should we skip onstop?
+    {
+      ONSTOPLOCK = true;
+      super.onStop();
+      return;
+    }
     //save pivot
     savePivotToSharedPrefs();
 
@@ -257,7 +281,9 @@ public class MyOtherMapFragment extends SherlockFragment
     saveSearchQueryToSharedPrefs();
 
     //clear maps and disconnect location client
-    MapActivity.clearSearchResults();
+    MapActivity.selectedSearchResults.clear();
+    MapActivity.currentSearchResults.clear();
+    MapActivity.slidingMenuAdapter.clear();
     MapActivity.mLocationClient.disconnect();
     super.onStop();
   }
@@ -283,8 +309,8 @@ public class MyOtherMapFragment extends SherlockFragment
     SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
     CharSequence query = MapActivity.searchView.getQuery();
-    
-    String value = query == null ? "" :  query.toString();
+
+    String value = query == null ? "" : query.toString();
 
     prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
   }
@@ -392,41 +418,39 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().putString( key, serializedString ).commit(); //SEARCH_RESULT_SERIALIZED_STRING_KEY
   }
 
-  public static boolean setTitleDescriptionCheckbox( Marker marker, boolean setTransPane )
+  public static void changeMarkerState( Marker marker )
   {
-    if ( marker.equals( MyOtherMapFragment.pivotMarker ) ) // why doesn't == work?
+    if ( !marker.equals( MyOtherMapFragment.pivotMarker ) ) // why doesn't == work?
     {
-      return true;
-    }
-    trasnPanel.setVisibility( View.VISIBLE );
-    boolean selected = MapActivity.selectedSearchResults.contains( marker );
-    checkBox.setChecked( selected );
-    // this checks if marker is in focus
-    if ( marker.equals( paneMarker ) )
-    {
-      if ( selected )
+      boolean selected = MapActivity.selectedSearchResults.contains( marker );
+      if ( marker.equals( paneMarker ) )
       {
-        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
-        MapActivity.selectedSearchResults.remove( marker );
+        if ( selected )
+        {
+          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
+          MapActivity.selectedSearchResults.remove( marker );
+        }
+        else
+        {
+          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+          MapActivity.selectedSearchResults.add( marker );
+        }
+        checkBox.setChecked( !selected );
       }
       else
       {
-        marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
-        MapActivity.selectedSearchResults.add( marker );
+        checkBox.setChecked( selected );
       }
-      checkBox.setChecked( !selected );
     }
-    if ( setTransPane )
-    {
-      paneMarker = marker;
-      SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      String title = sr._name;
-      String description = sr.address;
-      paneTitle.setText( title );
-      paneDescription.setText( description );
-    }
-    
-    return false;
+  }
+  
+  public static void setPanenlText(SearchResult sr)
+  {
+    trasnPanel.setVisibility( View.VISIBLE );
+    String title = sr._name;
+    String description = sr.address;
+    paneTitle.setText( title );
+    paneDescription.setText( description );
   }
 
   // Define a DialogFragment that displays the error dialog

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -33,15 +34,24 @@ public class BurritoClickListeners
   {
     ViewPager _viewPager;
 
-    public Saved( ViewPager viewPager )
+    public Saved( )
     {
-      this._viewPager = viewPager;
     }
 
     @Override
     public void onClick( View v )
     {
-      _viewPager.setCurrentItem( 1 );
+//clears 
+      for ( Marker m : MapActivity.currentSearchResults.keySet() )
+      {
+        m.remove();
+      }
+      MapActivity.currentSearchResults.clear();
+      MapActivity.selectedSearchResults.clear();
+      MapActivity.slidingMenuAdapter.clear();
+      MyOtherMapFragment.paneMarker = null;
+      MyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
+      
     }
   }
 
@@ -132,10 +142,12 @@ public class BurritoClickListeners
   public static class SearchViewOnQueryTextListener implements OnQueryTextListener
   {
     private Context context;
-    public SearchViewOnQueryTextListener (Context context)
+
+    public SearchViewOnQueryTextListener( Context context )
     {
-      this.context=context;
+      this.context = context;
     }
+
     @Override
     public boolean onQueryTextChange( String newText )
     {
@@ -160,7 +172,11 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
-      return MyOtherMapFragment.setTitleDescriptionCheckbox( marker, true );
+      MyOtherMapFragment.changeMarkerState( marker );
+      MyOtherMapFragment.paneMarker = marker;
+      MyOtherMapFragment.setPanenlText( MapActivity.currentSearchResults.get( marker ) );
+      MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
+      return true;
     }
   }
 
@@ -267,11 +283,13 @@ public class BurritoClickListeners
   {
     private MapActivity _mapActivity;
     private MyOtherMapFragment _mapFragment;
-    public FindMeOnClickListener(MapActivity mapActivity, MyOtherMapFragment mapFragment )
+
+    public FindMeOnClickListener( MapActivity mapActivity, MyOtherMapFragment mapFragment )
     {
       _mapActivity = mapActivity;
       _mapFragment = mapFragment;
     }
+
     @Override
     public void onClick( View v )
     {

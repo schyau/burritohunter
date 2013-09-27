@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
@@ -25,16 +26,20 @@ public class SampleListFragment extends ListFragment
   }
 
   @Override
-  public void onListItemClick(ListView l, View v, int position, long id)
+  public void onListItemClick( ListView l, View v, int position, long id )
   {
     super.onListItemClick( l, v, position, id );
-    Marker m = (Marker)getListAdapter().getItem( position );
+    Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
-    MyOtherMapFragment.setTitleDescriptionCheckbox( m, true );
+    MyOtherMapFragment.changeMarkerState( m );
+    MyOtherMapFragment.setPanenlText( MapActivity.currentSearchResults.get( m ) );
+    MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );
+    MyOtherMapFragment.paneMarker = m;
+
     m.showInfoWindow();
-    Log.d("asdf","asdlfkja;sdf");
+    Log.d( "asdf", "asdlfkja;sdf" );
   }
-  
+
   public static class SlidingMenuAdapter extends ArrayAdapter<Marker>
   {
 
@@ -67,7 +72,6 @@ public class SampleListFragment extends ListFragment
 
       return convertView;
     }
-    
 
   }
 }
