@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -37,7 +38,6 @@ import com.potato.burritohunter.R;
 import com.potato.burritohunter.adapter.ViewPagerAdapter;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
-import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.foursquare.FoursquareSearchResult;
 import com.potato.burritohunter.foursquare.Location;
 import com.potato.burritohunter.foursquare.Response;
@@ -66,7 +66,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public static LocationClient mLocationClient;
   public static MapActivity instance;
   public static SearchView searchView;
+  public static View viewInMap;
   public static SlidingMenu slidingMenu;
+  public static POIListFragment _listFragment;
 
   public static MyOtherMapFragment _mapFragment;
 
@@ -216,14 +218,12 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
      * _mapFragment = SupportMapFragment.newInstance(); initMap(_mapFragment.getMap());
      */
 
-    POIListFragment listFragment = new POIListFragment();
-    List<SavedListItem> list = DatabaseUtil.getSavedList();
-    listFragment.setPoiList( list );
+    _listFragment = new POIListFragment();
 
     viewPager = (ViewPager) findViewById( R.id.pager );
     viewPagerAdapter = new ViewPagerAdapter( getSupportFragmentManager() );
     viewPagerAdapter.addFragment( _mapFragment );
-    viewPagerAdapter.addFragment( listFragment );
+    viewPagerAdapter.addFragment( _listFragment );
 
     viewPager.setAdapter( viewPagerAdapter );
     viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
@@ -270,6 +270,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     searchView.setSubmitButtonEnabled( true );
     searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener( this ) );
 
+    viewInMap = menu.findItem( R.id.viewinmap ).getActionView();
+
     menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
     menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );
     return super.onCreateOptionsMenu( menu );
@@ -286,7 +288,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public void onResume()
   {
     super.onResume();
-
     SomeUtil.getBus().register( this );
   }
 

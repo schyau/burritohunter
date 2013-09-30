@@ -1,6 +1,7 @@
 package com.potato.burritohunter.stuff;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,16 +17,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.adapter.SavedListAdapter;
 import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
 
 public class BurritoClickListeners
@@ -40,21 +41,24 @@ public class BurritoClickListeners
 
     @Override
     public void onClick( View v )
-    {
-//clears 
-      for ( Marker m : MapActivity.currentSearchResults.keySet() )
-      {
-        m.remove();
-      }
-      MapActivity.currentSearchResults.clear();
-      MapActivity.selectedSearchResults.clear();
-      MapActivity.slidingMenuAdapter.clear();
-      MyOtherMapFragment.paneMarker = null;
-      MyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
-      
+    { 
+      clearMarkers(); 
     }
   }
 
+  public static void clearMarkers()
+  {
+    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    {
+      m.remove();
+    }
+    MapActivity.currentSearchResults.clear();
+    MapActivity.selectedSearchResults.clear();
+    MapActivity.slidingMenuAdapter.clear();
+    MyOtherMapFragment.paneMarker = null;
+    MyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
+  }
+  
   public static class Save implements OnClickListener
   {
     private Context _ctx;
@@ -206,9 +210,40 @@ public class BurritoClickListeners
       {
         case 0:
           _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
+          if ( MapActivity.searchView != null )
+          {
+            MapActivity.searchView.setVisibility( View.VISIBLE );
+          }
+          if ( MapActivity.viewInMap != null)
+          {
+            MapActivity.viewInMap.setVisibility(View.GONE);
+          }
+          break;
+        case 1:
+
+          if ( MapActivity.searchView != null )
+          {
+            MapActivity.searchView.setVisibility( View.GONE );
+          }
+          if ( MapActivity.viewInMap != null)
+          {
+            MapActivity.viewInMap.setVisibility(View.GONE);
+          }
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
+          break;
+        case 2:
+
+          if ( MapActivity.searchView != null )
+          {
+            MapActivity.searchView.setVisibility( View.GONE );
+          }
+          if ( MapActivity.viewInMap != null)
+          {
+            MapActivity.viewInMap.setVisibility(View.VISIBLE);
+          }
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
         default:
-          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
       }
     }
@@ -262,6 +297,10 @@ public class BurritoClickListeners
                   DatabaseUtil.addList( name, ids );
                   Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
 
+                  List<SavedListItem> list = DatabaseUtil.getSavedList();
+                  SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
+                  MapActivity._listFragment.setListAdapter( adapter );
+
                 }
               }
               else
@@ -301,7 +340,6 @@ public class BurritoClickListeners
         Log.d( "FindMe", lat + ", lng: " + lng );
         _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
       }
-
     }
   }
 

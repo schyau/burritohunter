@@ -34,11 +34,12 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
   }
 
   /* private view holder class */
-  private class ViewHolder
+  public static class ViewHolder
   {
     ImageView imageView;
     TextView txtTitle;
     TextView txtDesc;
+    public long id;
   }
 
   public View getView( int position, View convertView, ViewGroup parent )
@@ -64,6 +65,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
 
     holder.txtDesc.setText( "luls this is the primary key " + rowItem.get_id() );
     holder.txtTitle.setText( rowItem.get_title() );
+    holder.id = rowItem._id;
     //holder.imageView.setImageResource(rowItem.getImageId());
 
     return convertView;

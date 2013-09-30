@@ -94,8 +94,8 @@ public class MyOtherMapFragment extends SherlockFragment
     map = mMapFragment.getMap();
     vw.findViewById( R.id.find_me )
         .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
-    Button saved = (Button)vw.findViewById( R.id.saved );
-    saved.setOnClickListener( new BurritoClickListeners.Saved( ) );
+    Button saved = (Button) vw.findViewById( R.id.saved );
+    saved.setOnClickListener( new BurritoClickListeners.Saved() );
     initMap( map );
     paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
     paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
@@ -173,15 +173,16 @@ public class MyOtherMapFragment extends SherlockFragment
                 if ( MapActivity.mLocationClient.isConnected() )
                 {
                   Location loc = MapActivity.mLocationClient.getLastLocation();
-                  if( loc == null )
+                  if ( loc == null )
                   {
-                    Toast.makeText (thisContext, "an error occurred, apologies", Toast.LENGTH_SHORT ).show();
+                    Toast.makeText( thisContext, "an error occurred, apologies", Toast.LENGTH_SHORT ).show();
                   }
                   else
-                    {double lat = MapActivity.mLocationClient.getLastLocation().getLatitude();
-                  double lng = MapActivity.mLocationClient.getLastLocation().getLongitude();
-                  updateAndDrawPivot( new LatLng( lat, lng ) );
-                    }
+                  {
+                    double lat = MapActivity.mLocationClient.getLastLocation().getLatitude();
+                    double lng = MapActivity.mLocationClient.getLastLocation().getLongitude();
+                    updateAndDrawPivot( new LatLng( lat, lng ) );
+                  }
                 }
                 else
                 {
@@ -244,7 +245,7 @@ public class MyOtherMapFragment extends SherlockFragment
       //change marker state 
       marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      Log.d("com.potato.burritohunter", "Here: "+sr._name+",      id: "+id );
+      Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
     }
     //TODO set save panemarker in onstop and set to last chosen panemarker here
     // restore the search result that was typed
@@ -301,7 +302,7 @@ public class MyOtherMapFragment extends SherlockFragment
     {
       trasnPanel.setVisibility( View.VISIBLE );
     }
-
+    super.onResume();
   }
 
   private void saveSearchQueryToSharedPrefs()
@@ -443,14 +444,15 @@ public class MyOtherMapFragment extends SherlockFragment
       }
     }
   }
-  
-  public static void setPanenlText(SearchResult sr)
+
+  public static void setPanenlText( SearchResult sr )
   {
-    trasnPanel.setVisibility( View.VISIBLE );
+    // null checks here?  I think it should have some.
     String title = sr._name;
     String description = sr.address;
     paneTitle.setText( title );
     paneDescription.setText( description );
+    trasnPanel.setVisibility( View.VISIBLE );
   }
 
   // Define a DialogFragment that displays the error dialog
@@ -478,5 +480,4 @@ public class MyOtherMapFragment extends SherlockFragment
       return mDialog;
     }
   }
-
 }

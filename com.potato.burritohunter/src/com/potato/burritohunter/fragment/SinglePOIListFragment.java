@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SinglePOIListAdapter;
 import com.potato.burritohunter.stuff.SearchResult;
 

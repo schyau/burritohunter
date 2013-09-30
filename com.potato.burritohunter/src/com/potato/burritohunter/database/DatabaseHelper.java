@@ -31,14 +31,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public static final String TABLE_FOREIGN_KEY = "foriegn_key_table";
 
   // Table 'poi_list' and 'poi_single' names
-  public static final String KEY_ID = "id";
+  public static final String KEY_ID = "_id";
   public static final String KEY_FOREIGN_KEY = "foreign_key";
   public static final String KEY_NAME = "name";
   public static final String KEY_LAT = "latitude";
   public static final String KEY_LNG = "longitude";
   public static final String KEY_ADDRESS = "address";
-  
-
 
   public DatabaseHelper( Context context )
   {
@@ -50,8 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public void onCreate( SQLiteDatabase db )
   {
     // CREATE TABLE poi (id INTEGER PRIMARY KEY UNIQUE AUTOINCREMENT, name TEXT );
-    String CREATE_POI_LIST_TABLE = "CREATE TABLE " + TABLE_LIST_POI + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_NAME
-                                   + " TEXT" + ")";
+    String CREATE_POI_LIST_TABLE = "CREATE TABLE " + TABLE_LIST_POI + "(" + KEY_ID
+                                   + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_NAME + " TEXT" + ")";
 
     // create table foreign_key_table
     // (
@@ -75,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     Log.d( TAG, CREATE_POI_LIST_TABLE );
     Log.d( TAG, CREATE_POI_SINGLE_TABLE );
-    Log.d( TAG+ "XX", CREATE_FOREIGN_KEYS_TABLE );
+    Log.d( TAG + "XX", CREATE_FOREIGN_KEYS_TABLE );
 
     db.execSQL( CREATE_POI_LIST_TABLE );
     db.execSQL( CREATE_POI_SINGLE_TABLE );
@@ -100,18 +98,18 @@ public class DatabaseHelper extends SQLiteOpenHelper
     SQLiteDatabase db = this.getWritableDatabase();;
     try
     {
-      db.insertOrThrow( TABLE_SINGLE_POI, null, values ) ;
+      db.insertOrThrow( TABLE_SINGLE_POI, null, values );
     }
-    catch (SQLException e)
+    catch ( SQLException e )
     {
       try
       {
-        db.replace( TABLE_SINGLE_POI, null, values ) ;
+        db.replace( TABLE_SINGLE_POI, null, values );
       }
-      catch (SQLException replaceE)
+      catch ( SQLException replaceE )
       {
-        Log.d("DatabaseHelper", "couldn't insert or update point!");
-        if (replaceE!= null)
+        Log.d( "DatabaseHelper", "couldn't insert or update point!" );
+        if ( replaceE != null )
         {
           replaceE.printStackTrace();
         }
@@ -128,7 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   }
 
   // should be called after saveList
-  public void saveForeignKey ( String id, long foreignKey )
+  public void saveForeignKey( String id, long foreignKey )
   {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
@@ -141,11 +139,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
   // get all points related to the list foreign key
   public List<SearchResult> retrievePoints( String foreignKey )
   {
-    String selectQuery = "select "+KEY_ID+" from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = " + foreignKey;
+    String selectQuery = "select " + KEY_ID + " from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = "
+                         + foreignKey;
     SQLiteDatabase db = this.getReadableDatabase();
 
     Cursor cursor = db.rawQuery( selectQuery, null );
-    
+
     List<SearchResult> list = new ArrayList<SearchResult>();
     // looping through all rows and adding to list
     if ( cursor.moveToFirst() )
@@ -154,17 +153,17 @@ public class DatabaseHelper extends SQLiteOpenHelper
       do
       {
         String id = cursor.getString( idIndex );
-        Cursor cursorSingle = retrieveSinglePoint( id);
-        SearchResult searchResult = getSearchResult (cursorSingle);
+        Cursor cursorSingle = retrieveSinglePoint( id );
+        SearchResult searchResult = getSearchResult( cursorSingle );
 
         list.add( searchResult );
       } while ( cursor.moveToNext() );
     }
     return list;
   }
-  
+
   //provide a cursor with a single item and we'll grab its column info
-  public SearchResult getSearchResult ( Cursor cursorSingle )
+  public SearchResult getSearchResult( Cursor cursorSingle )
   {
     cursorSingle.moveToFirst();
     SearchResult searchResult = new SearchResult();
@@ -174,18 +173,19 @@ public class DatabaseHelper extends SQLiteOpenHelper
     int latKey = cursorSingle.getColumnIndex( KEY_LAT );
     int lngKey = cursorSingle.getColumnIndex( KEY_LNG );
     int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
-    searchResult.id = cursorSingle.getString(idKey);
-    searchResult._name = cursorSingle.getString(nameKey);
-    searchResult._lat = cursorSingle.getDouble(latKey);
-    searchResult._lng = cursorSingle.getDouble(lngKey);
-    searchResult.address = cursorSingle.getString(addressKey);
+    searchResult.id = cursorSingle.getString( idKey );
+    searchResult._name = cursorSingle.getString( nameKey );
+    searchResult._lat = cursorSingle.getDouble( latKey );
+    searchResult._lng = cursorSingle.getDouble( lngKey );
+    searchResult.address = cursorSingle.getString( addressKey );
     return searchResult;
   }
-  
+
   public Cursor retrieveSinglePoint( String id )
   {
     SQLiteDatabase db = this.getReadableDatabase();
-    String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI+"."+KEY_ID+"='"+id+"'";
+    String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI + "." + KEY_ID + "='"
+                               + id + "'";
     return db.rawQuery( selectSingleQuery, null );
   }
 
@@ -237,5 +237,25 @@ public class DatabaseHelper extends SQLiteOpenHelper
     String selectQuery = "SELECT  * FROM " + TABLE_LIST_POI;
     SQLiteDatabase db = this.getWritableDatabase();
     return db.rawQuery( selectQuery, null );
+  }
+
+  public void deleteListRow( long id )
+  {
+    delete( TABLE_LIST_POI, KEY_ID, id );
+    boolean b = true;
+    while ( b )
+    {
+      b = delete( TABLE_FOREIGN_KEY, KEY_ID, id );
+    }
+  }
+
+  public boolean delete( String tableName, String keyRowId, long rowId )
+  {
+    /*
+     * this is what your database delete method should look like this method deletes by id, the first column in your
+     * database
+     */
+    SQLiteDatabase db = this.getWritableDatabase();
+    return db.delete( tableName, keyRowId + "=" + rowId, null ) > 0;
   }
 }

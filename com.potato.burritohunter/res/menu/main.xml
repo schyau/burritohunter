@@ -5,5 +5,9 @@
           android:icon="@drawable/ic_launcher"
           android:showAsAction="ifRoom"
           android:actionViewClass="com.actionbarsherlock.widget.SearchView" />
-
+    <item android:id="@+id/viewinmap"
+          android:title="@string/search_hint"
+          android:icon="@drawable/unnamed" 
+          android:showAsAction="ifRoom"
+          android:actionViewClass="android.widget.ImageButton"/>
 </menu>
