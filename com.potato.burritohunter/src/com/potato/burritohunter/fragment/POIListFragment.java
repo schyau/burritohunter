@@ -91,7 +91,7 @@ public class POIListFragment extends SherlockListFragment
     long foreignKey = savedListItem._id;
     List<SearchResult> list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
 
-    single.setSinglePOIs( list );
+    single.setSinglePOIs( list, foreignKey );
     single.setAdapter();
 
     // will have to expand on this when we get to the fourth one

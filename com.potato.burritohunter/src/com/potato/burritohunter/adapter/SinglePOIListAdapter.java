@@ -19,13 +19,13 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
 {
   Fragment frag;
   List<SearchResult> rowItems;
-  
-  public SinglePOIListAdapter ( Fragment frag, List<SearchResult> rowItems )
+
+  public SinglePOIListAdapter( Fragment frag, List<SearchResult> rowItems )
   {
     this.frag = frag;
     this.rowItems = rowItems;
   }
-  
+
   @Override
   public int getCount()
   {
@@ -35,41 +35,42 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
   @Override
   public Object getItem( int position )
   {
-    return rowItems.get(position);
+    return rowItems.get( position );
   }
 
   @Override
   public long getItemId( int position )
   {
-    return rowItems.indexOf(getItem(position));
+    return rowItems.indexOf( getItem( position ) );
   }
 
-  private class ViewHolder
+  public class ViewHolder
   {
     TextView txtTitle;
+    public String id;
   }
-  
+
   @Override
   public View getView( int position, View convertView, ViewGroup parent )
   {
     // TODO Auto-generated method stub
     ViewHolder holder = null;
-    
-    LayoutInflater mInflater = (LayoutInflater)
-        frag.getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-    if (convertView == null)
+
+    LayoutInflater mInflater = (LayoutInflater) frag.getActivity().getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
+    if ( convertView == null )
     {
-      convertView = mInflater.inflate(R.layout.single_poi_list_item, null);
+      convertView = mInflater.inflate( R.layout.single_poi_list_item, null );
       holder = new ViewHolder();
       holder.txtTitle = (TextView) convertView.findViewById( R.id.title );
-      convertView.setTag(holder);
+      holder.id = ( (SearchResult) getItem( position ) ).id;
+      convertView.setTag( holder );
     }
     else
     {
       holder = (ViewHolder) convertView.getTag();
     }
-    
-    SearchResult rowItem = (SearchResult) getItem(position);
+
+    SearchResult rowItem = (SearchResult) getItem( position );
     holder.txtTitle.setText( rowItem._name );
     return convertView;
   }
@@ -77,6 +78,6 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
   @Override
   public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
   {
-   // TODO lead to description page. 
+    // TODO lead to description page. 
   }
 }

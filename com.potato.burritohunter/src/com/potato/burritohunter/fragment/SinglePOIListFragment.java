@@ -2,26 +2,41 @@ package com.potato.burritohunter.fragment;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.potato.burritohunter.R;
+import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.adapter.SavedListAdapter;
 import com.potato.burritohunter.adapter.SinglePOIListAdapter;
+import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.stuff.SearchResult;
 
 
 public class SinglePOIListFragment extends SherlockListFragment
 {
   private List<SearchResult> singlePOIs;
+  long foreignKey;
+  
 
-  public void setSinglePOIs( List<SearchResult> singlePOIs)
+  public void setSinglePOIs( List<SearchResult> singlePOIs, long foreignKey )
   {
     this.singlePOIs = singlePOIs;
+    this.foreignKey = foreignKey;
   }
 
   @Override
@@ -56,5 +71,40 @@ public class SinglePOIListFragment extends SherlockListFragment
     Intent i = new Intent(Intent.ACTION_VIEW);
     i.setData(Uri.parse(url));
     startActivity(i);
+  }
+
+  @Override
+  public void onActivityCreated(Bundle b)
+  {
+    super.onActivityCreated( b );
+    final Context _ctx = getActivity();
+    getListView().setOnItemLongClickListener( new OnItemLongClickListener()
+    {
+      @Override
+      public boolean onItemLongClick( AdapterView<?> arg0, final View arg1, int arg2, long arg3 )
+      {
+        final String title=  ((TextView)arg1.findViewById(R.id.title)).getText().toString();
+        new AlertDialog.Builder( _ctx )
+        .setMessage( "Are you sure you want to delete "+title+"?" )
+            .setPositiveButton( "Yes!", new DialogInterface.OnClickListener()
+              {
+                public void onClick( DialogInterface dialog, int whichButton )
+                {
+                  String id = ((SinglePOIListAdapter.ViewHolder)arg1.getTag()).id;
+                  DatabaseUtil.getDatabaseHelper().deleteSingle( id, foreignKey );  //id and foreignkey is flipped.
+                  Toast.makeText( _ctx, title+ " deleted!", Toast.LENGTH_SHORT ).show();
+                }
+
+              } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
+              {
+                public void onClick( DialogInterface dialog, int whichButton )
+                {
+                  /* User clicked cancel so do some stuff */
+                }
+              } ).create().show();
+        return false;
+      }
+
+    } );
   }
 }

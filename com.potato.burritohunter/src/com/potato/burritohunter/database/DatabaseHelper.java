@@ -54,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     // create table foreign_key_table
     // (
     //  id integer not null references poi_list(id), 
-    //  foreign_key integer not null references poi_single(id),
+    //  foreign_key text not null references poi_single(id),
     //  primary key (id, foreign_key)
     // ) 
     String CREATE_FOREIGN_KEYS_TABLE = "CREATE TABLE " + TABLE_FOREIGN_KEY + "(" + KEY_ID
@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     // create table single_poi 
     // (
-    //   id integer primary key not null unique,
+    //   id text primary key not null unique,
     //   name text, lat text, lng text, address text
     // )
     String CREATE_POI_SINGLE_TABLE = "CREATE TABLE " + TABLE_SINGLE_POI + "(" + KEY_ID
@@ -241,21 +241,19 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
   public void deleteListRow( long id )
   {
-    delete( TABLE_LIST_POI, KEY_ID, id );
-    boolean b = true;
-    while ( b )
+    SQLiteDatabase db = this.getWritableDatabase();
+    db.delete( TABLE_LIST_POI, KEY_ID + "=" + id, null );
+    while ( db.delete( TABLE_FOREIGN_KEY, KEY_ID + "=" + id, null ) > 0 )
     {
-      b = delete( TABLE_FOREIGN_KEY, KEY_ID, id );
     }
   }
 
-  public boolean delete( String tableName, String keyRowId, long rowId )
+  public void deleteSingle( String id, long foreignKey )
   {
-    /*
-     * this is what your database delete method should look like this method deletes by id, the first column in your
-     * database
-     */
     SQLiteDatabase db = this.getWritableDatabase();
-    return db.delete( tableName, keyRowId + "=" + rowId, null ) > 0;
+    String WHERE_CLAUSE = KEY_ID + "='"+id+"'"+" AND "+ KEY_FOREIGN_KEY+"=" + foreignKey ; //oops swapped the foreignkey vs id logic
+    boolean b = db.delete( TABLE_FOREIGN_KEY, WHERE_CLAUSE, null ) > 0;
   }
+
+
 }
