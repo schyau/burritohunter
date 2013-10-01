@@ -283,6 +283,10 @@ public class MyOtherMapFragment extends SherlockFragment
 
     //clear maps and disconnect location client
     MapActivity.selectedSearchResults.clear();
+    for (Marker m : MapActivity.currentSearchResults.keySet() ){
+      m.remove();
+    }
+    map.clear();
     MapActivity.currentSearchResults.clear();
     MapActivity.slidingMenuAdapter.clear();
     MapActivity.mLocationClient.disconnect();
