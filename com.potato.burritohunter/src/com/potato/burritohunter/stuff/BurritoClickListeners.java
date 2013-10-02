@@ -216,7 +216,7 @@ public class BurritoClickListeners
           }
           if ( MapActivity.viewInMap != null)
           {
-            MapActivity.viewInMap.setVisibility(View.GONE);
+            //MapActivity.viewInMap.setVisibility(View.GONE);
           }
           break;
         case 1:
@@ -227,7 +227,7 @@ public class BurritoClickListeners
           }
           if ( MapActivity.viewInMap != null)
           {
-            MapActivity.viewInMap.setVisibility(View.GONE);
+            //MapActivity.viewInMap.setVisibility(View.GONE);
           }
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
@@ -239,7 +239,7 @@ public class BurritoClickListeners
           }
           if ( MapActivity.viewInMap != null)
           {
-            MapActivity.viewInMap.setVisibility(View.VISIBLE);
+            //MapActivity.viewInMap.setVisibility(View.VISIBLE);
           }
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;

@@ -8,6 +8,5 @@
     <item android:id="@+id/viewinmap"
           android:title="@string/search_hint"
           android:icon="@drawable/unnamed" 
-          android:showAsAction="ifRoom"
-          android:actionViewClass="android.widget.ImageButton"/>
+          android:showAsAction="ifRoom"/>
 </menu>

@@ -45,6 +45,7 @@ import com.potato.burritohunter.foursquare.Venue;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
+import com.potato.burritohunter.fragment.SinglePOIListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
@@ -274,6 +275,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
     menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );
+    menu.add( Menu.NONE, MENU_VIEW, Menu.NONE, "View" );
     return super.onCreateOptionsMenu( menu );
   }
 
@@ -306,10 +308,10 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     Response r = searchResult.getResponse();
     List<Venue> venues = r.getVenues();
     // you should clear currentsearchresult instead, then this should clear by itself
-    
+
     /* new */
     ArrayList<String> ids = new ArrayList<String>();
-    
+
     String paneMarkerId = null;
     Marker newPaneMarker = null; // so when it's remade, we can store the value
     if ( MyOtherMapFragment.paneMarker != null )
@@ -340,7 +342,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     {
       Cursor c = dbHelper.retrieveSinglePoint( id );
       SearchResult sr = dbHelper.getSearchResult( c );
-      
 
       LatLng pos = new LatLng( sr._lat, sr._lng );
       Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
@@ -349,7 +350,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
                                                                       .fromResource( R.drawable.ic_launcher ) ) );
-      if ( sr.id.equals( paneMarkerId  ) )
+      if ( sr.id.equals( paneMarkerId ) )
       {
         newPaneMarker = marker;
       }
@@ -368,7 +369,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       Location location = venue.getLocation();
       String id = venue.getId();
       String name = venue.getName();
-      if(ids.contains( id ))  //already accounted for
+      if ( ids.contains( id ) ) //already accounted for
       {
         continue;
       }
@@ -427,6 +428,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
   public static final int MENU_ADD = Menu.FIRST;
   public static final int MENU_DELETE = Menu.FIRST + 1;
+  public static final int MENU_VIEW = Menu.FIRST + 2;
 
   @Override
   public boolean onOptionsItemSelected( MenuItem item )
@@ -439,6 +441,40 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       case MENU_DELETE:
         //DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey );
 
+        return true;
+      case MENU_VIEW:
+        MapActivity.selectedSearchResults.clear();
+        for ( Marker m : MapActivity.currentSearchResults.keySet() )
+        {
+          m.remove();
+        }
+        _mapFragment.getMap().clear();
+        MapActivity.currentSearchResults.clear();
+        MapActivity.slidingMenuAdapter.clear();
+
+        // clear current, selected, and sliding
+        // retrieve points.
+        DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+        List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults ,MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY);
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY);
+        /*for ( SearchResult sr : searchResults )
+        {
+          // TODO make a big ass Marker class with its own onclicklistener
+          Marker marker = _mapFragment.getMap()
+              .addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
+                              .icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
+          currentSearchResults.put( marker, sr );
+          selectedSearchResults.add( marker );
+          slidingMenuAdapter.add( marker );
+        }*/
+
+        // populate current selected and sliding, draw markers too
+        _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+        viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
+        //change viewpager
+        viewPager.setCurrentItem( 0 );
+        getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );        
         return true;
       default:
         return super.onOptionsItemSelected( item );

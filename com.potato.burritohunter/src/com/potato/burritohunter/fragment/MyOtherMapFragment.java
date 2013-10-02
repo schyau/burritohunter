@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -76,8 +76,8 @@ public class MyOtherMapFragment extends SherlockFragment
   private final static String CAMERA_LAT_KEY = "CAMERA LAT KEY";
   private final static String CAMERA_LNG_KEY = "CAMERA LNG KEY";
 
-  private static final String SEARCH_RESULT_SERIALIZED_STRING_KEY = "SEARCH RESULT SERIALIZED STRING KEY"; // search results 
-  private static final String SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY = "SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY"; // selected search result
+  public static final String SEARCH_RESULT_SERIALIZED_STRING_KEY = "SEARCH RESULT SERIALIZED STRING KEY"; // search results 
+  public static final String SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY = "SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY"; // selected search result
   private static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
 
   public static boolean shouldFindMe = false;
@@ -268,7 +268,7 @@ public class MyOtherMapFragment extends SherlockFragment
     savePivotToSharedPrefs();
 
     // save current search results
-    saveSearchResultsToSharedPrefs( MapActivity.currentSearchResults.values(), SEARCH_RESULT_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( getActivity(), MapActivity.currentSearchResults.values(), SEARCH_RESULT_SERIALIZED_STRING_KEY );
 
     //save selected points
     ArrayList<SearchResult> selectedSearchResults = new ArrayList<SearchResult>();
@@ -276,7 +276,7 @@ public class MyOtherMapFragment extends SherlockFragment
     {
       selectedSearchResults.add( MapActivity.currentSearchResults.get( m ) );
     }
-    saveSearchResultsToSharedPrefs( selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( getActivity(), selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
 
     //save query
     saveSearchQueryToSharedPrefs();
@@ -325,24 +325,19 @@ public class MyOtherMapFragment extends SherlockFragment
     UiSettings settings = map.getUiSettings();
     settings.setAllGesturesEnabled( true );
     settings.setMyLocationButtonEnabled( true );
-    map.setOnMarkerDragListener( new OnMarkerDragListener()
+    map.setOnMapLongClickListener( new OnMapLongClickListener()
+    {
+
+      @Override
+      public void onMapLongClick( LatLng point )
       {
-        @Override
-        public void onMarkerDrag( Marker marker )
-        {
-        }
+        
+        updateAndDrawPivot(point);
 
-        @Override
-        public void onMarkerDragEnd( Marker marker )
-        {
-          PIVOT = marker.getPosition();
-        }
-
-        @Override
-        public void onMarkerDragStart( Marker marker )
-        {
-        }
-      } );
+        
+      }
+      
+    });
     map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
   }
 
@@ -407,9 +402,9 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().commit();
   }
 
-  public void saveSearchResultsToSharedPrefs( Collection<SearchResult> searchResults, String key )
+  public static void saveSearchResultsToSharedPrefs( Activity activity, Collection<SearchResult> searchResults, String key )
   {
-    SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    SharedPreferences prefs = activity.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
 
     // bundle up all searchresult ids

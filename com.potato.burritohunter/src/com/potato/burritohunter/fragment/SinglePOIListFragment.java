@@ -22,6 +22,7 @@ import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SavedListAdapter;
 import com.potato.burritohunter.adapter.SinglePOIListAdapter;
+import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.stuff.SearchResult;
@@ -30,13 +31,13 @@ import com.potato.burritohunter.stuff.SearchResult;
 public class SinglePOIListFragment extends SherlockListFragment
 {
   private List<SearchResult> singlePOIs;
-  long foreignKey;
+  public static long staticForeignKey;
   
 
   public void setSinglePOIs( List<SearchResult> singlePOIs, long foreignKey )
   {
     this.singlePOIs = singlePOIs;
-    this.foreignKey = foreignKey;
+    staticForeignKey = foreignKey;
   }
 
   @Override
@@ -78,6 +79,7 @@ public class SinglePOIListFragment extends SherlockListFragment
   {
     super.onActivityCreated( b );
     final Context _ctx = getActivity();
+    final SinglePOIListFragment frag = this;
     getListView().setOnItemLongClickListener( new OnItemLongClickListener()
     {
       @Override
@@ -91,7 +93,12 @@ public class SinglePOIListFragment extends SherlockListFragment
                 public void onClick( DialogInterface dialog, int whichButton )
                 {
                   String id = ((SinglePOIListAdapter.ViewHolder)arg1.getTag()).id;
-                  DatabaseUtil.getDatabaseHelper().deleteSingle( id, foreignKey );  //id and foreignkey is flipped.
+                  DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+                  dbHelper.deleteSingle( id, staticForeignKey );  //id and foreignkey is flipped.
+                  List<SearchResult> searchResults = dbHelper.retrievePoints( staticForeignKey+"" );
+                  frag.setSinglePOIs( searchResults, staticForeignKey );
+                  frag.setAdapter ( );
+                  
                   Toast.makeText( _ctx, title+ " deleted!", Toast.LENGTH_SHORT ).show();
                 }
 
