@@ -8,14 +8,15 @@
     <fragment
         android:id="@+id/map_frag"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+        android:layout_height="450dp"
+        class="com.google.android.gms.maps.SupportMapFragment"/>
 
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="2"
+        android:layout_alignParentBottom="true"
         android:text="Save" />
 
     <Button
@@ -23,18 +24,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/save"
+        android:layout_alignParentBottom="true"
         android:text="View Saved" />
 
     <Button
         android:id="@+id/find_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/saved" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:gravity="bottom"
+        android:gravity="top"
+        android:layout_below="@id/map_frag"
         android:orientation="vertical"
         android:paddingLeft="5px"
         android:paddingRight="5px"

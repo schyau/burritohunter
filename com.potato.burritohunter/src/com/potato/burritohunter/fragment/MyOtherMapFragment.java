@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -325,19 +326,26 @@ public class MyOtherMapFragment extends SherlockFragment
     UiSettings settings = map.getUiSettings();
     settings.setAllGesturesEnabled( true );
     settings.setMyLocationButtonEnabled( true );
+    settings.setMyLocationButtonEnabled(true);
     map.setOnMapLongClickListener( new OnMapLongClickListener()
     {
-
       @Override
       public void onMapLongClick( LatLng point )
       {
-        
         updateAndDrawPivot(point);
+      }
+    });
+    map.setOnMapClickListener( new OnMapClickListener() {
 
+      @Override
+      public void onMapClick( LatLng point )
+      {
+        trasnPanel.setVisibility( View.GONE );
+        paneMarker=null; 
         
       }
       
-    });
+    } );
     map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
   }
 

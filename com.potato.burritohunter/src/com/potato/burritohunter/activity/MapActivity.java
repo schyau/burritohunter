@@ -474,6 +474,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
         viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
         //change viewpager
         viewPager.setCurrentItem( 0 );
+        searchView.setVisibility( View.VISIBLE );
         getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );        
         return true;
       default:
