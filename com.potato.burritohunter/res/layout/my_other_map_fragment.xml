@@ -5,88 +5,33 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true" >
+
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pagerBottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </android.support.v4.view.ViewPager>
+
+        <!-- hack to fix ugly black artefact with maps v2 -->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+        </FrameLayout>
     <fragment
         android:id="@+id/map_frag"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="match_parent"
+        android:layout_above="@id/frame"
         class="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:layout_alignParentBottom="true"
-        android:text="Save" />
 
-    <Button
-        android:id="@+id/saved"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/save"
-        android:layout_alignParentBottom="true"
-        android:text="View Saved" />
-
-    <Button
-        android:id="@+id/find_me"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/saved" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="top"
-        android:layout_below="@id/map_frag"
-        android:orientation="vertical"
-        android:paddingLeft="5px"
-        android:paddingRight="5px"
-        android:paddingTop="5px" >
-
-        <com.potato.burritohunter.stuff.TransparentPanel
-            android:id="@+id/transparent_panel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5px"
-            android:paddingLeft="5px"
-            android:paddingRight="5px"
-            android:paddingTop="5px" >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp" >
-
-                <RelativeLayout
-                    android:id="@+id/trans_pane_left_rl"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent" >
-
-                    <TextView
-                        android:id="@+id/trans_pane_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="Tap on a Marker to view details"
-                        android:textSize="25sp" />
-
-                    <TextView
-                        android:id="@+id/trans_pane_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/trans_pane_title"
-                        android:maxLines="2"
-                        android:text="blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah" />
-                </RelativeLayout>
-
-                <CheckBox
-                    android:id="@+id/trans_pane_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/trans_pane_left_rl"/>
-            </RelativeLayout>
-        </com.potato.burritohunter.stuff.TransparentPanel>
-    </LinearLayout>
 
 </RelativeLayout>

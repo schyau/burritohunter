@@ -56,7 +56,8 @@ public class BurritoClickListeners
     MapActivity.selectedSearchResults.clear();
     MapActivity.slidingMenuAdapter.clear();
     MyOtherMapFragment.paneMarker = null;
-    MyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
+    //chyauchyauMyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
+    BottomPagerPanel.getInstance().disableMarkerPanel();
   }
   
   public static class Save implements OnClickListener
@@ -178,7 +179,8 @@ public class BurritoClickListeners
     {
       MyOtherMapFragment.changeMarkerState( marker );
       MyOtherMapFragment.paneMarker = marker;
-      MyOtherMapFragment.setPanenlText( MapActivity.currentSearchResults.get( marker ) );
+      SearchResult sr = MapActivity.currentSearchResults.get(marker);
+      BottomPagerPanel.getInstance().enableMarkerPanel( sr );
       MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
       return true;
     }

@@ -23,11 +23,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -43,10 +42,10 @@ import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.SearchResult;
-import com.potato.burritohunter.stuff.TransparentPanel;
 
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
@@ -56,13 +55,8 @@ public class MyOtherMapFragment extends SherlockFragment
   private SupportMapFragment mMapFragment;
   public static GoogleMap map;
 
-  // i kinda cringe at this being static but owell luls
-  public static TextView paneTitle;
-  public static TextView paneDescription;
-  public static CheckBox checkBox;
   public static Marker paneMarker;
   public static Marker pivotMarker;
-  public static TransparentPanel trasnPanel;
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -93,24 +87,13 @@ public class MyOtherMapFragment extends SherlockFragment
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();
-    vw.findViewById( R.id.find_me )
-        .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
-    Button saved = (Button) vw.findViewById( R.id.saved );
-    saved.setOnClickListener( new BurritoClickListeners.Saved() );
+    //vw.findViewById( R.id.find_me )
+    //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
+    //Button saved = (Button) vw.findViewById( R.id.saved );
+    //saved.setOnClickListener( new BurritoClickListeners.Saved() );
+    BottomPagerPanel.makeInstance( vw, (SherlockFragmentActivity) getActivity() );
     initMap( map );
-    paneTitle = (TextView) vw.findViewById( R.id.trans_pane_title );
-    paneDescription = (TextView) vw.findViewById( R.id.trans_pane_description );
-    checkBox = (CheckBox) vw.findViewById( R.id.trans_pane_checkbox );
-    trasnPanel = (TransparentPanel) vw.findViewById( R.id.transparent_panel );
-    checkBox.setOnClickListener( new View.OnClickListener()
-      {
-        @Override
-        public void onClick( View v )
-        {
-          //paneMarker should not be null by the time it reaches here
-          changeMarkerState( paneMarker );
-        }
-      } );
+    //chyauchyau: set pane here
     return vw;
   }
 
@@ -269,7 +252,8 @@ public class MyOtherMapFragment extends SherlockFragment
     savePivotToSharedPrefs();
 
     // save current search results
-    saveSearchResultsToSharedPrefs( getActivity(), MapActivity.currentSearchResults.values(), SEARCH_RESULT_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( getActivity(), MapActivity.currentSearchResults.values(),
+                                    SEARCH_RESULT_SERIALIZED_STRING_KEY );
 
     //save selected points
     ArrayList<SearchResult> selectedSearchResults = new ArrayList<SearchResult>();
@@ -284,7 +268,8 @@ public class MyOtherMapFragment extends SherlockFragment
 
     //clear maps and disconnect location client
     MapActivity.selectedSearchResults.clear();
-    for (Marker m : MapActivity.currentSearchResults.keySet() ){
+    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    {
       m.remove();
     }
     map.clear();
@@ -301,13 +286,13 @@ public class MyOtherMapFragment extends SherlockFragment
     //don't check trasnPanel null, because it shouild never be, and if it is, just crash so we know
     if ( paneMarker == null )
     {
-      trasnPanel.setVisibility( View.GONE );
+      BottomPagerPanel.getInstance().disableMarkerPanel();
     }
     else
     {
-      trasnPanel.setVisibility( View.VISIBLE );
+      SearchResult sr = MapActivity.currentSearchResults.get( paneMarker );
+      BottomPagerPanel.getInstance().enableMarkerPanel( sr );
     }
-    super.onResume();
   }
 
   private void saveSearchQueryToSharedPrefs()
@@ -326,26 +311,27 @@ public class MyOtherMapFragment extends SherlockFragment
     UiSettings settings = map.getUiSettings();
     settings.setAllGesturesEnabled( true );
     settings.setMyLocationButtonEnabled( true );
-    settings.setMyLocationButtonEnabled(true);
+    settings.setMyLocationButtonEnabled( true );
     map.setOnMapLongClickListener( new OnMapLongClickListener()
-    {
-      @Override
-      public void onMapLongClick( LatLng point )
       {
-        updateAndDrawPivot(point);
-      }
-    });
-    map.setOnMapClickListener( new OnMapClickListener() {
+        @Override
+        public void onMapLongClick( LatLng point )
+        {
+          updateAndDrawPivot( point );
+        }
+      } );
+    map.setOnMapClickListener( new OnMapClickListener()
+      {
+        @Override
+        public void onMapClick( LatLng point )
+        {
+          //chyauchyau -- show button screen
+          //chyauchyau -- marker should not be highlighted
+          paneMarker = null;
+          BottomPagerPanel.getInstance().disableMarkerPanel();
+        }
 
-      @Override
-      public void onMapClick( LatLng point )
-      {
-        trasnPanel.setVisibility( View.GONE );
-        paneMarker=null; 
-        
-      }
-      
-    } );
+      } );
     map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
   }
 
@@ -410,7 +396,8 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().commit();
   }
 
-  public static void saveSearchResultsToSharedPrefs( Activity activity, Collection<SearchResult> searchResults, String key )
+  public static void saveSearchResultsToSharedPrefs( Activity activity, Collection<SearchResult> searchResults,
+                                                     String key )
   {
     SharedPreferences prefs = activity.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
@@ -443,25 +430,14 @@ public class MyOtherMapFragment extends SherlockFragment
           marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
           MapActivity.selectedSearchResults.add( marker );
         }
-        checkBox.setChecked( !selected );
+        //checkBox.setChecked( !selected );    //chyauchyau
       }
       else
       {
-        checkBox.setChecked( selected );
+        //checkBox.setChecked( selected );    //chyauchyau
       }
     }
   }
-
-  public static void setPanenlText( SearchResult sr )
-  {
-    // null checks here?  I think it should have some.
-    String title = sr._name;
-    String description = sr.address;
-    paneTitle.setText( title );
-    paneDescription.setText( description );
-    trasnPanel.setVisibility( View.VISIBLE );
-  }
-
   // Define a DialogFragment that displays the error dialog
   public static class ErrorDialogFragment extends DialogFragment
   {

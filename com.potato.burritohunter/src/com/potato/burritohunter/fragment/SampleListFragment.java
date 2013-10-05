@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.SearchResult;
 
 public class SampleListFragment extends ListFragment
@@ -32,7 +33,8 @@ public class SampleListFragment extends ListFragment
     Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
     MyOtherMapFragment.changeMarkerState( m );
-    MyOtherMapFragment.setPanenlText( MapActivity.currentSearchResults.get( m ) );
+    SearchResult sr = MapActivity.currentSearchResults.get(m);
+    BottomPagerPanel.getInstance().enableMarkerPanel( sr );
     MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );
     MyOtherMapFragment.paneMarker = m;
 
