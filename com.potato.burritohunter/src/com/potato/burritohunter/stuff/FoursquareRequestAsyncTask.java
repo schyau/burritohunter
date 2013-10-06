@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import com.potato.burritohunter.foursquare.FoursquareSearchResult;
-import com.potato.burritohunter.foursquare.FoursquareService;
+import com.potato.burritohunter.foursquare.explore.FoursquareExploreResult;
+import com.potato.burritohunter.foursquare.explore.FoursquareExploreService;
 import com.squareup.otto.Bus;
 
-public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, FoursquareSearchResult>
+public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, FoursquareExploreResult>
 {
   private static final String MAX_RESULT_KEY = "MaxSearchResults";
   private static final String RADIUS_KEY = "SearchRadius";
@@ -30,18 +30,18 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   }
 
   @Override
-  protected FoursquareSearchResult doInBackground( Void... params )
+  protected FoursquareExploreResult doInBackground( Void... params )
   {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(_context);
     int maxResults = preferences.getInt( MAX_RESULT_KEY, 10 );
     int radius = preferences.getInt( RADIUS_KEY, 10 ) * MULTIPLIER_TO_KM;
-    return FoursquareService.search( _lat, _lng, _query, radius, maxResults );
+    return FoursquareExploreService.search( _lat, _lng, _query, radius, maxResults );
     // TODO: purge stale shits
     // return FoursquareService.searchVenueDetail( "43e879cbf964a5200f2f1fe3" );
   }
 
   @Override
-  protected void onPostExecute( FoursquareSearchResult result )
+  protected void onPostExecute( FoursquareExploreResult result )
   {
     super.onPostExecute( result );
     if ( result == null )

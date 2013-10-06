@@ -38,10 +38,12 @@ import com.potato.burritohunter.R;
 import com.potato.burritohunter.adapter.ViewPagerAdapter;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
-import com.potato.burritohunter.foursquare.FoursquareSearchResult;
-import com.potato.burritohunter.foursquare.Location;
-import com.potato.burritohunter.foursquare.Response;
-import com.potato.burritohunter.foursquare.Venue;
+import com.potato.burritohunter.foursquare.explore.FoursquareExploreResult;
+import com.potato.burritohunter.foursquare.explore.Group;
+import com.potato.burritohunter.foursquare.explore.Item;
+import com.potato.burritohunter.foursquare.explore.Response;
+import com.potato.burritohunter.foursquare.search.Location;
+import com.potato.burritohunter.foursquare.search.Venue;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
@@ -303,10 +305,21 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   }
 
   @Subscribe
-  public void subscriberWithASillyName( FoursquareSearchResult searchResult )
+  public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
-    Response r = searchResult.getResponse();
-    List<Venue> venues = r.getVenues();
+    Response response = searchResult.getResponse();
+
+    List<Venue> venues = new ArrayList<Venue>();
+    List<Group> groups = response.getGroups();
+    Group g = groups.get( 0 );
+    List<Item> items = g.getItems();
+    for ( Item item : items )
+    {
+     venues.add( item.getVenue() ); 
+    }
+    
+    
+    
     // you should clear currentsearchresult instead, then this should clear by itself
 
     /* new */
