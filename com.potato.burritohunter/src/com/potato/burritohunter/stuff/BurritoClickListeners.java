@@ -1,18 +1,20 @@
 package com.potato.burritohunter.stuff;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -31,35 +33,48 @@ import com.potato.burritohunter.fragment.MyOtherMapFragment;
 
 public class BurritoClickListeners
 {
-  public static class Saved implements OnClickListener
+  public static class ClearUnsaved implements OnClickListener
   {
-    ViewPager _viewPager;
-
-    public Saved( )
-    {
-    }
-
     @Override
     public void onClick( View v )
-    { 
-      clearMarkers(); 
+    {
+      Set<Marker> set = new HashSet<Marker>( MapActivity.currentSearchResults.keySet() );
+      for ( Marker m : set )
+      {
+        if ( MapActivity.selectedSearchResults.contains( m ) )
+          continue;
+        m.remove();
+        MapActivity.currentSearchResults.remove( m );
+        MapActivity.selectedSearchResults.remove( m );
+        MapActivity.slidingMenuAdapter.remove( m );
+      }
+      if ( MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
+      {
+        BottomPagerPanel.getInstance().disableMarkerPanel();
+      }
     }
   }
 
-  public static void clearMarkers()
+  public static class ClearAll implements OnLongClickListener
   {
-    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+
+    @Override
+    public boolean onLongClick( View v )
     {
-      m.remove();
+      for ( Marker m : MapActivity.currentSearchResults.keySet() )
+      {
+        m.remove();
+      }
+      MapActivity.currentSearchResults.clear();
+      MapActivity.selectedSearchResults.clear();
+      MapActivity.slidingMenuAdapter.clear();
+      MyOtherMapFragment.paneMarker = null;
+      //chyauchyauMyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
+      BottomPagerPanel.getInstance().disableMarkerPanel();
+      return false;
     }
-    MapActivity.currentSearchResults.clear();
-    MapActivity.selectedSearchResults.clear();
-    MapActivity.slidingMenuAdapter.clear();
-    MyOtherMapFragment.paneMarker = null;
-    //chyauchyauMyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
-    BottomPagerPanel.getInstance().disableMarkerPanel();
   }
-  
+
   public static class Save implements OnClickListener
   {
     private Context _ctx;
@@ -97,18 +112,23 @@ public class BurritoClickListeners
                   }
                   else
                   {
-                    /*
-                     * ArrayList<SearchResult> poiList = new ArrayList<SearchResult>(); for ( Marker key :
-                     * MapActivity.selectedSearchResults ) // gotta get this somehow, maybe put this in its own class
-                     * data structure { poiList.add( MapActivity.currentSearchResults.get( key ) ); } //add markers into
-                     * db DatabaseUtil.addPOIList( name, poiList ); //TODO should be async
-                     */
-
-                    //^old way of doing it, new way is to:
                     // add name and foreign_key to list_table
                     // use marker to look up id from currentSearchResults
                     // add id and foreign_key to foreign_key_table
+                    ArrayList<String> ids = new ArrayList<String>();
+                    for ( Marker marker : MapActivity.selectedSearchResults )
+                    {
+                      SearchResult searchResult = MapActivity.currentSearchResults.get( marker );
+                      String id = searchResult.id;
+                      ids.add( id );
+                    }
+                    DatabaseUtil.addList( name, ids );
                     Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
+
+                    List<SavedListItem> list = DatabaseUtil.getSavedList();
+                    SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
+                    MapActivity._listFragment.setListAdapter( adapter );
+
                   }
                 }
                 else
@@ -126,22 +146,6 @@ public class BurritoClickListeners
             } ).create().show();
     }
 
-  }
-
-  public static class FindMe implements OnClickListener
-  {
-    private MyLocationHelper myLocationHelper;
-
-    public FindMe( MyLocationHelper myLocationHelper )
-    {
-      this.myLocationHelper = myLocationHelper;
-    }
-
-    @Override
-    public void onClick( View v )
-    {
-      myLocationHelper.setMyLocation();
-    }
   }
 
   public static class SearchViewOnQueryTextListener implements OnQueryTextListener
@@ -177,9 +181,13 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
+      if ( marker.equals( MyOtherMapFragment.pivotMarker ) )
+      {
+        return true;
+      }
       MyOtherMapFragment.changeMarkerState( marker );
       MyOtherMapFragment.paneMarker = marker;
-      SearchResult sr = MapActivity.currentSearchResults.get(marker);
+      SearchResult sr = MapActivity.currentSearchResults.get( marker );
       BottomPagerPanel.getInstance().enableMarkerPanel( sr );
       MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
       return true;
@@ -216,9 +224,9 @@ public class BurritoClickListeners
           {
             MapActivity.searchView.setVisibility( View.VISIBLE );
           }
-          if ( MapActivity.viewInMap != null)
+          if ( MapActivity.viewInMap != null )
           {
-            //MapActivity.viewInMap.setVisibility(View.GONE);
+            MapActivity.viewInMap.setVisible( false );
           }
           break;
         case 1:
@@ -227,9 +235,9 @@ public class BurritoClickListeners
           {
             MapActivity.searchView.setVisibility( View.GONE );
           }
-          if ( MapActivity.viewInMap != null)
+          if ( MapActivity.viewInMap != null )
           {
-            //MapActivity.viewInMap.setVisibility(View.GONE);
+            MapActivity.viewInMap.setVisible( false );
           }
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
@@ -239,9 +247,9 @@ public class BurritoClickListeners
           {
             MapActivity.searchView.setVisibility( View.GONE );
           }
-          if ( MapActivity.viewInMap != null)
+          if ( MapActivity.viewInMap != null )
           {
-            //MapActivity.viewInMap.setVisibility(View.VISIBLE);
+            MapActivity.viewInMap.setVisible( true );
           }
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
@@ -249,75 +257,6 @@ public class BurritoClickListeners
           break;
       }
     }
-  }
-
-  public static void displayDialogs( final Context _ctx )
-  {
-    LayoutInflater factory = LayoutInflater.from( _ctx );
-    final View textEntryView = factory.inflate( R.layout.save_dialog, null );
-    final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
-    if ( MapActivity.selectedSearchResults.size() == 0 )
-    {
-      Toast.makeText( _ctx, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
-      return;
-    }
-    new AlertDialog.Builder( _ctx )
-
-    .setMessage( "What would you like to name this trip?" ).setView( textEntryView )
-        .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
-          {
-            public void onClick( DialogInterface dialog, int whichButton )
-            {
-              Editable e = editText.getText();
-              if ( e != null )
-              {
-                String name = e.toString();
-                if ( name == null || name.length() < 3 )
-                {
-                  Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
-                }
-                else
-                {
-                  /*
-                   * ArrayList<SearchResult> poiList = new ArrayList<SearchResult>(); for ( Marker key :
-                   * MapActivity.selectedSearchResults ) // gotta get this somehow, maybe put this in its own class data
-                   * structure { poiList.add( MapActivity.currentSearchResults.get( key ) ); } //add markers into db
-                   * DatabaseUtil.addPOIList( name, poiList ); //TODO should be async
-                   */
-
-                  //^old way of doing it, new way is to:
-                  // add name and foreign_key to list_table
-                  // use marker to look up id from currentSearchResults
-                  // add id and foreign_key to foreign_key_table
-                  ArrayList<String> ids = new ArrayList<String>();
-                  for ( Marker marker : MapActivity.selectedSearchResults )
-                  {
-                    SearchResult searchResult = MapActivity.currentSearchResults.get( marker );
-                    String id = searchResult.id;
-                    ids.add( id );
-                  }
-                  DatabaseUtil.addList( name, ids );
-                  Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
-
-                  List<SavedListItem> list = DatabaseUtil.getSavedList();
-                  SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
-                  MapActivity._listFragment.setListAdapter( adapter );
-
-                }
-              }
-              else
-              {
-                Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
-              }
-            }
-
-          } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
-          {
-            public void onClick( DialogInterface dialog, int whichButton )
-            {
-              /* User clicked cancel so do some stuff */
-            }
-          } ).create().show();
   }
 
   public static class FindMeOnClickListener implements View.OnClickListener

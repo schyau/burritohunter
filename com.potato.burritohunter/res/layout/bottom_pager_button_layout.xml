@@ -1,26 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:orientation="horizontal">
-        <Button
+    android:layout_height="fill_parent" >
+
+    <ImageButton 
+        android:id="@+id/panelLeftArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/findmeselector"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"/>
+    <ImageButton
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="Save" />
+        android:background="@drawable/findmeselector"
+        android:layout_toRightOf="@id/panelLeftArrow" />
 
-    <Button
-        android:id="@+id/saved"
+    <ImageButton
+        android:id="@+id/clear_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/save"
-        android:text="View Saved" />
+        android:background="@drawable/findmeselector"
+        android:layout_toRightOf="@id/save" />
 
-    <Button
+    <ImageButton
         android:id="@+id/find_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/saved" />
-    
-</LinearLayout>
+        android:background="@drawable/findmeselector"
+        android:layout_toRightOf="@id/clear_all" />
+
+    <TextView
+        android:id="@+id/num_selected"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="#FFFFFFFF"
+        android:layout_alignParentRight="true"
+        android:text="" />
+
+</RelativeLayout>

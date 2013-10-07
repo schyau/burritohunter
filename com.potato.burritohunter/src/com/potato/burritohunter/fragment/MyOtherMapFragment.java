@@ -22,7 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -43,7 +44,6 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
-import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.SearchResult;
 
@@ -89,8 +89,7 @@ public class MyOtherMapFragment extends SherlockFragment
     map = mMapFragment.getMap();
     //vw.findViewById( R.id.find_me )
     //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
-    //Button saved = (Button) vw.findViewById( R.id.saved );
-    //saved.setOnClickListener( new BurritoClickListeners.Saved() );
+    //may have to rebuild dynamically instead of using xml
     BottomPagerPanel.makeInstance( vw, (SherlockFragmentActivity) getActivity() );
     initMap( map );
     //chyauchyau: set pane here
@@ -344,6 +343,7 @@ public class MyOtherMapFragment extends SherlockFragment
       FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
       ft.remove( fragment );
       ft.commit();
+      BottomPagerPanel.getInstance().handleOnDestroy();
     }
     catch ( Exception e )
     {
@@ -430,6 +430,8 @@ public class MyOtherMapFragment extends SherlockFragment
           marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
           MapActivity.selectedSearchResults.add( marker );
         }
+        BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
+                                                                                      .size() + "" );
         //checkBox.setChecked( !selected );    //chyauchyau
       }
       else
@@ -438,6 +440,7 @@ public class MyOtherMapFragment extends SherlockFragment
       }
     }
   }
+
   // Define a DialogFragment that displays the error dialog
   public static class ErrorDialogFragment extends DialogFragment
   {

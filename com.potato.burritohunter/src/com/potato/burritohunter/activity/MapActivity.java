@@ -48,7 +48,6 @@ import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.fragment.SinglePOIListFragment;
-import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.SearchResult;
@@ -69,11 +68,11 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public static LocationClient mLocationClient;
   public static MapActivity instance;
   public static SearchView searchView;
-  public static View viewInMap;
+  public static MenuItem viewInMap;
   public static SlidingMenu slidingMenu;
   public static POIListFragment _listFragment;
 
-  public static MyOtherMapFragment _mapFragment;
+  public static MyOtherMapFragment _mapFragment; 
 
   // request the current location or start periodic updates
 
@@ -231,6 +230,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     viewPager.setAdapter( viewPagerAdapter );
     viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
     viewPager.setCurrentItem( 0 );
+    viewPager.setOffscreenPageLimit( 0 );
+
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter( _context );
@@ -272,12 +273,10 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
     searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener( this ) );
+    //searchView.setIconified( false );
 
-    viewInMap = menu.findItem( R.id.viewinmap ).getActionView();
-
-    menu.add( Menu.NONE, MENU_ADD, Menu.NONE, "Save" );
-    menu.add( Menu.NONE, MENU_DELETE, Menu.NONE, "Saved" );
-    menu.add( Menu.NONE, MENU_VIEW, Menu.NONE, "View" );
+    viewInMap = (MenuItem) menu.findItem( R.id.viewinmap );
+    viewInMap.setVisible( false );
     return super.onCreateOptionsMenu( menu );
   }
 
@@ -308,6 +307,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
     Response response = searchResult.getResponse();
+    
 
     List<Venue> venues = new ArrayList<Venue>();
     List<Group> groups = response.getGroups();
@@ -317,10 +317,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     {
      venues.add( item.getVenue() ); 
     }
-    
-    
-    
-    // you should clear currentsearchresult instead, then this should clear by itself
+    Toast.makeText( this, venues.size() + " results found", Toast.LENGTH_SHORT ).show();
 
     /* new */
     ArrayList<String> ids = new ArrayList<String>();
@@ -375,14 +372,12 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
     MyOtherMapFragment.paneMarker = newPaneMarker;
     /* end new */
-    if ( venues == null )
-      return;
     for ( Venue venue : venues )
     {
       Location location = venue.getLocation();
       String id = venue.getId();
       String name = venue.getName();
-      if ( ids.contains( id ) ) //already accounted for
+      if ( ids.contains( id ) ) //already accounted for, // new todo: 
       {
         continue;
       }
@@ -448,22 +443,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     switch ( item.getItemId() )
     {
-      case MENU_ADD:
-        BurritoClickListeners.displayDialogs( this );
-        return true;
-      case MENU_DELETE:
-        //DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey );
-
-        return true;
-      case MENU_VIEW:
-        MapActivity.selectedSearchResults.clear();
-        for ( Marker m : MapActivity.currentSearchResults.keySet() )
-        {
-          m.remove();
-        }
-        _mapFragment.getMap().clear();
-        MapActivity.currentSearchResults.clear();
-        MapActivity.slidingMenuAdapter.clear();
+      case R.id.viewinmap:
+  //      MapActivity.selectedSearchResults.clear();
+  //      for ( Marker m : MapActivity.currentSearchResults.keySet() )
+  //      {
+  //        m.remove();
+  //      }
+  //      _mapFragment.getMap().clear();
+  //      MapActivity.currentSearchResults.clear();
+  //      MapActivity.slidingMenuAdapter.clear();
 
         // clear current, selected, and sliding
         // retrieve points.
@@ -471,24 +459,22 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
         List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
         MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults ,MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY);
         MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY);
-        /*for ( SearchResult sr : searchResults )
-        {
-          // TODO make a big ass Marker class with its own onclicklistener
-          Marker marker = _mapFragment.getMap()
-              .addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-                              .icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
-          currentSearchResults.put( marker, sr );
-          selectedSearchResults.add( marker );
-          slidingMenuAdapter.add( marker );
-        }*/
 
         // populate current selected and sliding, draw markers too
-        _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-        viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
+//        _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+//        viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
         //change viewpager
-        viewPager.setCurrentItem( 0 );
-        searchView.setVisibility( View.VISIBLE );
-        getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );        
+//        viewPager.setCurrentItem( 0 );
+//        searchView.setVisibility( View.VISIBLE );
+//        getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
+//        item.setVisible( false );
+
+        // TODO lol, confession.  i am stupid.  :) kthxbai
+        Intent i = getPackageManager().getLaunchIntentForPackage("com.potato.burritohunter");
+        i.putExtra(StartUpActivity.SKIP_STARTUP_FLAG, true);
+        startActivity( i );
+
+        finish();
         return true;
       default:
         return super.onOptionsItemSelected( item );

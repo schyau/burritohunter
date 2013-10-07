@@ -3,14 +3,16 @@ package com.potato.burritohunter.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.potato.burritohunter.R;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter 
 {
-  // fixed number of views, so we can break this up
   List<Fragment> fragments;
 
   public ViewPagerAdapter( FragmentManager mgr )

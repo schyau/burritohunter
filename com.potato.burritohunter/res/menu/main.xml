@@ -8,5 +8,6 @@
     <item android:id="@+id/viewinmap"
           android:title="@string/search_hint"
           android:icon="@drawable/unnamed" 
-          android:showAsAction="ifRoom"/>
+          android:showAsAction="always"
+          />
 </menu>
