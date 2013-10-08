@@ -19,11 +19,15 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -44,6 +48,8 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
+import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
+import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.SearchResult;
 
@@ -57,6 +63,8 @@ public class MyOtherMapFragment extends SherlockFragment
 
   public static Marker paneMarker;
   public static Marker pivotMarker;
+
+  public static EditText mySearchView;
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -87,6 +95,29 @@ public class MyOtherMapFragment extends SherlockFragment
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();
+
+    mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
+    mySearchView.setOnEditorActionListener( new OnEditorActionListener()
+      {
+        @Override
+        public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+        {
+          if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == event.KEYCODE_ENTER )
+          {
+            // TODO change this to a fragment loading?
+            //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
+            double lat = MyOtherMapFragment.PIVOT.latitude;
+            double lng = MyOtherMapFragment.PIVOT.longitude;
+            new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance ).execute(); // need to get this info
+            // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
+            //return false;
+            /*InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
+            imm.hideSoftInputFromWindow( mySearchView.getWindowToken(), 0 );*/
+            return false;
+          }
+          return false;
+        }
+      } );
     //vw.findViewById( R.id.find_me )
     //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
     //may have to rebuild dynamically instead of using xml
@@ -326,6 +357,8 @@ public class MyOtherMapFragment extends SherlockFragment
         {
           //chyauchyau -- show button screen
           //chyauchyau -- marker should not be highlighted
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
+          imm.hideSoftInputFromWindow( mySearchView.getWindowToken(), 0 );
           paneMarker = null;
           BottomPagerPanel.getInstance().disableMarkerPanel();
         }

@@ -8,6 +8,7 @@ import java.util.Set;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -90,6 +92,11 @@ public class BurritoClickListeners
       LayoutInflater factory = LayoutInflater.from( _ctx );
       final View textEntryView = factory.inflate( R.layout.save_dialog, null );
       final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
+      
+      InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
+
+      imm.hideSoftInputFromWindow( MyOtherMapFragment.mySearchView.getWindowToken(), 0 );
+      imm.showSoftInput( editText, 0 );
       if ( MapActivity.selectedSearchResults.size() == 0 )
       {
         Toast.makeText( _ctx, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
@@ -128,13 +135,15 @@ public class BurritoClickListeners
                     List<SavedListItem> list = DatabaseUtil.getSavedList();
                     SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
                     MapActivity._listFragment.setListAdapter( adapter );
-
                   }
                 }
                 else
                 {
                   Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
                 }
+
+                InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
+                imm.hideSoftInputFromWindow( editText.getWindowToken(), 0 );
               }
 
             } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
@@ -142,6 +151,9 @@ public class BurritoClickListeners
               public void onClick( DialogInterface dialog, int whichButton )
               {
                 /* User clicked cancel so do some stuff */
+
+                InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
+                imm.hideSoftInputFromWindow( editText.getWindowToken(), 0 );
               }
             } ).create().show();
     }

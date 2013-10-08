@@ -17,7 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -211,6 +211,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public void onCreate( Bundle savedInstanceState )
   {
     super.onCreate( savedInstanceState );
+    getSupportActionBar().hide();
     setContentView( R.layout.activity_map );
     mLocationClient = new LocationClient( this, this, this );
     _mapFragment = new MyOtherMapFragment();
@@ -236,6 +237,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter( _context );
     mFrag.setListAdapter( slidingMenuAdapter );
+
     /*
      * Button save = (Button) findViewById( R.id.save ); Button saved = (Button) findViewById( R.id.saved );
      * 
@@ -273,7 +275,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
     searchView.setSubmitButtonEnabled( true );
     searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener( this ) );
-    //searchView.setIconified( false );
+    searchView.setIconified( false );
+    //searchView.setImequestFocus();
 
     viewInMap = (MenuItem) menu.findItem( R.id.viewinmap );
     viewInMap.setVisible( false );

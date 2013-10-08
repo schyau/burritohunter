@@ -44,6 +44,7 @@ public class BottomPagerButtonsPanel extends SherlockFragment
     //FindMeOnClickListener
     _findMeButton.setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance,
                                                                                        MapActivity._mapFragment ) );
+    setNumSelectedTextView( MapActivity.selectedSearchResults.size() + "");
     _panelLeftArrowButton.setOnClickListener( new OnClickListener()
       {
 

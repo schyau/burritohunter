@@ -21,7 +21,7 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   String _query;
   Bus _eventBus;
 
-  public FoursquareRequestAsyncTask( Double lat, Double lng, String query, Bus eventBus, MapActivity mapActivity)//Context context ) //yep, just took a shit here :)
+  public FoursquareRequestAsyncTask( Double lat, Double lng, String query, Bus eventBus, MapActivity mapActivity )//Context context ) //yep, just took a shit here :)
   { // TODO plz design this better, maybe pass in a POJO
     _lat = lat;
     _lng = lng;
@@ -34,7 +34,7 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   @Override
   protected FoursquareExploreResult doInBackground( Void... params )
   {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mapActivity);
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( mapActivity );
     int maxResults = preferences.getInt( MAX_RESULT_KEY, 10 );
     int radius = preferences.getInt( RADIUS_KEY, 10 ) * MULTIPLIER_TO_KM;
     return FoursquareExploreService.search( _lat, _lng, _query, radius, maxResults );
@@ -46,9 +46,9 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   protected void onPostExecute( FoursquareExploreResult result )
   {
     super.onPostExecute( result );
-    /*if ( result == null )
-      return;
-    _eventBus.post( result );*/
+    /*
+     * if ( result == null ) return; _eventBus.post( result );
+     */
     mapActivity.subscriberWithASillyName( result );
   }
 }
