@@ -20,12 +20,12 @@ import com.potato.burritohunter.stuff.BurritoClickListeners;
 
 public class BottomPagerButtonsPanel extends SherlockFragment
 {
-  private TextView _numSelectedTextView;
-  private ImageButton _panelLeftArrowButton;
-  private ImageButton _clearAllButton;
-  private ImageButton _findMeButton;
-  private ImageButton _saveButton;
-  private ViewPager _viewPager;
+  private static TextView _numSelectedTextView;
+  private static ImageButton _panelLeftArrowButton;
+  private static ImageButton _clearAllButton;
+  private static ImageButton _findMeButton;
+  private static ImageButton _saveButton;
+  private static ViewPager _viewPager;
 
   @SuppressLint( "NewApi" )
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )

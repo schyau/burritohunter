@@ -53,6 +53,7 @@ public class BurritoClickListeners
       if ( MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
       {
         BottomPagerPanel.getInstance().disableMarkerPanel();
+        MyOtherMapFragment.paneMarker = null;
       }
     }
   }

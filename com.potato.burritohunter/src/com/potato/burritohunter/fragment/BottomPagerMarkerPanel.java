@@ -18,10 +18,14 @@ import com.potato.burritohunter.stuff.SearchResult;
 
 public class BottomPagerMarkerPanel extends SherlockFragment
 {
-  private TextView _title;
-  private TextView _desc;
-  private ImageButton _bottomPagerRightArrow;
-  private ViewPager _viewPager;
+  // hello.
+  // i'd like to take this time to make a formal apology to my species.  i am an idiot and i'm sorry.
+  // these instance variables are now class variables
+  // have a good day.
+  private static TextView _title;
+  private static TextView _desc;
+  private static ImageButton _bottomPagerRightArrow;
+  private static ViewPager _viewPager;
 
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
