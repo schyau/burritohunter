@@ -170,7 +170,7 @@ public class BurritoClickListeners
       //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
       double lat = MyOtherMapFragment.PIVOT.latitude;
       double lng = MyOtherMapFragment.PIVOT.longitude;
-      new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus(), context ).execute(); // need to get this info
+  //    new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus(), context ).execute(); // need to get this info
       // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
       return false;
     }
