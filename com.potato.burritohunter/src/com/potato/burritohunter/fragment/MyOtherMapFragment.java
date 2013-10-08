@@ -86,7 +86,6 @@ public class MyOtherMapFragment extends SherlockFragment
   public static boolean shouldFindMe = false;
   private static boolean ONSTOPLOCK = false; //should we skip on stop?
 
-  // solution shamelessly stolen from
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -104,15 +103,9 @@ public class MyOtherMapFragment extends SherlockFragment
         {
           if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == event.KEYCODE_ENTER )
           {
-            // TODO change this to a fragment loading?
-            //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
             new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance ).execute(); // need to get this info
-            // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
-            //return false;
-            /*InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
-            imm.hideSoftInputFromWindow( mySearchView.getWindowToken(), 0 );*/
             return false;
           }
           return false;
@@ -324,16 +317,16 @@ public class MyOtherMapFragment extends SherlockFragment
       BottomPagerPanel.getInstance().enableMarkerPanel( sr );
     }
   }
-
+  //TODO chyauchyau save searchQuery
   private void saveSearchQueryToSharedPrefs()
   {
     SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
-    CharSequence query = MapActivity.searchView.getQuery();
+    //chyauchyauCharSequence query = MapActivity.searchView.getQuery();
 
-    String value = query == null ? "" : query.toString();
+//    String value = query == null ? "" : query.toString();
 
-    prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
+  //  prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
   }
 
   private void initMap( GoogleMap map )

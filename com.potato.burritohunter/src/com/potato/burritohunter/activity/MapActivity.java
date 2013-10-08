@@ -8,8 +8,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.database.Cursor;
@@ -17,13 +15,9 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -48,7 +42,6 @@ import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.fragment.SinglePOIListFragment;
-import com.potato.burritohunter.stuff.BurritoClickListeners.SearchViewOnQueryTextListener;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
@@ -67,145 +60,11 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public static SampleListFragment.SlidingMenuAdapter slidingMenuAdapter;
   public static LocationClient mLocationClient;
   public static MapActivity instance;
-  public static SearchView searchView;
   public static MenuItem viewInMap;
   public static SlidingMenu slidingMenu;
   public static POIListFragment _listFragment;
 
   public static MyOtherMapFragment _mapFragment; 
-
-  // request the current location or start periodic updates
-
-  @Override
-  public void onDisconnected()
-  { // locationservices dropped connection from error
-    Toast.makeText( this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT ).show();
-  }
-
-  @Override
-  public void onConnectionFailed( ConnectionResult connectionResult )
-  { //locationservices
-    if ( connectionResult.hasResolution() )
-    {
-      try
-      {
-        connectionResult.startResolutionForResult( this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
-      }
-      catch ( IntentSender.SendIntentException e )
-      {
-        e.printStackTrace();
-      }
-    }
-    else
-    {
-      showErrorDialog( connectionResult.getErrorCode() );
-    }
-  }
-
-  // Define a DialogFragment that displays the error dialog
-  public static class ErrorDialogFragment extends DialogFragment
-  {
-    private Dialog mDialog;
-
-    public ErrorDialogFragment()
-    {
-      super();
-      mDialog = null;
-    }
-
-    public void setDialog( Dialog dialog )
-    {
-      mDialog = dialog;
-    }
-
-    @Override
-    public Dialog onCreateDialog( Bundle savedInstanceState )
-    {
-      return mDialog;
-    }
-  }
-
-  @Override
-  public void onActivityResult( int requestCode, int resultCode, Intent data )
-  {
-    // Decide what to do based on the original request code
-    switch ( requestCode )
-    {
-      case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-        //if activity's result is okay
-        switch ( resultCode )
-        {
-          case Activity.RESULT_OK:
-            //try request again... asin getlastknownlocation?
-            break;
-        }
-    }
-  }
-
-  private boolean servicesConnected()
-  {
-    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable( this );
-    if ( ConnectionResult.SUCCESS == resultCode )
-    {
-      Log.d( "Location Updates", "Google Play services is available." );
-      return true;
-    }
-    else
-    {
-      showErrorDialog( resultCode );
-    }
-    return false;
-  }
-
-  public android.location.Location getCurrentLocation()
-  {
-    if ( mLocationClient != null )
-    {
-      if ( servicesConnected() )
-      {
-        boolean stuff = mLocationClient.isConnected();
-        return mLocationClient.getLastLocation();
-      }
-      else
-      {
-        // retry?
-      }
-    }
-    return null;
-  }
-
-  public void connectClient()
-  {
-    mLocationClient.connect();
-  }
-
-  public void disconnectClient()
-  {
-    mLocationClient.disconnect();
-  }
-
-  private void showErrorDialog( int errorCode )
-  {
-    Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog( errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
-    if ( errorDialog != null ) // googl services can provide a dialog
-    {
-      ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-      errorFragment.setDialog( errorDialog );
-      errorFragment.show( getSupportFragmentManager(), "Location Updates" );
-    }
-  }
-
-  @Override
-  public void onConnected( Bundle dataBundle )
-  {
-    Toast.makeText( this, "Connected", Toast.LENGTH_SHORT ).show();
-    if ( MyOtherMapFragment.shouldFindMe )
-    {
-      double lat = mLocationClient.getLastLocation().getLatitude();
-      double lng = mLocationClient.getLastLocation().getLongitude();
-      _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
-    }
-  }
 
   @Override
   public void onCreate( Bundle savedInstanceState )
@@ -216,10 +75,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     mLocationClient = new LocationClient( this, this, this );
     _mapFragment = new MyOtherMapFragment();
     instance = this;
-    //_mapFragment = MyMapFragment.newInstance( PIVOT );
-    /*
-     * _mapFragment = SupportMapFragment.newInstance(); initMap(_mapFragment.getMap());
-     */
 
     _listFragment = new POIListFragment();
 
@@ -237,14 +92,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter( _context );
     mFrag.setListAdapter( slidingMenuAdapter );
-
-    /*
-     * Button save = (Button) findViewById( R.id.save ); Button saved = (Button) findViewById( R.id.saved );
-     * 
-     * //findMe.setOnClickListener( new BurritoClickListeners.FindMe( ) ); save.setOnClickListener( new
-     * BurritoClickListeners.Save( this ) );
-     */
-
   }
 
   //Called when the Activity becomes visible.
@@ -252,7 +99,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   protected void onStart()
   {
     super.onStart();
-    // Connect the client.
   }
 
   // Called when the Activity is no longer visible.
@@ -260,27 +106,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   protected void onStop()
   {
     super.onStop();
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu( Menu menu )
-  {
-    MenuInflater inflater = this.getSupportMenuInflater();
-    inflater.inflate( R.menu.main, menu );
-
-    // Add SearchWidget.
-    SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
-    searchView = (SearchView) menu.findItem( R.id.action_bar_search ).getActionView();
-
-    searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
-    searchView.setSubmitButtonEnabled( true );
-    searchView.setOnQueryTextListener( new SearchViewOnQueryTextListener( this ) );
-    searchView.setIconified( false );
-    //searchView.setImequestFocus();
-
-    viewInMap = (MenuItem) menu.findItem( R.id.viewinmap );
-    viewInMap.setVisible( false );
-    return super.onCreateOptionsMenu( menu );
   }
 
   @Override
@@ -437,50 +262,170 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
   }
 
-  public static final int MENU_ADD = Menu.FIRST;
-  public static final int MENU_DELETE = Menu.FIRST + 1;
-  public static final int MENU_VIEW = Menu.FIRST + 2;
+  public void viewInMapAction ()
+  {
+    //      MapActivity.selectedSearchResults.clear();
+    //      for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    //      {
+    //        m.remove();
+    //      }
+    //      _mapFragment.getMap().clear();
+    //      MapActivity.currentSearchResults.clear();
+    //      MapActivity.slidingMenuAdapter.clear();
+
+          // clear current, selected, and sliding
+          // retrieve points.
+          DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+          List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
+          MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults ,MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY);
+          MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY);
+
+//         populate current selected and sliding, draw markers too
+//          _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+//          viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
+          //change viewpager
+//          viewPager.setCurrentItem( 0 );
+//          searchView.setVisibility( View.VISIBLE );
+//          getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
+//          item.setVisible( false );
+
+          // TODO lol, confession.  i am stupid.  :) kthxbai
+          Intent i = getPackageManager().getLaunchIntentForPackage("com.potato.burritohunter");
+          i.putExtra(StartUpActivity.SKIP_STARTUP_FLAG, true);
+          startActivity( i );
+
+          finish();
+  }
 
   @Override
-  public boolean onOptionsItemSelected( MenuItem item )
-  {
-    switch ( item.getItemId() )
+  public void onDisconnected()
+  { // locationservices dropped connection from error
+    Toast.makeText( this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT ).show();
+  }
+
+  @Override
+  public void onConnectionFailed( ConnectionResult connectionResult )
+  { //locationservices
+    if ( connectionResult.hasResolution() )
     {
-      case R.id.viewinmap:
-  //      MapActivity.selectedSearchResults.clear();
-  //      for ( Marker m : MapActivity.currentSearchResults.keySet() )
-  //      {
-  //        m.remove();
-  //      }
-  //      _mapFragment.getMap().clear();
-  //      MapActivity.currentSearchResults.clear();
-  //      MapActivity.slidingMenuAdapter.clear();
-
-        // clear current, selected, and sliding
-        // retrieve points.
-        DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-        List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults ,MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY);
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY);
-
-        // populate current selected and sliding, draw markers too
-//        _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-//        viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
-        //change viewpager
-//        viewPager.setCurrentItem( 0 );
-//        searchView.setVisibility( View.VISIBLE );
-//        getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
-//        item.setVisible( false );
-
-        // TODO lol, confession.  i am stupid.  :) kthxbai
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.potato.burritohunter");
-        i.putExtra(StartUpActivity.SKIP_STARTUP_FLAG, true);
-        startActivity( i );
-
-        finish();
-        return true;
-      default:
-        return super.onOptionsItemSelected( item );
+      try
+      {
+        connectionResult.startResolutionForResult( this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
+      }
+      catch ( IntentSender.SendIntentException e )
+      {
+        e.printStackTrace();
+      }
+    }
+    else
+    {
+      showErrorDialog( connectionResult.getErrorCode() );
     }
   }
+
+  // Define a DialogFragment that displays the error dialog
+  public static class ErrorDialogFragment extends DialogFragment
+  {
+    private Dialog mDialog;
+
+    public ErrorDialogFragment()
+    {
+      super();
+      mDialog = null;
+    }
+
+    public void setDialog( Dialog dialog )
+    {
+      mDialog = dialog;
+    }
+
+    @Override
+    public Dialog onCreateDialog( Bundle savedInstanceState )
+    {
+      return mDialog;
+    }
+  }
+
+  @Override
+  public void onActivityResult( int requestCode, int resultCode, Intent data )
+  {
+    // Decide what to do based on the original request code
+    switch ( requestCode )
+    {
+      case CONNECTION_FAILURE_RESOLUTION_REQUEST:
+        //if activity's result is okay
+        switch ( resultCode )
+        {
+          case Activity.RESULT_OK:
+            //try request again... asin getlastknownlocation?
+            break;
+        }
+    }
+  }
+
+  private boolean servicesConnected()
+  {
+    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable( this );
+    if ( ConnectionResult.SUCCESS == resultCode )
+    {
+      Log.d( "Location Updates", "Google Play services is available." );
+      return true;
+    }
+    else
+    {
+      showErrorDialog( resultCode );
+    }
+    return false;
+  }
+
+  public android.location.Location getCurrentLocation()
+  {
+    if ( mLocationClient != null )
+    {
+      if ( servicesConnected() )
+      {
+        boolean stuff = mLocationClient.isConnected();
+        return mLocationClient.getLastLocation();
+      }
+      else
+      {
+        // retry?
+      }
+    }
+    return null;
+  }
+
+  public void connectClient()
+  {
+    mLocationClient.connect();
+  }
+
+  public void disconnectClient()
+  {
+    mLocationClient.disconnect();
+  }
+
+  private void showErrorDialog( int errorCode )
+  {
+    Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog( errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
+    if ( errorDialog != null ) // googl services can provide a dialog
+    {
+      ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+      errorFragment.setDialog( errorDialog );
+      errorFragment.show( getSupportFragmentManager(), "Location Updates" );
+    }
+  }
+
+  @Override
+  public void onConnected( Bundle dataBundle )
+  {
+    Toast.makeText( this, "Connected", Toast.LENGTH_SHORT ).show();
+    if ( MyOtherMapFragment.shouldFindMe )
+    {
+      double lat = mLocationClient.getLastLocation().getLatitude();
+      double lng = mLocationClient.getLastLocation().getLongitude();
+      _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
+    }
+  }
+
 }

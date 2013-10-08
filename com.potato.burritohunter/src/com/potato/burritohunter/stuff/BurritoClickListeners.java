@@ -92,11 +92,6 @@ public class BurritoClickListeners
       LayoutInflater factory = LayoutInflater.from( _ctx );
       final View textEntryView = factory.inflate( R.layout.save_dialog, null );
       final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
-      
-      InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
-
-      imm.hideSoftInputFromWindow( MyOtherMapFragment.mySearchView.getWindowToken(), 0 );
-      imm.showSoftInput( editText, 0 );
       if ( MapActivity.selectedSearchResults.size() == 0 )
       {
         Toast.makeText( _ctx, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
@@ -150,42 +145,10 @@ public class BurritoClickListeners
             {
               public void onClick( DialogInterface dialog, int whichButton )
               {
-                /* User clicked cancel so do some stuff */
-
-                InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
-                imm.hideSoftInputFromWindow( editText.getWindowToken(), 0 );
               }
             } ).create().show();
     }
 
-  }
-
-  public static class SearchViewOnQueryTextListener implements OnQueryTextListener
-  {
-    private Context context;
-
-    public SearchViewOnQueryTextListener( Context context )
-    {
-      this.context = context;
-    }
-
-    @Override
-    public boolean onQueryTextChange( String newText )
-    {
-      return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit( String query )
-    {
-      // TODO change this to a fragment loading?
-      //new PlacesRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute(); // need to get this info
-      double lat = MyOtherMapFragment.PIVOT.latitude;
-      double lng = MyOtherMapFragment.PIVOT.longitude;
-  //    new FoursquareRequestAsyncTask( lat, lng, query, SomeUtil.getBus(), context ).execute(); // need to get this info
-      // new YelpRequestAsyncTask( 37.798052, -122.406278, query, SomeUtil.getBus() ).execute();
-      return false;
-    }
   }
 
   public static class MapOnMarkerClickListener implements OnMarkerClickListener
@@ -232,40 +195,9 @@ public class BurritoClickListeners
       {
         case 0:
           _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
-          if ( MapActivity.searchView != null )
-          {
-            MapActivity.searchView.setVisibility( View.VISIBLE );
-          }
-          if ( MapActivity.viewInMap != null )
-          {
-            MapActivity.viewInMap.setVisible( false );
-          }
-          break;
-        case 1:
-
-          if ( MapActivity.searchView != null )
-          {
-            MapActivity.searchView.setVisibility( View.GONE );
-          }
-          if ( MapActivity.viewInMap != null )
-          {
-            MapActivity.viewInMap.setVisible( false );
-          }
-          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
-          break;
-        case 2:
-
-          if ( MapActivity.searchView != null )
-          {
-            MapActivity.searchView.setVisibility( View.GONE );
-          }
-          if ( MapActivity.viewInMap != null )
-          {
-            MapActivity.viewInMap.setVisible( true );
-          }
-          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
         default:
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           break;
       }
     }
