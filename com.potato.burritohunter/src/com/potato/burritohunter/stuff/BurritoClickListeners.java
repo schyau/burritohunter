@@ -71,7 +71,6 @@ public class BurritoClickListeners
       MapActivity.selectedSearchResults.clear();
       MapActivity.slidingMenuAdapter.clear();
       MyOtherMapFragment.paneMarker = null;
-      //chyauchyauMyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
       BottomPagerPanel.getInstance().disableMarkerPanel();
       BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( "0" );
       return false;
@@ -169,17 +168,33 @@ public class BurritoClickListeners
     @Override
     public boolean onMarkerClick( Marker marker )
     {
-      if ( marker.equals( MyOtherMapFragment.pivotMarker ) )
+      if ( !marker.equals( MyOtherMapFragment.pivotMarker ) )
       {
-        return true;
+        onMarkerClicked( marker );
       }
-      MyOtherMapFragment.changeMarkerState( marker );
-      MyOtherMapFragment.paneMarker = marker;
-      SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      BottomPagerPanel.getInstance().enableMarkerPanel( sr );
-      MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
       return true;
     }
+  }
+  
+  public static class OnBottomMarkerPanelPictureClickListener implements OnClickListener
+  {
+    @Override
+    public void onClick( View v )
+    {
+      //TODO, add null check
+      //skipping the null check just because it shouldn't be null at this moment!
+      Marker marker = MyOtherMapFragment.paneMarker;
+      onMarkerClicked ( marker );
+    }
+  }
+
+  public static void onMarkerClicked( Marker marker )
+  {
+    MyOtherMapFragment.changeMarkerState( marker );
+    MyOtherMapFragment.paneMarker = marker;
+    SearchResult sr = MapActivity.currentSearchResults.get( marker );
+    BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+    MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
   }
 
   public static class ViewPagerOnPageChangeListener implements OnPageChangeListener

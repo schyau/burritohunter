@@ -2,7 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-
+	<ImageView 
+	    android:id="@+id/bottom_pager_marker_picture"
+	    android:layout_height="wrap_content"
+	    android:layout_width="50dp"
+	    android:scaleType="fitXY"
+	    android:layout_alignParentLeft="true"
+	    android:src="@drawable/rufknkddngme"/>
     <ImageButton
         android:id="@+id/bottomPagerRightArrow"
         android:layout_width="wrap_content"
@@ -15,7 +21,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_toLeftOf="@id/bottomPagerRightArrow"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/bottom_pager_marker_picture" >
 
         <TextView
             android:id="@+id/bottomPagerMarkerTitle"

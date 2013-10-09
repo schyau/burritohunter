@@ -35,8 +35,8 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   protected FoursquareExploreResult doInBackground( Void... params )
   {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( mapActivity );
-    int maxResults = preferences.getInt( MAX_RESULT_KEY, 10 );
-    int radius = preferences.getInt( RADIUS_KEY, 10 ) * MULTIPLIER_TO_KM;
+    int maxResults = preferences.getInt( MAX_RESULT_KEY, 10 ) + 1;
+    int radius = (preferences.getInt( RADIUS_KEY, 10 ) + 1 ) * MULTIPLIER_TO_KM;
     return FoursquareExploreService.search( _lat, _lng, _query, radius, maxResults );
     // TODO: purge stale shits
     // return FoursquareService.searchVenueDetail( "43e879cbf964a5200f2f1fe3" );
@@ -46,9 +46,8 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   protected void onPostExecute( FoursquareExploreResult result )
   {
     super.onPostExecute( result );
-    /*
-     * if ( result == null ) return; _eventBus.post( result );
-     */
+    if ( result == null ) 
+      return; _eventBus.post( result );
     mapActivity.subscriberWithASillyName( result );
   }
 }
