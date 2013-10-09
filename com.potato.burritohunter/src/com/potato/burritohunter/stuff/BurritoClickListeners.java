@@ -226,6 +226,10 @@ public class BurritoClickListeners
         Log.d( "FindMe", lat + ", lng: " + lng );
         _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
       }
+      else
+      {
+        Toast.makeText( _mapActivity, "Unable to find your location", Toast.LENGTH_SHORT ).show();
+      }
     }
   }
 
