@@ -17,6 +17,8 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -64,7 +66,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public static SlidingMenu slidingMenu;
   public static POIListFragment _listFragment;
 
-  public static MyOtherMapFragment _mapFragment; 
+  public static MyOtherMapFragment _mapFragment;
 
   @Override
   public void onCreate( Bundle savedInstanceState )
@@ -135,7 +137,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
     Response response = searchResult.getResponse();
-    
 
     List<Venue> venues = new ArrayList<Venue>();
     List<Group> groups = response.getGroups();
@@ -143,7 +144,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     List<Item> items = g.getItems();
     for ( Item item : items )
     {
-     venues.add( item.getVenue() ); 
+      venues.add( item.getVenue() );
     }
     Toast.makeText( this, venues.size() + " results found", Toast.LENGTH_SHORT ).show();
 
@@ -262,39 +263,53 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
   }
 
-  public void viewInMapAction ()
+  //delete this once you get viewin map working
+  /*@Override
+  public boolean onCreateOptionsMenu( Menu menu )
   {
-    //      MapActivity.selectedSearchResults.clear();
-    //      for ( Marker m : MapActivity.currentSearchResults.keySet() )
-    //      {
-    //        m.remove();
-    //      }
-    //      _mapFragment.getMap().clear();
-    //      MapActivity.currentSearchResults.clear();
-    //      MapActivity.slidingMenuAdapter.clear();
+    MenuInflater inflater = this.getSupportMenuInflater();
+    inflater.inflate( R.menu.main, menu );
+    return super.onCreateOptionsMenu( menu );
+  }
 
-          // clear current, selected, and sliding
-          // retrieve points.
-          DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-          List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
-          MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults ,MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY);
-          MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY);
+  @Override
+  public boolean onOptionsItemSelected( MenuItem item )
+  {
+    switch ( item.getItemId() )
+    {
+      case R.id.viewinmap:
+        viewInMapAction();
+        return true;
+    }
+    return super.onOptionsItemSelected( item );
+  }*/
 
-//         populate current selected and sliding, draw markers too
-//          _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-//          viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
-          //change viewpager
-//          viewPager.setCurrentItem( 0 );
-//          searchView.setVisibility( View.VISIBLE );
-//          getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
-//          item.setVisible( false );
+  public void viewInMapAction()
+  {
+    MapActivity.selectedSearchResults.clear();
+    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    {
+      m.remove();
+    }
+    _mapFragment.getMap().clear();
+    MapActivity.currentSearchResults.clear();
+    MapActivity.slidingMenuAdapter.clear();
 
-          // TODO lol, confession.  i am stupid.  :) kthxbai
-          Intent i = getPackageManager().getLaunchIntentForPackage("com.potato.burritohunter");
-          i.putExtra(StartUpActivity.SKIP_STARTUP_FLAG, true);
-          startActivity( i );
+    // clear current, selected, and sliding
+    // retrieve points.
+    DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+    List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
+    MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,
+                                                       MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
+    MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,
+                                                       MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
 
-          finish();
+    //populate current selected and sliding, draw markers too
+    _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+    viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
+    //change viewpager
+    getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
+    viewPager.setCurrentItem( 0 );
   }
 
   @Override

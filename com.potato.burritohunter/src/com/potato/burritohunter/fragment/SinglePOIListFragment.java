@@ -65,6 +65,12 @@ public class SinglePOIListFragment extends SherlockListFragment
   @Override
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
+    /* start of shitty code */
+    if (position == 0 )
+    {// plz delete this when you can figure out where to put viewin map.  kthx
+        MapActivity.instance.viewInMapAction();   return;   
+    }
+    /* end of shitty code */
     SearchResult searchResult = (SearchResult) parent.getItemAtPosition(position);
     String searchResultId = searchResult.id;
 

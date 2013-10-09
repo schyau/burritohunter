@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.SearchResult;
 
 public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickListener // can practice using variant/invariant generics here!
@@ -35,7 +36,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
   @Override
   public Object getItem( int position )
   {
-    return rowItems.get( position );
+    return rowItems.get( position  ) ;
   }
 
   @Override

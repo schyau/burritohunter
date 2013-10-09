@@ -5,22 +5,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.LatLng;
@@ -74,31 +73,32 @@ public class BurritoClickListeners
       MyOtherMapFragment.paneMarker = null;
       //chyauchyauMyOtherMapFragment.trasnPanel.setVisibility( View.GONE );
       BottomPagerPanel.getInstance().disableMarkerPanel();
+      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( "0" );
       return false;
     }
   }
 
   public static class Save implements OnClickListener
   {
-    private Context _ctx;
+    private Activity activity;
 
-    public Save( Context ctx )
+    public Save( Activity activity )
     {
-      _ctx = ctx;
+      this.activity = activity;
     }
 
     @Override
     public void onClick( View arg0 )
     {
-      LayoutInflater factory = LayoutInflater.from( _ctx );
+      LayoutInflater factory = LayoutInflater.from( activity );
       final View textEntryView = factory.inflate( R.layout.save_dialog, null );
       final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
       if ( MapActivity.selectedSearchResults.size() == 0 )
       {
-        Toast.makeText( _ctx, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
+        Toast.makeText( activity, "saving nothing is not allowed!", Toast.LENGTH_SHORT ).show();
         return;
       }
-      new AlertDialog.Builder( _ctx )
+      final AlertDialog dialog = new AlertDialog.Builder( activity )
 
       .setMessage( "What would you like to name this trip?" ).setView( textEntryView )
           .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
@@ -111,7 +111,7 @@ public class BurritoClickListeners
                   String name = e.toString();
                   if ( name == null || name.length() < 3 )
                   {
-                    Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
+                    Toast.makeText( activity, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
                   }
                   else
                   {
@@ -126,7 +126,7 @@ public class BurritoClickListeners
                       ids.add( id );
                     }
                     DatabaseUtil.addList( name, ids );
-                    Toast.makeText( _ctx, name + " was saved!", Toast.LENGTH_SHORT ).show();
+                    Toast.makeText( activity, name + " was saved!", Toast.LENGTH_SHORT ).show();
 
                     List<SavedListItem> list = DatabaseUtil.getSavedList();
                     SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
@@ -135,11 +135,8 @@ public class BurritoClickListeners
                 }
                 else
                 {
-                  Toast.makeText( _ctx, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
+                  Toast.makeText( activity, "name must be greater than 3", Toast.LENGTH_SHORT ).show();
                 }
-
-                InputMethodManager imm = (InputMethodManager) _ctx.getSystemService( Context.INPUT_METHOD_SERVICE );
-                imm.hideSoftInputFromWindow( editText.getWindowToken(), 0 );
               }
 
             } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
@@ -147,7 +144,22 @@ public class BurritoClickListeners
               public void onClick( DialogInterface dialog, int whichButton )
               {
               }
-            } ).create().show();
+            } ).create();
+      editText.setOnFocusChangeListener( new OnFocusChangeListener()
+        {
+
+          @Override
+          public void onFocusChange( View v, boolean hasFocus )
+          {
+            if ( hasFocus )
+            {
+              dialog.getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE );
+            }
+
+          }
+
+        } );
+      dialog.show();
     }
 
   }
