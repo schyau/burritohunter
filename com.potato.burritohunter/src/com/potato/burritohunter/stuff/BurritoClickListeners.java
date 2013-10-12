@@ -239,15 +239,17 @@ public class BurritoClickListeners
         case 0:
           POIListFragment.listAdapter.whenFragmentOnStop();
           _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
+          GalleryPoiList.kontinue = false;
           break;
         case 1:
           POIListFragment.listAdapter.startFlipping();
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
+          GalleryPoiList.kontinue = true;
           break;
         case 2:
           POIListFragment.listAdapter.whenFragmentOnStop();
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
-          
+          GalleryPoiList.kontinue = false;
         default:
           break;
       }

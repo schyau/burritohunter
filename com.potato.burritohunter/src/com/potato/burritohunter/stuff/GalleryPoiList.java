@@ -25,6 +25,7 @@ public class GalleryPoiList
   public int count;
   private final GalleryPoiList instance;
   private final SavedListAdapter.ViewHolder holder;
+  public static boolean kontinue = false;
 
   private boolean isLeft = false;
 
@@ -75,7 +76,8 @@ public class GalleryPoiList
               } );
           }
           Log.d("asdf", "hey mum.  mum. mum. mum. hey mum. mum.  mum.");
-          _viewFlipperHandler.postDelayed( instance._flipperRunnable, FLIP_DELAY );
+          if(kontinue)
+            _viewFlipperHandler.postDelayed( instance._flipperRunnable, FLIP_DELAY );
         }
       };
 
@@ -130,5 +132,6 @@ public class GalleryPoiList
   public void stopFlippingNaoJUSTSTHAPPP()
   {
     _viewFlipperHandler.removeCallbacks( _flipperRunnable );
+    kontinue = false;
   }
 }

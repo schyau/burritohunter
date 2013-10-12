@@ -45,6 +45,7 @@ import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.fragment.SinglePOIListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
+import com.potato.burritohunter.stuff.GalleryPoiList;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.squareup.otto.Subscribe;
@@ -108,6 +109,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   protected void onStop()
   {
     super.onStop();
+
   }
 
   @Override
@@ -115,6 +117,10 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     super.onPause();
     SomeUtil.getBus().unregister( this );
+    if ( viewPager.getCurrentItem() == 1)
+    {
+      GalleryPoiList.kontinue = false;
+    }
   }
 
   @Override
@@ -122,6 +128,11 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     super.onResume();
     SomeUtil.getBus().register( this );
+    if ( viewPager.getCurrentItem() ==1 )
+    {
+      POIListFragment.listAdapter.startFlipping();
+      GalleryPoiList.kontinue = true;
+    }
   }
 
   //remove markers except ones that were selected.  to clear all markers, clear selected markers before calling this func
