@@ -26,7 +26,7 @@ public class BottomPagerMarkerPanel extends SherlockFragment
   private static TextView _desc;
   private static ImageButton _bottomPagerRightArrow;
   private static ViewPager _viewPager;
-  private static ImageView _imageIcon;
+  public static ImageView _imageIcon;
 
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {

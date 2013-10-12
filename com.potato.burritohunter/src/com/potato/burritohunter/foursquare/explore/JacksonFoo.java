@@ -1,5 +1,5 @@
 package com.potato.burritohunter.foursquare.explore;
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+/*import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 
 import java.io.File;
@@ -99,4 +99,4 @@ enum SubCategories
 enum Themes
 {
   Theme1, Theme2, Theme3, Theme4
-}
+}*/

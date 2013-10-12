@@ -13,6 +13,7 @@ public class SearchResult
 	public String _name;
 	public String id;
 	public String _canonicalAddress;
+	public String photoIcon;
 	
 	public void serialize ( )
 	{

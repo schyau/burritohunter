@@ -17,8 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -38,6 +36,8 @@ import com.potato.burritohunter.foursquare.explore.FoursquareExploreResult;
 import com.potato.burritohunter.foursquare.explore.Group;
 import com.potato.burritohunter.foursquare.explore.Item;
 import com.potato.burritohunter.foursquare.explore.Response;
+import com.potato.burritohunter.foursquare.search.Category;
+import com.potato.burritohunter.foursquare.search.Icon;
 import com.potato.burritohunter.foursquare.search.Location;
 import com.potato.burritohunter.foursquare.search.Venue;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
@@ -136,9 +136,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   @Subscribe
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
+    List<Venue> venues = new ArrayList<Venue>();
     Response response = searchResult.getResponse();
 
-    List<Venue> venues = new ArrayList<Venue>();
     List<Group> groups = response.getGroups();
     Group g = groups.get( 0 );
     List<Item> items = g.getItems();
@@ -225,6 +225,27 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       mySearchResult.address = address;
       mySearchResult.id = id;
       mySearchResult._canonicalAddress = venue.getCanonicalUrl();
+
+      List<Category> categories = venue.getCategories();
+      if ( categories != null )
+      {
+        Category category = categories.get( 0 );
+        if ( category != null )
+        {
+          Icon icon = category.getIcon();
+          if ( icon != null )
+          {
+            String prefix = icon.getPrefix();
+            String bg = "bg_";
+            String imageSize = "32";
+            String suffix = icon.getSuffix();
+            String iconUrl = prefix + bg + imageSize + suffix;
+            mySearchResult.photoIcon = iconUrl;
+          }
+        }
+      }
+
+      //mySearchResult.photoUrl = 
       dbHelper.insertPoint( mySearchResult );
       LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
       // TODO make a big ass Marker class with its own onclicklistener
@@ -264,25 +285,13 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   }
 
   //delete this once you get viewin map working
-  /*@Override
-  public boolean onCreateOptionsMenu( Menu menu )
-  {
-    MenuInflater inflater = this.getSupportMenuInflater();
-    inflater.inflate( R.menu.main, menu );
-    return super.onCreateOptionsMenu( menu );
-  }
-
-  @Override
-  public boolean onOptionsItemSelected( MenuItem item )
-  {
-    switch ( item.getItemId() )
-    {
-      case R.id.viewinmap:
-        viewInMapAction();
-        return true;
-    }
-    return super.onOptionsItemSelected( item );
-  }*/
+  /*
+   * @Override public boolean onCreateOptionsMenu( Menu menu ) { MenuInflater inflater = this.getSupportMenuInflater();
+   * inflater.inflate( R.menu.main, menu ); return super.onCreateOptionsMenu( menu ); }
+   * 
+   * @Override public boolean onOptionsItemSelected( MenuItem item ) { switch ( item.getItemId() ) { case
+   * R.id.viewinmap: viewInMapAction(); return true; } return super.onOptionsItemSelected( item ); }
+   */
 
   public void viewInMapAction()
   {

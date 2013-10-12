@@ -46,42 +46,42 @@ public class POIListFragment extends SherlockListFragment
     vw.setBackgroundColor( Color.WHITE );
     return vw;
   }
+
   @Override
-  public void onActivityCreated(Bundle b)
+  public void onActivityCreated( Bundle b )
   {
     super.onActivityCreated( b );
     final Context _ctx = getActivity();
     getListView().setOnItemLongClickListener( new OnItemLongClickListener()
-    {
-      @Override
-      public boolean onItemLongClick( AdapterView<?> arg0, final View arg1, int arg2, long arg3 )
       {
-        final String title=  ((TextView)arg1.findViewById(R.id.title)).getText().toString();
-        new AlertDialog.Builder( _ctx )
-        .setMessage( "Are you sure you want to delete "+title+"?" )
-            .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
-              {
-                public void onClick( DialogInterface dialog, int whichButton )
+        @Override
+        public boolean onItemLongClick( AdapterView<?> arg0, final View arg1, int arg2, long arg3 )
+        {
+          final String title = ( (TextView) arg1.findViewById( R.id.title ) ).getText().toString();
+          new AlertDialog.Builder( _ctx ).setMessage( "Are you sure you want to delete " + title + "?" )
+              .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
                 {
-                  long id = ((SavedListAdapter.ViewHolder)arg1.getTag()).id;
-                  DatabaseUtil.getDatabaseHelper().deleteListRow( id );
-                  List<SavedListItem> list = DatabaseUtil.getSavedList();
-                  SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
-                  MapActivity._listFragment.setListAdapter( adapter );
-                  Toast.makeText( _ctx, title+ " deleted!", Toast.LENGTH_SHORT ).show();
-                }
+                  public void onClick( DialogInterface dialog, int whichButton )
+                  {
+                    long id = ( (SavedListAdapter.ViewHolder) arg1.getTag() ).id;
+                    DatabaseUtil.getDatabaseHelper().deleteListRow( id );
+                    List<SavedListItem> list = DatabaseUtil.getSavedList();
+                    SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
+                    MapActivity._listFragment.setListAdapter( adapter );
+                    Toast.makeText( _ctx, title + " deleted!", Toast.LENGTH_SHORT ).show();
+                  }
 
-              } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
-              {
-                public void onClick( DialogInterface dialog, int whichButton )
+                } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
                 {
-                  /* User clicked cancel so do some stuff */
-                }
-              } ).create().show();
-        return false;
-      }
+                  public void onClick( DialogInterface dialog, int whichButton )
+                  {
+                    /* User clicked cancel so do some stuff */
+                  }
+                } ).create().show();
+          return false;
+        }
 
-    } );
+      } );
   }
 
   @Override
@@ -110,5 +110,11 @@ public class POIListFragment extends SherlockListFragment
     MapActivity.viewPagerAdapter.notifyDataSetChanged();
     MapActivity.viewPager.setCurrentItem( 2 );
 
+  }
+
+  public void onDestroy()
+  {
+    ( (SavedListAdapter) getListAdapter() ).whenFragmentOnStop();
+    super.onDestroy();
   }
 }

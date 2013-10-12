@@ -37,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public static final String KEY_LAT = "latitude";
   public static final String KEY_LNG = "longitude";
   public static final String KEY_ADDRESS = "address";
+  public static final String KEY_ICON = "icon";
 
   public DatabaseHelper( Context context )
   {
@@ -65,11 +66,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     // create table single_poi 
     // (
     //   id text primary key not null unique,
-    //   name text, lat text, lng text, address text
+    //   name text, lat text, lng text, address text, icon text
     // )
     String CREATE_POI_SINGLE_TABLE = "CREATE TABLE " + TABLE_SINGLE_POI + "(" + KEY_ID
                                      + " TEXT PRIMARY KEY NOT NULL UNIQUE, " + KEY_NAME + " TEXT, " + KEY_LAT
-                                     + " TEXT, " + KEY_LNG + " TEXT, " + KEY_ADDRESS + " TEXT)";
+                                     + " TEXT, " + KEY_LNG + " TEXT, " + KEY_ADDRESS + " TEXT, " + KEY_ICON + " TEXT )";
 
     Log.d( TAG, CREATE_POI_LIST_TABLE );
     Log.d( TAG, CREATE_POI_SINGLE_TABLE );
@@ -87,6 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     String name = searchResult._name;
     String address = searchResult.address;
     String id = searchResult.id;
+    String photoIcon = searchResult.photoIcon;
 
     ContentValues values = new ContentValues();
     values.put( KEY_ID, id );
@@ -94,6 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     values.put( KEY_LNG, lng );
     values.put( KEY_NAME, name );
     values.put( KEY_ADDRESS, address );
+    values.put( KEY_ICON, photoIcon);
 
     SQLiteDatabase db = this.getWritableDatabase();;
     try
@@ -173,11 +176,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
     int latKey = cursorSingle.getColumnIndex( KEY_LAT );
     int lngKey = cursorSingle.getColumnIndex( KEY_LNG );
     int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
+    int photoIconKey = cursorSingle.getColumnIndex( KEY_ICON );
     searchResult.id = cursorSingle.getString( idKey );
     searchResult._name = cursorSingle.getString( nameKey );
     searchResult._lat = cursorSingle.getDouble( latKey );
     searchResult._lng = cursorSingle.getDouble( lngKey );
     searchResult.address = cursorSingle.getString( addressKey );
+    searchResult.photoIcon = cursorSingle.getString( photoIconKey );
     return searchResult;
   }
 

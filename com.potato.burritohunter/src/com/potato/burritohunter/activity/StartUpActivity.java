@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.stuff.ADS;
 
@@ -20,6 +22,8 @@ public class StartUpActivity extends SherlockActivity
     super.onCreate( savedInstanceState );
     final Context context = this;
     ADS.getInstance().init( getApplicationContext() );
+    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();
+    ImageLoader.getInstance().init(config);
     if ( getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean( SKIP_STARTUP_FLAG, false ) )
     {
       Intent intent = new Intent( context, MapActivity.class );

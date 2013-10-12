@@ -25,11 +25,13 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SavedListAdapter;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.fragment.BottomPagerMarkerPanel;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
 
 public class BurritoClickListeners
@@ -171,6 +173,18 @@ public class BurritoClickListeners
       if ( !marker.equals( MyOtherMapFragment.pivotMarker ) )
       {
         onMarkerClicked( marker );
+        SearchResult sr = MapActivity.currentSearchResults.get( marker );
+        ImageLoader imageLoader =ImageLoader.getInstance();
+        
+        //photoicon not guaranteed to exist
+        if ( sr.photoIcon !=null )
+        {
+          imageLoader.displayImage( sr.photoIcon, BottomPagerMarkerPanel._imageIcon);
+        }
+        else
+        {
+          BottomPagerMarkerPanel._imageIcon.setBackgroundResource( R.drawable.rufknkddngme );
+        }
       }
       return true;
     }
