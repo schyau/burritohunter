@@ -3,12 +3,10 @@ package com.potato.burritohunter.stuff;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.R;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
@@ -38,7 +36,6 @@ public class GalleryPoiList
     this.holder = holder;
     this.photoUrls = photoUrls;
     _viewFlipperHandler = new Handler();
-    // Set up a handler to automatically advance the pages.
     _flipperRunnable = new Runnable()
       {
 
@@ -77,7 +74,8 @@ public class GalleryPoiList
                 }
               } );
           }
-          _viewFlipperHandler.postDelayed( this, FLIP_DELAY );
+          Log.d("asdf", "hey mum.  mum. mum. mum. hey mum. mum.  mum.");
+          _viewFlipperHandler.postDelayed( instance._flipperRunnable, FLIP_DELAY );
         }
       };
 
@@ -121,9 +119,14 @@ public class GalleryPoiList
     String url = getUrl();
     ImageLoader.getInstance().displayImage( url, iv, SomeUtil.getImageOptions() );
 
-    _viewFlipperHandler.postDelayed( _flipperRunnable, FLIP_DELAY );
+    ahemStartFlippingPlz();
   }
 
+  public void ahemStartFlippingPlz()
+  {
+    _viewFlipperHandler.postDelayed( _flipperRunnable, FLIP_DELAY );
+  }
+  
   public void stopFlippingNaoJUSTSTHAPPP()
   {
     _viewFlipperHandler.removeCallbacks( _flipperRunnable );

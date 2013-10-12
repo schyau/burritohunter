@@ -100,6 +100,14 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     }
   }
 
+  public void startFlipping()
+  {
+    for( GalleryPoiList threadGallery : gallery )
+    {
+      threadGallery.ahemStartFlippingPlz();
+    }
+  }
+  
   @Override
   public int getCount()
   {

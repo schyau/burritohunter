@@ -237,11 +237,18 @@ public class BurritoClickListeners
       switch ( position )
       {
         case 0:
-          //POIListFragment.listAdapter.whenFragmentOnStop();
+          POIListFragment.listAdapter.whenFragmentOnStop();
           _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
           break;
-        default:
+        case 1:
+          POIListFragment.listAdapter.startFlipping();
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
+          break;
+        case 2:
+          POIListFragment.listAdapter.whenFragmentOnStop();
+          _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
+          
+        default:
           break;
       }
     }

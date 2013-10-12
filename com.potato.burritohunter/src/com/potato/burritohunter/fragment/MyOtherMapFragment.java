@@ -19,6 +19,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,10 +49,10 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
-import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
-import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
+import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
@@ -86,11 +87,26 @@ public class MyOtherMapFragment extends SherlockFragment
   public static boolean shouldFindMe = false;
   private static boolean ONSTOPLOCK = false; //should we skip on stop?
 
+  private static View vw;
+
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
-    View vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );
+    if ( vw != null )
+    {
+      ViewGroup parent = (ViewGroup) vw.getParent();
+      if ( parent != null )
+        parent.removeView( vw );
+    }
+    try
+    {
+      vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );
+    }
+    catch ( InflateException e )
+    {
+      /* map is already there, just return view as it is */
+    }
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();
@@ -105,7 +121,8 @@ public class MyOtherMapFragment extends SherlockFragment
           {
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
-            new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance ).execute(); // need to get this info
+            new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance )
+                .execute(); // need to get this info
             return false;
           }
           return false;
@@ -317,6 +334,7 @@ public class MyOtherMapFragment extends SherlockFragment
       BottomPagerPanel.getInstance().enableMarkerPanel( sr );
     }
   }
+
   //TODO chyauchyau save searchQuery
   private void saveSearchQueryToSharedPrefs()
   {
@@ -324,9 +342,9 @@ public class MyOtherMapFragment extends SherlockFragment
     prefs.edit().clear();
     //chyauchyauCharSequence query = MapActivity.searchView.getQuery();
 
-//    String value = query == null ? "" : query.toString();
+    //    String value = query == null ? "" : query.toString();
 
-  //  prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
+    //  prefs.edit().putString( SEARCH_QUERY_KEY, value ).commit();
   }
 
   private void initMap( GoogleMap map )

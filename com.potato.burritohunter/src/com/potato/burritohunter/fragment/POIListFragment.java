@@ -113,9 +113,15 @@ public class POIListFragment extends SherlockListFragment
 
   }
 
+  public void onPause()
+  {
+    super.onPause();
+    
+  }
+  
   public void onDestroy()
   {
-    listAdapter.whenFragmentOnStop();
+    //listAdapter.whenFragmentOnStop();
     super.onDestroy();
   }
 }
