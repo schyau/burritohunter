@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.database.DatabaseUtil;
@@ -34,11 +35,13 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
   /* private view holder class */
   public static class ViewHolder
   {
-    ImageView imageView;
-    TextView txtTitle;
-    TextView txtDesc;
+    public ImageView imageView;
+    public ImageView imageView1;
+    public ViewFlipper viewFlipper;
+    public TextView txtTitle;
+    public TextView txtDesc;
     public long id;
-    GalleryPoiList galleryPoiList;
+    public GalleryPoiList galleryPoiList;
   }
 
   private List<String> getPhotoUrls( int position )
@@ -65,7 +68,9 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
       holder.txtDesc = (TextView) convertView.findViewById( R.id.desc );
       holder.txtTitle = (TextView) convertView.findViewById( R.id.title );
       holder.imageView = (ImageView) convertView.findViewById( R.id.icon );
-      holder.galleryPoiList = new GalleryPoiList( holder.imageView, getPhotoUrls( position ) );
+      holder.imageView1 = (ImageView) convertView.findViewById( R.id.icon1 );
+      holder.viewFlipper = (ViewFlipper) convertView.findViewById(  R.id.view_flipper );
+      holder.galleryPoiList = new GalleryPoiList( holder, getPhotoUrls( position ) );
       gallery.add( holder.galleryPoiList );
 
       holder.galleryPoiList.start();
@@ -80,7 +85,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
 
     holder.txtDesc.setText( "luls this is the primary key " + rowItem.get_id() );
     holder.txtTitle.setText( rowItem.get_title() );
-    holder.galleryPoiList.setViewsAndUrls( holder.imageView, getPhotoUrls( position ) );
+    holder.galleryPoiList.setViewsAndUrls( getPhotoUrls( position ) );
     holder.id = rowItem._id;
     //holder.imageView.setImageResource(rowItem.getImageId());
 
@@ -91,7 +96,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
   {
     for( GalleryPoiList threadGallery : gallery )
     {
-      threadGallery.stopFlipping();
+      threadGallery.stopFlippingNaoJUSTSTHAPPP();
     }
   }
 

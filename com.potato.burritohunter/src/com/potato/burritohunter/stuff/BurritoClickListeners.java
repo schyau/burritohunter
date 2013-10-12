@@ -33,6 +33,7 @@ import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.fragment.BottomPagerMarkerPanel;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
+import com.potato.burritohunter.fragment.POIListFragment;
 
 public class BurritoClickListeners
 {
@@ -236,6 +237,7 @@ public class BurritoClickListeners
       switch ( position )
       {
         case 0:
+          //POIListFragment.listAdapter.whenFragmentOnStop();
           _slidingMenu.setTouchModeAbove( SlidingMenu.LEFT );
           break;
         default:

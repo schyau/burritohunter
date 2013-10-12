@@ -33,6 +33,7 @@ import com.potato.burritohunter.stuff.SearchResult;
 public class POIListFragment extends SherlockListFragment
 {
   static SinglePOIListFragment single = new SinglePOIListFragment();
+  public static SavedListAdapter listAdapter;
 
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -40,8 +41,8 @@ public class POIListFragment extends SherlockListFragment
     //Cursor c = DatabaseUtil.getDatabaseHelper().queryAllListPOIs();
     //SavedCursorAdapter adapter = new SavedCursorAdapter(getActivity().getApplicationContext(), c, true);
     List<SavedListItem> list = DatabaseUtil.getSavedList();
-    SavedListAdapter adapter = new SavedListAdapter( this, list );
-    setListAdapter( adapter );
+    listAdapter = new SavedListAdapter( this, list );
+    setListAdapter( listAdapter );
     View vw = super.onCreateView( inflater, container, savedInstanceState );
     vw.setBackgroundColor( Color.WHITE );
     return vw;
@@ -114,7 +115,7 @@ public class POIListFragment extends SherlockListFragment
 
   public void onDestroy()
   {
-    ( (SavedListAdapter) getListAdapter() ).whenFragmentOnStop();
+    listAdapter.whenFragmentOnStop();
     super.onDestroy();
   }
 }

@@ -88,7 +88,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     viewPager.setAdapter( viewPagerAdapter );
     viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
     viewPager.setCurrentItem( 0 );
-    viewPager.setOffscreenPageLimit( 0 );
+    viewPager.setOffscreenPageLimit( 1 );
 
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
 
