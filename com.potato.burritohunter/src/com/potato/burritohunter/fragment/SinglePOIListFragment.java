@@ -26,6 +26,7 @@ import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 
 public class SinglePOIListFragment extends SherlockListFragment
@@ -72,12 +73,8 @@ public class SinglePOIListFragment extends SherlockListFragment
     }
     /* end of shitty code */
     SearchResult searchResult = (SearchResult) parent.getItemAtPosition(position);
-    String searchResultId = searchResult.id;
-
-    String url = "https://foursquare.com/v/"+searchResultId;
-    Intent i = new Intent(Intent.ACTION_VIEW);
-    i.setData(Uri.parse(url));
-    startActivity(i);
+    String srId = searchResult.id;
+    SomeUtil.launchFourSquareDetail( MapActivity.instance, srId );
   }
 
   @Override

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.SearchResult;
@@ -29,6 +30,7 @@ public class BottomPagerMarkerPanel extends SherlockFragment
   private static ImageButton _bottomPagerRightArrow;
   public static ViewPager _viewPager;
   public static ImageView _imageIcon;
+  private static String id ;
 
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
@@ -39,6 +41,17 @@ public class BottomPagerMarkerPanel extends SherlockFragment
     _imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
     _imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
     _bottomPagerRightArrow.setOnClickListener( new BurritoClickListeners.RightButtonNavigation() );
+    
+    View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
+    linearLayout.setOnClickListener( new OnClickListener(){
+
+      @Override
+      public void onClick( View v )
+      {
+        SomeUtil.launchFourSquareDetail( MapActivity.instance, id );
+      }
+      
+    });
     return vw;
   }
 
@@ -47,6 +60,7 @@ public class BottomPagerMarkerPanel extends SherlockFragment
   {
     _title.setText( sr._name );
     _desc.setText( sr.address );
+    id = sr.id;
     
     // this is safe passing in null url
     ImageLoader.getInstance().displayImage( sr.photoIcon, _imageIcon, SomeUtil.getImageOptions() );

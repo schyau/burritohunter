@@ -2,6 +2,8 @@ package com.potato.burritohunter.stuff;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -66,5 +68,13 @@ public final class SomeUtil
     view.clearAnimation();
     view.setVisibility( View.GONE );
     
+  }
+  public static void launchFourSquareDetail( Activity activity, String id )
+  {
+
+    String url = "https://foursquare.com/v/"+id;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
   }
 }
