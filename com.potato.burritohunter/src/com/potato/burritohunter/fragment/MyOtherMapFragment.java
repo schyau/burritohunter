@@ -23,6 +23,7 @@ import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -115,6 +116,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
     mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
     loadingView = ( ImageView ) vw.findViewById(R.id.loading);
+
     mySearchView.setOnEditorActionListener( new OnEditorActionListener()
       {
         @Override
@@ -132,6 +134,17 @@ public class MyOtherMapFragment extends SherlockFragment
           return false;
         }
       } );
+    ImageView cancelView = (ImageView) vw.findViewById( R.id.search_cancel );
+    cancelView.setOnClickListener( new OnClickListener() {
+
+      @Override
+      public void onClick( View v )
+      {
+        mySearchView.setText( "" );
+        
+      }
+      
+    });
     //vw.findViewById( R.id.find_me )
     //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
     //may have to rebuild dynamically instead of using xml
