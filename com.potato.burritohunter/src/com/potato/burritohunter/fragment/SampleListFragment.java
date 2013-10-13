@@ -8,15 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 public class SampleListFragment extends ListFragment
 {
@@ -33,13 +36,10 @@ public class SampleListFragment extends ListFragment
     Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
     MyOtherMapFragment.changeMarkerState( m );
-    SearchResult sr = MapActivity.currentSearchResults.get(m);
-    BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+    SearchResult sr = MapActivity.currentSearchResults.get( m );
+    BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
     MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );
     MyOtherMapFragment.paneMarker = m;
-
-    m.showInfoWindow();
-    Log.d( "asdf", "asdlfkja;sdf" );
   }
 
   public static class SlidingMenuAdapter extends ArrayAdapter<Marker>
@@ -59,6 +59,9 @@ public class SampleListFragment extends ListFragment
       TextView title = (TextView) convertView.findViewById( R.id.title );
       Marker key = getItem( position );
       SearchResult searchResult = MapActivity.currentSearchResults.get( key );
+
+      ImageView iv = (ImageView) convertView.findViewById( R.id.icon_sliding );
+      ImageLoader.getInstance().displayImage( searchResult.photoIcon, iv, SomeUtil.getImageOptions() );
       title.setText( searchResult._name );
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
@@ -71,7 +74,6 @@ public class SampleListFragment extends ListFragment
       //  }
       //});
       //checkBox.setChecked( MapActivity.selectedSearchResults.contains( key ) );
-
       return convertView;
     }
 

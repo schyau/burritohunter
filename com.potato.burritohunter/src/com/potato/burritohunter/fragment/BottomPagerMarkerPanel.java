@@ -11,40 +11,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 public class BottomPagerMarkerPanel extends SherlockFragment
 {
   // hello.
   // i'd like to take this time to make a formal apology to my species.  i am an idiot and i'm sorry.
-  // these instance variables are now class variables
+  // these should-be instance variables are now class variables
   // have a good day.
   private static TextView _title;
   private static TextView _desc;
   private static ImageButton _bottomPagerRightArrow;
-  private static ViewPager _viewPager;
+  public static ViewPager _viewPager;
   public static ImageView _imageIcon;
 
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
     View vw = inflater.inflate( R.layout.bottom_pager_marker_layout, container, false );
-    this._title = (TextView) vw.findViewById( R.id.bottomPagerMarkerTitle );
-    this._desc = (TextView) vw.findViewById( R.id.bottomPagerMarkerDesc );
-    this._bottomPagerRightArrow = (ImageButton) vw.findViewById( R.id.bottomPagerRightArrow ); //do we need it?
+    _title = (TextView) vw.findViewById( R.id.bottomPagerMarkerTitle );
+    _desc = (TextView) vw.findViewById( R.id.bottomPagerMarkerDesc );
+    _bottomPagerRightArrow = (ImageButton) vw.findViewById( R.id.bottomPagerRightArrow ); //do we need it?
     _imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
     _imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
-    _bottomPagerRightArrow.setOnClickListener( new OnClickListener(){
-
-      @Override
-      public void onClick( View v )
-      {
-        _viewPager.setCurrentItem( BottomPagerPanel.PANEL_BUTTONS, true );
-      }
-      
-    });
+    _bottomPagerRightArrow.setOnClickListener( new BurritoClickListeners.RightButtonNavigation() );
     return vw;
   }
 
@@ -53,10 +47,14 @@ public class BottomPagerMarkerPanel extends SherlockFragment
   {
     _title.setText( sr._name );
     _desc.setText( sr.address );
+    
+    // this is safe passing in null url
+    ImageLoader.getInstance().displayImage( sr.photoIcon, _imageIcon, SomeUtil.getImageOptions() );
+    // TODO add a listener too
   }
 
-  public void setViewPager ( ViewPager viewPager)
+  public void setViewPager( ViewPager viewPager )
   {
-    this._viewPager = viewPager;
+    _viewPager = viewPager;
   }
 }

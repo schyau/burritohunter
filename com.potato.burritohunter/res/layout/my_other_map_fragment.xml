@@ -42,18 +42,20 @@
         android:background="@drawable/foursquare"/>
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:gravity="top"
         android:orientation="vertical"
-        android:paddingLeft="5px"
-        android:paddingRight="5px"
-        android:paddingTop="5px"
-        android:layout_margin="5px"
+        android:paddingLeft="10px"
+        android:paddingRight="10px"
+        android:paddingTop="10px"
+        android:layout_margin="8px"
         android:background="#AA000000"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
          >
 			<ImageView android:id="@+id/search_cancel"
-			    android:layout_width="22dp"
-			    android:layout_height="22dp"
+			    android:layout_width="@dimen/search_icon_dimen"
+			    android:layout_height="@dimen/search_icon_dimen"
 			    android:layout_centerInParent="true"
 			    android:src="@drawable/ic_launcher"
 			    android:scaleType="fitXY"
@@ -61,26 +63,26 @@
 			    android:layout_alignParentRight="true"/>
 
 			<ImageView android:id="@+id/loading"
-			    android:layout_width="22dp"
-			    android:layout_height="22dp"
+			    android:layout_width="@dimen/search_icon_dimen"
+			    android:layout_height="@dimen/search_icon_dimen"
 			    android:src="@drawable/ic_launcher"
 			    android:layout_centerInParent="true"
 			    android:scaleType="fitXY"
 			    android:layout_marginRight="3dp"
 			    android:layout_toLeftOf="@id/search_cancel"
 			    android:visibility="gone"/>
-			
-
 
             <EditText
                 android:id="@+id/mySearchView"
                 android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:layout_margin="2dp"
+                android:layout_height="34dp"
+                android:layout_marginLeft="5dp"
                 android:background="#00000000" 
                 android:inputType="textNoSuggestions"
                 android:imeOptions="actionSearch"
                 android:layout_toLeftOf="@id/search_cancel"
+                android:hint="Click to start your search"
+                android:maxLength="30"
                 />
     </RelativeLayout>
 

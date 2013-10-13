@@ -117,7 +117,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     super.onPause();
     SomeUtil.getBus().unregister( this );
-    if ( viewPager.getCurrentItem() == 1)
+    if ( viewPager.getCurrentItem() == 1 )
     {
       GalleryPoiList.kontinue = false;
     }
@@ -128,7 +128,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   {
     super.onResume();
     SomeUtil.getBus().register( this );
-    if ( viewPager.getCurrentItem() ==1 )
+    if ( viewPager.getCurrentItem() == 1 )
     {
       POIListFragment.listAdapter.startFlipping();
       GalleryPoiList.kontinue = true;
@@ -238,7 +238,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       mySearchResult._canonicalAddress = venue.getCanonicalUrl();
 
       List<Category> categories = venue.getCategories();
-      if ( categories != null )
+      if ( categories != null && categories.size() > 0 )
       {
         Category category = categories.get( 0 );
         if ( category != null )
@@ -256,6 +256,11 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
         }
       }
 
+      if (mySearchResult.photoIcon == null || "".equals(mySearchResult.photoIcon) )
+      {
+        //TODO set default pic here!!
+        //mySearchResult.photoIcon = 
+      }
       //mySearchResult.photoUrl = 
       dbHelper.insertPoint( mySearchResult );
       LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );

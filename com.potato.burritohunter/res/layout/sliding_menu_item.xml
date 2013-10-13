@@ -4,18 +4,21 @@
     android:layout_height="fill_parent" >
  
     <ImageView
-        android:id="@+id/icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@drawable/rufknkddngme" />
+        android:id="@+id/icon_sliding"
+        android:layout_width="@dimen/icon_width"
+        android:layout_height="@dimen/icon_height"
+        android:paddingLeft="@dimen/icon_padding"
+        android:paddingRight="@dimen/icon_padding"
+        android:scaleType="fitXY"
+        android:src="@drawable/rufknkddngme" />
  
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/icon"
+        android:layout_toRightOf="@+id/icon_sliding"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:paddingBottom="10dp"
         android:textColor="#CC0033"
         android:textSize="16dp" />
@@ -25,7 +28,9 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
-        android:layout_toRightOf="@+id/icon"
+        android:layout_toRightOf="@+id/icon_sliding"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:paddingLeft="10dp"
         android:textColor="#3399FF"
         android:textSize="14dp" />

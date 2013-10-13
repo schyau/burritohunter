@@ -91,7 +91,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
   private static View vw;
   public static View loadingView;
-
+  
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -115,14 +115,15 @@ public class MyOtherMapFragment extends SherlockFragment
     map = mMapFragment.getMap();
 
     mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
-    loadingView = ( ImageView ) vw.findViewById(R.id.loading);
+    loadingView = (ImageView) vw.findViewById( R.id.loading );
 
     mySearchView.setOnEditorActionListener( new OnEditorActionListener()
       {
         @Override
         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
         {
-          if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == event.KEYCODE_ENTER )
+          if ( actionId == EditorInfo.IME_ACTION_SEARCH
+               || ( ( event != null ) && ( event.getKeyCode() == event.KEYCODE_ENTER ) ) )
           {
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
@@ -134,17 +135,16 @@ public class MyOtherMapFragment extends SherlockFragment
           return false;
         }
       } );
-    ImageView cancelView = (ImageView) vw.findViewById( R.id.search_cancel );
-    cancelView.setOnClickListener( new OnClickListener() {
 
-      @Override
-      public void onClick( View v )
+    ImageView cancelView = (ImageView) vw.findViewById( R.id.search_cancel );
+    cancelView.setOnClickListener( new OnClickListener()
       {
-        mySearchView.setText( "" );
-        
-      }
-      
-    });
+        @Override
+        public void onClick( View v )
+        {
+          mySearchView.setText( "" );
+        }
+      } );
     //vw.findViewById( R.id.find_me )
     //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
     //may have to rebuild dynamically instead of using xml

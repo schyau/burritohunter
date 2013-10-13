@@ -37,6 +37,24 @@ import com.potato.burritohunter.fragment.POIListFragment;
 
 public class BurritoClickListeners
 {
+  public static class LeftButtonNavigation implements OnClickListener
+  {
+    @Override
+    public void onClick( View v )
+    {
+      BottomPagerMarkerPanel._viewPager.setCurrentItem( BottomPagerPanel.PANEL_MARKER, true );
+    }
+  }
+
+  public static class RightButtonNavigation implements OnClickListener
+  {
+    @Override
+    public void onClick( View v )
+    {
+      BottomPagerMarkerPanel._viewPager.setCurrentItem( BottomPagerPanel.PANEL_BUTTONS, true );
+    }
+  }
+
   public static class ClearUnsaved implements OnClickListener
   {
     @Override
@@ -174,23 +192,11 @@ public class BurritoClickListeners
       if ( !marker.equals( MyOtherMapFragment.pivotMarker ) )
       {
         onMarkerClicked( marker );
-        SearchResult sr = MapActivity.currentSearchResults.get( marker );
-        ImageLoader imageLoader =ImageLoader.getInstance();
-        
-        //photoicon not guaranteed to exist
-        if ( sr.photoIcon !=null )
-        {
-          imageLoader.displayImage( sr.photoIcon, BottomPagerMarkerPanel._imageIcon);
-        }
-        else
-        {
-          BottomPagerMarkerPanel._imageIcon.setBackgroundResource( R.drawable.rufknkddngme );
-        }
       }
       return true;
     }
   }
-  
+
   public static class OnBottomMarkerPanelPictureClickListener implements OnClickListener
   {
     @Override
@@ -199,7 +205,7 @@ public class BurritoClickListeners
       //TODO, add null check
       //skipping the null check just because it shouldn't be null at this moment!
       Marker marker = MyOtherMapFragment.paneMarker;
-      onMarkerClicked ( marker );
+      onMarkerClicked( marker );
     }
   }
 

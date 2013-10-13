@@ -86,6 +86,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     holder.txtDesc.setText( "luls this is the primary key " + rowItem.get_id() );
     holder.txtTitle.setText( rowItem.get_title() );
     holder.galleryPoiList.setViewsAndUrls( getPhotoUrls( position ) );
+    holder.galleryPoiList.start();
     holder.id = rowItem._id;
     //holder.imageView.setImageResource(rowItem.getImageId());
 
@@ -104,7 +105,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
   {
     for( GalleryPoiList threadGallery : gallery )
     {
-      threadGallery.ahemStartFlippingPlz();
+      threadGallery.start();
     }
   }
   

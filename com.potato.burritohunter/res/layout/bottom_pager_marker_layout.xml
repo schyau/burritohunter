@@ -11,7 +11,7 @@
 	    android:src="@drawable/rufknkddngme"/>
     <ImageButton
         android:id="@+id/bottomPagerRightArrow"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/bottom_panel_navi_padding"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:background="@drawable/findmeselector" />

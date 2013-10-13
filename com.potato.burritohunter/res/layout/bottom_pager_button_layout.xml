@@ -8,8 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/findmeselector"
-        android:layout_alignParentLeft="true"
-        android:visibility="gone"/>
+        android:layout_alignParentLeft="true"/>
     <ImageButton
         android:id="@+id/save"
         android:layout_width="wrap_content"

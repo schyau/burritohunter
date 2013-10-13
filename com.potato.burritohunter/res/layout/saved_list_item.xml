@@ -2,34 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
- <ViewFlipper
-            android:id="@+id/view_flipper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@drawable/rufknkddngme" />
-    <ImageView
-        android:id="@+id/icon1"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@drawable/rufknkddngme" />
- </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/view_flipper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/rufknkddngme"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/rufknkddngme"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+    </ViewFlipper>
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/viewFlipper"
+        android:layout_toRightOf="@id/view_flipper"
         android:paddingBottom="10dp"
         android:textColor="#CC0033"
         android:textSize="16dp" />
- 
+
     <TextView
         android:id="@+id/desc"
         android:layout_width="wrap_content"
@@ -39,5 +45,5 @@
         android:paddingLeft="10dp"
         android:textColor="#3399FF"
         android:textSize="14dp" />
- 
+
 </RelativeLayout>

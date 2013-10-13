@@ -2,8 +2,6 @@ package com.potato.burritohunter.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,15 +35,15 @@ public class BottomPagerButtonsPanel extends SherlockFragment
     this._clearAllButton = (ImageButton) vw.findViewById( R.id.clear_all );
     this._findMeButton = (ImageButton) vw.findViewById( R.id.find_me );
     this._saveButton = (ImageButton) vw.findViewById( R.id.save );
-    
+
     _saveButton.setOnClickListener( new BurritoClickListeners.Save( getActivity() ) );
     _clearAllButton.setOnClickListener( new BurritoClickListeners.ClearUnsaved() );
     _clearAllButton.setOnLongClickListener( new BurritoClickListeners.ClearAll() );
     //FindMeOnClickListener
     _findMeButton.setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance,
                                                                                        MapActivity._mapFragment ) );
-    setNumSelectedTextView( MapActivity.selectedSearchResults.size() + "");
-    _panelLeftArrowButton.setOnClickListener( new OnClickListener()
+    setNumSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
+    /*_panelLeftArrowButton.setOnClickListener( new OnClickListener()
       {
 
         @Override
@@ -54,8 +52,8 @@ public class BottomPagerButtonsPanel extends SherlockFragment
           _viewPager.setCurrentItem( BottomPagerPanel.PANEL_MARKER, true );
         }
 
-      } );
-    
+      } );*/
+
     //chyauchyau: set pane here
     return vw;
   }
@@ -65,11 +63,26 @@ public class BottomPagerButtonsPanel extends SherlockFragment
     _numSelectedTextView.setText( text );
   }
 
-  public void displayBottomPagerNavigation( boolean b )
+  public void setNaviButtonClickable( boolean b )
   {
     if ( _panelLeftArrowButton != null )
     {
-      _panelLeftArrowButton.setVisibility( b ? View.VISIBLE : View.GONE );
+      if ( b )
+      {
+        _panelLeftArrowButton.setOnClickListener( new BurritoClickListeners.LeftButtonNavigation() );
+      }
+      else
+      {
+        _panelLeftArrowButton.setOnClickListener( new OnClickListener()
+          {
+            @Override
+            public void onClick( View v )
+            {
+
+            }
+          } );
+      }
+
     }
   }
 

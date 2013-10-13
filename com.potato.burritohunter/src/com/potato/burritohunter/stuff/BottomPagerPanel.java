@@ -75,7 +75,7 @@ public class BottomPagerPanel
       _viewPager.setCurrentItem( PANEL_BUTTONS, true );
     }
     _viewPager.setPagingEnabled( false );
-    _buttonsPanel.displayBottomPagerNavigation( false );
+    _buttonsPanel.setNaviButtonClickable( false );
   }
 
   public void enableMarkerPanel( SearchResult sr )
@@ -86,7 +86,7 @@ public class BottomPagerPanel
     }
     _markerPanel.setViews( sr );
     _viewPager.setPagingEnabled( true );
-    _buttonsPanel.displayBottomPagerNavigation( true );
+    _buttonsPanel.setNaviButtonClickable( true );
   }
 
   public void setBottomPagerButtonsNumsSelectedTextView( String text )

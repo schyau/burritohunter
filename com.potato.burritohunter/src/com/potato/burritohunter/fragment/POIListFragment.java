@@ -44,7 +44,7 @@ public class POIListFragment extends SherlockListFragment
     listAdapter = new SavedListAdapter( this, list );
     setListAdapter( listAdapter );
     View vw = super.onCreateView( inflater, container, savedInstanceState );
-    vw.setBackgroundColor( Color.WHITE );
+    //vw.setBackgroundColor( Color.WHITE );
     return vw;
   }
 

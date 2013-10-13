@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
-import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickListener // can practice using variant/invariant generics here!
 {
@@ -36,7 +38,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
   @Override
   public Object getItem( int position )
   {
-    return rowItems.get( position  ) ;
+    return rowItems.get( position );
   }
 
   @Override
@@ -49,6 +51,8 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
   {
     TextView txtTitle;
     public String id;
+    ImageView imageView;
+    TextView txtDesc;
   }
 
   @Override
@@ -58,21 +62,26 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
     ViewHolder holder = null;
 
     LayoutInflater mInflater = (LayoutInflater) frag.getActivity().getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
+    SearchResult sr = ( (SearchResult) getItem( position ) );
     if ( convertView == null )
     {
       convertView = mInflater.inflate( R.layout.single_poi_list_item, null );
+
       holder = new ViewHolder();
       holder.txtTitle = (TextView) convertView.findViewById( R.id.title );
-      holder.id = ( (SearchResult) getItem( position ) ).id;
+      holder.txtDesc = (TextView) convertView.findViewById( R.id.desc );
+      holder.imageView = (ImageView) convertView.findViewById( R.id.icon );
       convertView.setTag( holder );
     }
     else
     {
       holder = (ViewHolder) convertView.getTag();
     }
-
-    SearchResult rowItem = (SearchResult) getItem( position );
-    holder.txtTitle.setText( rowItem._name );
+    holder.txtTitle.setText( sr._name );
+    holder.txtDesc.setText( sr.address );
+    holder.id = sr.id;
+    ImageLoader.getInstance().displayImage( sr.photoIcon, holder.imageView, SomeUtil.getImageOptions() );
+    //holder.imageView.setText( sr._name );
     return convertView;
   }
 

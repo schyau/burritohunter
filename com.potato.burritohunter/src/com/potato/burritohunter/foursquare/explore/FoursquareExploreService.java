@@ -1,5 +1,8 @@
 package com.potato.burritohunter.foursquare.explore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,9 +16,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.stuff.ADS;
-import com.potato.burritohunter.stuff.SomeUtil;
 
 public class FoursquareExploreService
 {
@@ -26,10 +27,18 @@ public class FoursquareExploreService
   // use a builder for disssss
   public static FoursquareExploreResult search( Double lat, Double lng, String term, int radius, int maxResults )
   {
-    String getURL = "https://api.foursquare.com/v2/venues/explore" + "?ll=" + lat + "," + lng + "&limit="+maxResults
+    try
+    {
+      term = URLEncoder.encode( term, "UTF-8" );
+    }
+    catch ( UnsupportedEncodingException e )
+    {
+      return null; // && http://www.myfacewhen.net/uploads/4286-kill-yourself.jpg
+    }
+    String getURL = "https://api.foursquare.com/v2/venues/explore" + "?ll=" + lat + "," + lng + "&limit=" + maxResults
                     + "&client_id=" + ADS.getInstance().getFoursquareClientId() + "&client_secret="
-                    + ADS.getInstance().getFoursquareClientSecret() + "&query=" + term
-                    + "&v=20130830" + "&radius="+radius;
+                    + ADS.getInstance().getFoursquareClientSecret() + "&query=" + term + "&v=20130830" + "&radius="
+                    + radius;
     Log.d( TAG, "url: " + getURL );
     String response = search( getURL );
 
