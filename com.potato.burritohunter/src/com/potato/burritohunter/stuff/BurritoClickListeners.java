@@ -251,6 +251,7 @@ public class BurritoClickListeners
           POIListFragment.listAdapter.startFlipping();
           _slidingMenu.setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE );
           GalleryPoiList.kontinue = true;
+          SomeUtil.hideSoftKeyboard( MapActivity.instance, MyOtherMapFragment.mySearchView );
           break;
         case 2:
           POIListFragment.listAdapter.whenFragmentOnStop();

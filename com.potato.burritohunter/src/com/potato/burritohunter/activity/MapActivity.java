@@ -92,6 +92,17 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     viewPager.setOffscreenPageLimit( 1 );
 
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
+    getSlidingMenu().setOnOpenedListener( new SlidingMenu.OnOpenedListener(){
+
+      @Override
+      public void onOpened()
+      {
+        SomeUtil.hideSoftKeyboard( MapActivity.instance, MyOtherMapFragment.mySearchView );
+        
+      }
+      
+    });
+    
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter( _context );
     mFrag.setListAdapter( slidingMenuAdapter );
