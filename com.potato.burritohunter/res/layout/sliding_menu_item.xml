@@ -7,8 +7,8 @@
         android:id="@+id/icon_sliding"
         android:layout_width="@dimen/icon_width"
         android:layout_height="@dimen/icon_height"
-        android:paddingLeft="@dimen/icon_padding"
         android:paddingRight="@dimen/icon_padding"
+        android:layout_centerVertical="true"
         android:scaleType="fitXY"
         android:src="@drawable/rufknkddngme" />
  
@@ -19,21 +19,24 @@
         android:layout_toRightOf="@+id/icon_sliding"
         android:singleLine="true"
         android:ellipsize="end"
-        android:paddingBottom="10dp"
-        android:textColor="#CC0033"
-        android:textSize="16dp" />
+        android:paddingBottom="2dp"
+        android:paddingTop="5dp"
+        android:textColor="#FFFFFFFF"
+        android:textSize="20sp"
+         />
  
     <TextView
         android:id="@+id/desc"
-        android:layout_width="100dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
         android:layout_toRightOf="@+id/icon_sliding"
         android:singleLine="true"
         android:ellipsize="end"
-        android:paddingLeft="10dp"
-        android:textColor="#3399FF"
-        android:textSize="14dp" />
+        android:paddingLeft="13dp"
+        android:textColor="#FFFFFFFF"
+        android:textSize="14sp"
+        android:paddingBottom="5dp" />
 
 
 

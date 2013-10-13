@@ -8,7 +8,7 @@
     <dimen name="list_padding">10dp</dimen>
 	<dimen name="shadow_width">15dp</dimen>
 	
-	<dimen name="icon_width">70dp</dimen>
+	<dimen name="icon_width">60dp</dimen>
 	<dimen name="icon_height">50dp</dimen>
 	<dimen name="icon_padding">10dp</dimen>
 	<dimen name="search_icon_dimen">30dp</dimen>

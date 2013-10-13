@@ -17,6 +17,7 @@
         android:saveEnabled="false"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:maxLength="25"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>
