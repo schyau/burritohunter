@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.foursquare.explore.FoursquareExploreResult;
 import com.potato.burritohunter.foursquare.explore.FoursquareExploreService;
+import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.squareup.otto.Bus;
 
 public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, FoursquareExploreResult>
@@ -45,9 +46,11 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   @Override
   protected void onPostExecute( FoursquareExploreResult result )
   {
+    //TODO what about error cases?  do we handle that?
     super.onPostExecute( result );
+    SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
     if ( result == null ) 
-      return; _eventBus.post( result );
+      return; //_eventBus.post( result );
     mapActivity.subscriberWithASillyName( result );
   }
 }

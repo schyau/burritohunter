@@ -3,6 +3,9 @@ package com.potato.burritohunter.stuff;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.database.DatabaseHelper;
@@ -23,6 +26,7 @@ public final class ADS
   private static String YELP_CONSUMER_SECRET = "";
   private static String FOURSQUARE_CLIENT_ID;
   private static String FOURSQUARE_CLIENT_SECRET;
+  public static final Animation an = new RotateAnimation(0.0f, 360.0f );;
 
   private ADS()
   {
@@ -42,6 +46,12 @@ public final class ADS
   public void init( Context context )
   {
     _context = context;
+    // Create an animation instance
+    // Set the animation's parameters
+    an.setDuration(10000);               // duration in ms
+    an.setRepeatCount(-1);                // -1 = infinite repeated
+    an.setRepeatMode(Animation.REVERSE); // reverses each repeat
+    an.setFillAfter(true);               // keep rotation after animation
     initKeys();
     DatabaseUtil.setDatabaseHelper( new DatabaseHelper( context ) );
   }
@@ -104,4 +114,7 @@ public final class ADS
   {
     return FOURSQUARE_CLIENT_SECRET;
   }
+  
+
+
 }

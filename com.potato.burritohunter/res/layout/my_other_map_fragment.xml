@@ -40,33 +40,48 @@
         android:layout_above="@id/frame"
         android:layout_alignParentRight="true"
         android:background="@drawable/foursquare"/>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="35dp"
         android:gravity="top"
         android:orientation="vertical"
         android:paddingLeft="5px"
         android:paddingRight="5px"
-        android:paddingTop="5px" >
+        android:paddingTop="5px"
+        android:layout_margin="5px"
+        android:background="#AA000000"
+         >
+			<ImageView android:id="@+id/search_cancel"
+			    android:layout_width="22dp"
+			    android:layout_height="22dp"
+			    android:layout_centerInParent="true"
+			    android:src="@drawable/ic_launcher"
+			    android:scaleType="fitXY"
+			    android:layout_marginRight="3dp"
+			    android:layout_alignParentRight="true"/>
 
-        <com.potato.burritohunter.stuff.TransparentPanel
-            android:id="@+id/transparent_panel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5px"
-            android:paddingLeft="5px"
-            android:paddingRight="5px"
-            android:paddingTop="5px" android:focusable="true"
-android:focusableInTouchMode="true">
+			<ImageView android:id="@+id/loading"
+			    android:layout_width="22dp"
+			    android:layout_height="22dp"
+			    android:src="@drawable/ic_launcher"
+			    android:layout_centerInParent="true"
+			    android:scaleType="fitXY"
+			    android:layout_marginRight="3dp"
+			    android:layout_toLeftOf="@id/search_cancel"
+			    android:visibility="gone"/>
+			
+
 
             <EditText
                 android:id="@+id/mySearchView"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="30dp"
+                android:layout_margin="2dp"
                 android:background="#00000000" 
                 android:inputType="textNoSuggestions"
-                android:imeOptions="actionSearch"/>
-        </com.potato.burritohunter.stuff.TransparentPanel>
-    </LinearLayout>
+                android:imeOptions="actionSearch"
+                android:layout_toLeftOf="@id/search_cancel"
+                />
+    </RelativeLayout>
 
 </RelativeLayout>

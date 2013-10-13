@@ -3,10 +3,11 @@ package com.potato.burritohunter.stuff;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.squareup.otto.Bus;
 
 public final class SomeUtil
@@ -46,5 +47,24 @@ public final class SomeUtil
   private SomeUtil()
   {
   }
+  
+  public static void startLoadingRotate(View view)
+  {
+    //should put a null check here before launching into the wild
+    if (view == null )
+      return;
 
+    // Aply animation to image view
+    view.startAnimation(ADS.an);
+    view.setVisibility( View.VISIBLE );
+  }
+  public static void stopLoadingRotate(View view)
+  {
+    if (view == null)
+      return;
+
+    view.clearAnimation();
+    view.setVisibility( View.GONE );
+    
+  }
 }

@@ -13,7 +13,9 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.stuff.ADS;
+import com.potato.burritohunter.stuff.SomeUtil;
 
 public class FoursquareExploreService
 {

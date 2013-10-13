@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -88,6 +89,7 @@ public class MyOtherMapFragment extends SherlockFragment
   private static boolean ONSTOPLOCK = false; //should we skip on stop?
 
   private static View vw;
+  public static View loadingView;
 
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
@@ -112,6 +114,7 @@ public class MyOtherMapFragment extends SherlockFragment
     map = mMapFragment.getMap();
 
     mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
+    loadingView = ( ImageView ) vw.findViewById(R.id.loading);
     mySearchView.setOnEditorActionListener( new OnEditorActionListener()
       {
         @Override
@@ -121,6 +124,7 @@ public class MyOtherMapFragment extends SherlockFragment
           {
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
+            SomeUtil.startLoadingRotate( MyOtherMapFragment.loadingView );
             new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance )
                 .execute(); // need to get this info
             return false;
