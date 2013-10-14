@@ -1,11 +1,11 @@
 package com.potato.burritohunter.fragment;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +42,8 @@ public class POIListFragment extends SherlockListFragment
     List<SavedListItem> list = DatabaseUtil.getSavedList();
     listAdapter = new SavedListAdapter( this, list );
     setListAdapter( listAdapter );
-    View vw = super.onCreateView( inflater, container, savedInstanceState );
+    View vw = inflater.inflate( R.layout.poi_list_fragment_layout, container, false );
+    //medalsList.setDividerHeight(1);
     //vw.setBackgroundColor( Color.WHITE );
     return vw;
   }

@@ -1,41 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@color/gray_background" >
 
     <ImageButton 
         android:id="@+id/panelLeftArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/findmeselector"
+        android:src="@drawable/findmeselector"
+        android:background="#00000000"
+        android:layout_margin="5dp"
         android:layout_alignParentLeft="true"/>
     <ImageButton
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/findmeselector"
+        android:src="@drawable/save_button"
+        android:background="#00000000"
+        android:layout_margin="5dp"
         android:layout_toRightOf="@id/panelLeftArrow" />
-
     <ImageButton
         android:id="@+id/clear_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/findmeselector"
+        android:src="@drawable/clear_button"
+        android:background="#00000000"
+        android:padding="5dp"
         android:layout_toRightOf="@id/save" />
 
-    <ImageButton
-        android:id="@+id/find_me"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/findmeselector"
-        android:layout_toRightOf="@id/clear_all" />
 
     <TextView
         android:id="@+id/num_selected"
         android:layout_width="50dp"
         android:layout_height="match_parent"
-        android:background="#FFFFFFFF"
+        android:background="@color/red_color"
         android:layout_alignParentRight="true"
-        android:text="" />
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/gray_background"
+        android:textSize="30sp" />
 
+    <ImageButton
+        android:id="@+id/find_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/locate_me"
+        android:background="#00000000"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/num_selected" />
 </RelativeLayout>

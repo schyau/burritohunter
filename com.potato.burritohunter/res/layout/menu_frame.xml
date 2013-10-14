@@ -4,31 +4,33 @@
     android:layout_height="match_parent" >
 
     <!-- add a line here -->
-    <LinearLayout
-        android:id="@+id/menu_frame2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true" >
-    <Button
-        android:id="@+id/settings_button"
+
+    <TextView
+        android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#00000000"
-        android:text="Settings" />
+        android:text="Search Results"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/gray_background"
+        android:background="@color/red_color"
+        android:textSize="@dimen/screen_title_text_size" />
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
-        />
-        
-	</LinearLayout>
+        android:id="@+id/settings_button"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="3dp"
+        android:background="@color/red_color"
+        android:scaleType="fitCenter"
+        android:src="@drawable/settings" />
+
     <FrameLayout
         android:id="@+id/menu_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/menu_frame2"
-        android:layout_alignParentTop="true" />
+        android:layout_above="@id/settings_button"
+        android:layout_below="@id/tv" />
 
 </RelativeLayout>

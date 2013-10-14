@@ -1,16 +1,12 @@
 package com.potato.burritohunter.activity;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -36,7 +32,7 @@ public class BaseActivity extends SlidingFragmentActivity
       FragmentTransaction t = this.getSupportFragmentManager().beginTransaction();
       mFrag = new SampleListFragment();
       t.replace( R.id.menu_frame, mFrag );
-      Button settings = (Button) findViewById( R.id.settings_button );
+      View settings = findViewById( R.id.settings_button );
       settings.setOnClickListener( new OnClickListener()
         {
           @Override

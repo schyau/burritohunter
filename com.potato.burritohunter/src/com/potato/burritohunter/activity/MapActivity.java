@@ -210,7 +210,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                            .title( sr._name )
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
-                                                                      .fromResource( R.drawable.ic_launcher ) ) );
+                                                                      .fromResource( R.drawable.item_unselected ) ) );
       if ( sr.id.equals( paneMarkerId ) )
       {
         newPaneMarker = marker;
@@ -281,7 +281,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                            .title( mySearchResult._name )
                                                            .snippet( "Kiel is cool" )
                                                            .icon( BitmapDescriptorFactory
-                                                                      .fromResource( R.drawable.ic_launcher ) ) );
+                                                                      .fromResource( R.drawable.item_unselected ) ) );
 
       currentSearchResults.put( marker, mySearchResult );
 

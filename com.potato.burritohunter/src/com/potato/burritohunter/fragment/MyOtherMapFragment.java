@@ -271,7 +271,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
       // TODO make a big ass Marker class with its own onclicklistener
       Marker marker = getMap().addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-                                              .icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
+                                              .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
 
       MapActivity.currentSearchResults.put( marker, sr );
       reverseSearchResultHashMap.put( id, marker );
@@ -287,7 +287,7 @@ public class MyOtherMapFragment extends SherlockFragment
       Marker marker = reverseSearchResultHashMap.get( id );
       MapActivity.selectedSearchResults.add( marker );
       //change marker state 
-      marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+      marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
       Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
     }
@@ -486,12 +486,12 @@ public class MyOtherMapFragment extends SherlockFragment
       {
         if ( selected )
         {
-          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) );
+          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) );
           MapActivity.selectedSearchResults.remove( marker );
         }
         else
         {
-          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher_clicked ) );
+          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
           MapActivity.selectedSearchResults.add( marker );
         }
         BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults

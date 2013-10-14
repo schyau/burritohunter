@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="wrap_content"
+    android:background="@color/gray_background" >
 
     <ViewFlipper
         android:id="@+id/view_flipper"
@@ -9,75 +10,52 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp" >
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="7dp" >
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="@dimen/icon_width"
+            android:layout_height="@dimen/icon_height"
             android:scaleType="fitXY"
             android:src="@drawable/rufknkddngme" />
 
         <ImageView
             android:id="@+id/icon1"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="@dimen/icon_width"
+            android:layout_height="@dimen/icon_height"
+            
             android:scaleType="fitXY"
             android:src="@drawable/rufknkddngme" />
     </ViewFlipper>
 
-    <ImageView
-        android:id="@+id/caret"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_launcher" />
-
-    <RelativeLayout
-        android:id="@+id/poiCountLayout"
+    <TextView
+        android:id="@+id/poiCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/caret" >
-
-        <ImageView
-            android:id="@+id/poiCountIcon"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:src="@drawable/ic_launcher"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true" />
-
-        <TextView
-            android:id="@+id/poiCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/poiCountIcon"
-            android:text="0"
-            android:textSize="16sp" />
-    </RelativeLayout>
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="0"
+        android:textSize="50sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="15dp"
+        android:textColor="@color/red_color" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/view_flipper"
-        android:layout_toLeftOf="@id/caret"
-        android:paddingRight="15dp"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/poiCount"
+        android:layout_toRightOf="@id/view_flipper"
         android:ellipsize="end"
+        android:layout_marginTop="4dp"
         android:singleLine="true"
-        android:paddingBottom="3dp"
-        android:textColor="#FFFFFFFF"
-        android:textSize="20sp" />
+        android:textColor="@color/gray_title"
+        android:textSize="@dimen/title_text_size" />
 
     <TextView
         android:id="@+id/desc"
@@ -86,8 +64,8 @@
         android:layout_below="@+id/title"
         android:layout_toRightOf="@id/view_flipper"
         android:ellipsize="end"
-        android:paddingLeft="10dp"
-        android:textColor="#FFFFFFFF"
-        android:textSize="14sp" />
+        android:paddingTop="-5dp"
+        android:textColor="@color/gray_desc"
+        android:textSize="@dimen/desc_text_size" />
 
 </RelativeLayout>

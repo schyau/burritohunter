@@ -50,7 +50,7 @@ public class MyMapFragment extends SupportMapFragment
         settings.setMyLocationButtonEnabled(true);
 
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, 16));
-        getMap().addMarker(new MarkerOptions().position(latLon).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+        getMap().addMarker(new MarkerOptions().position(latLon).icon(BitmapDescriptorFactory.fromResource(R.drawable.item_unselected)));
         getMap().setOnMarkerClickListener( new MapOnMarkerClickListener() );
     }
 }

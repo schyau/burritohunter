@@ -49,7 +49,7 @@ public class MyLocationHelper implements GooglePlayServicesClient.ConnectionCall
       // get rid of map var?  
       MY_LOCATION = map.addMarker( new MarkerOptions()
           .position( new LatLng( mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude() ) ).title( "Kiel" )
-          .snippet( "Kiel is cool" ).icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_launcher ) ) );
+          .snippet( "Kiel is cool" ).icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
     }
   }
   

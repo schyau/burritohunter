@@ -6,12 +6,12 @@
         android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lists"
+        android:text="Saved Searches"
         android:gravity="center"
         android:layout_alignParentTop="true"
         android:textColor="@color/gray_background"
         android:background="@color/red_color"
-        android:textSize="40sp" />
+        android:textSize="@dimen/screen_title_text_size" />
 
     <ListView
         android:id="@android:id/list"
@@ -20,6 +20,7 @@
         android:layout_height="fill_parent"
         android:divider="@color/red_color"
         android:dividerHeight="@dimen/divider_height"
-        android:background="@color/red_color" />
+        android:background="@color/red_color"/>
+
 
 </RelativeLayout>

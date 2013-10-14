@@ -44,8 +44,9 @@ public class SinglePOIListFragment extends SherlockListFragment
      * android.R.layout.simple_list_item_1, countries );
      */
     setAdapter();
-
-    return super.onCreateView( inflater, container, savedInstanceState );
+    View vw = inflater.inflate( R.layout.single_list_fragment_layout, container, false );
+    return vw;
+    //return super.onCreateView( inflater, container, savedInstanceState );
 
     //use this to make a new adapter
     //http://theopentutorials.com/tutorials/android/listview/android-custom-listview-with-image-and-text-using-baseadapter/

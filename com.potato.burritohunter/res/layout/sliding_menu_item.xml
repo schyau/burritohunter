@@ -1,51 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
- 
+    android:layout_height="fill_parent"
+    android:background="@color/gray_background"
+    android:paddingLeft="10dp" >
+
     <ImageView
         android:id="@+id/icon_sliding"
         android:layout_width="@dimen/icon_width"
         android:layout_height="@dimen/icon_height"
-        android:paddingRight="@dimen/icon_padding"
         android:layout_centerVertical="true"
-        android:scaleType="fitXY"
+        android:paddingRight="@dimen/icon_padding"
         android:src="@drawable/rufknkddngme" />
- 
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/icon_sliding"
-        android:singleLine="true"
         android:ellipsize="end"
-        android:paddingBottom="2dp"
         android:paddingTop="5dp"
-        android:textColor="#FFFFFFFF"
-        android:textSize="20sp"
-         />
- 
+        android:singleLine="true"
+        android:textColor="@color/gray_title"
+        android:textSize="@dimen/title_text_size" />
+
     <TextView
         android:id="@+id/desc"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
         android:layout_toRightOf="@+id/icon_sliding"
-        android:singleLine="true"
+        android:layout_marginTop="-5dp"
         android:ellipsize="end"
-        android:paddingLeft="13dp"
-        android:textColor="#FFFFFFFF"
-        android:textSize="14sp"
-        android:paddingBottom="5dp" />
-
-
-
-   <!--  <CheckBox
-        android:id="@+id/sliding_menu_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/desc"
-        android:layout_alignParentRight="true" /> -->
- 
+        android:singleLine="true"
+        android:textColor="@color/gray_desc"
+        android:textSize="@dimen/desc_text_size" />
 </RelativeLayout>
-
