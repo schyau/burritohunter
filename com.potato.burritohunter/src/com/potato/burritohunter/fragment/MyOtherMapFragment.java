@@ -184,7 +184,7 @@ public class MyOtherMapFragment extends SherlockFragment
       pivotMarker.remove();
     }
     pivotMarker = map.addMarker( new MarkerOptions().position( PIVOT ).draggable( true )
-        .icon( BitmapDescriptorFactory.fromResource( R.drawable.abs__ab_bottom_solid_dark_holo ) ) );
+        .icon( BitmapDescriptorFactory.fromResource( R.drawable.center_mark ) ) );
 
     pivotMarker.setPosition( PIVOT ); // is this ncessary? I don't think so
     map.animateCamera( CameraUpdateFactory.newCameraPosition( CameraPosition.fromLatLngZoom( PIVOT, 12 ) ) );
