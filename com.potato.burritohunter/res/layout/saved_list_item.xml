@@ -8,8 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp">
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp" >
 
         <ImageView
             android:id="@+id/icon"
@@ -34,29 +34,48 @@
         android:id="@+id/caret"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:layout_marginLeft="5dp"
-        android:scaleType="fitXY"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_launcher"/>
-        
-    <TextView
-        android:id="@+id/poiCount"
+        android:layout_marginLeft="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher" />
+
+    <RelativeLayout
+        android:id="@+id/poiCountLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/caret"
         android:layout_alignParentTop="true"
-        android:text="000 places"        
-        android:textSize="16sp" />
+        android:layout_toLeftOf="@id/caret" >
+
+        <ImageView
+            android:id="@+id/poiCountIcon"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:src="@drawable/ic_launcher"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:id="@+id/poiCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/poiCountIcon"
+            android:text="0"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/poiCount"
         android:layout_toRightOf="@id/view_flipper"
-        android:paddingBottom="3dp"
+        android:layout_toLeftOf="@id/caret"
+        android:paddingRight="15dp"
+        android:layout_alignParentTop="true"
         android:ellipsize="end"
+        android:singleLine="true"
+        android:paddingBottom="3dp"
         android:textColor="#FFFFFFFF"
         android:textSize="20sp" />
 
@@ -66,8 +85,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
         android:layout_toRightOf="@id/view_flipper"
-        android:paddingLeft="10dp"
         android:ellipsize="end"
+        android:paddingLeft="10dp"
         android:textColor="#FFFFFFFF"
         android:textSize="14sp" />
 

@@ -42,6 +42,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     public TextView txtDesc;
     public long id;
     public GalleryPoiList galleryPoiList;
+    public TextView numViews;
   }
 
   private List<String> getPhotoUrls( int position )
@@ -56,6 +57,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     return photoUrls;
   }
 
+  @Override
   public View getView( int position, View convertView, ViewGroup parent )
   {
     ViewHolder holder = null;
@@ -69,8 +71,9 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
       holder.txtTitle = (TextView) convertView.findViewById( R.id.title );
       holder.imageView = (ImageView) convertView.findViewById( R.id.icon );
       holder.imageView1 = (ImageView) convertView.findViewById( R.id.icon1 );
-      holder.viewFlipper = (ViewFlipper) convertView.findViewById(  R.id.view_flipper );
+      holder.viewFlipper = (ViewFlipper) convertView.findViewById( R.id.view_flipper );
       holder.galleryPoiList = new GalleryPoiList( holder, getPhotoUrls( position ) );
+      holder.numViews = (TextView) convertView.findViewById( R.id.poiCount );
       gallery.add( holder.galleryPoiList );
 
       holder.galleryPoiList.start();
@@ -85,9 +88,18 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
 
     holder.txtDesc.setText( "luls this is the primary key " + rowItem.get_id() );
     holder.txtTitle.setText( rowItem.get_title() );
-    holder.galleryPoiList.setViewsAndUrls( getPhotoUrls( position ) );
+    List<String> photoUrlsList = getPhotoUrls( position );
+    holder.galleryPoiList.setViewsAndUrls( photoUrlsList );
     holder.galleryPoiList.start();
     holder.id = rowItem._id;
+    String numViewsStr = "";
+    if ( photoUrlsList == null )
+    {
+      numViewsStr = "0";
+    }
+    numViewsStr = ""+photoUrlsList.size();     
+   
+    holder.numViews.setText( numViewsStr );
     //holder.imageView.setImageResource(rowItem.getImageId());
 
     return convertView;
@@ -95,7 +107,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
 
   public void whenFragmentOnStop()
   {
-    for( GalleryPoiList threadGallery : gallery )
+    for ( GalleryPoiList threadGallery : gallery )
     {
       threadGallery.stopFlippingNaoJUSTSTHAPPP();
     }
@@ -103,12 +115,12 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
 
   public void startFlipping()
   {
-    for( GalleryPoiList threadGallery : gallery )
+    for ( GalleryPoiList threadGallery : gallery )
     {
       threadGallery.start();
     }
   }
-  
+
   @Override
   public int getCount()
   {
