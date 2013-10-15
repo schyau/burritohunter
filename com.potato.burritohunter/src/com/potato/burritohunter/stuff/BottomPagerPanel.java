@@ -15,12 +15,12 @@ import com.potato.burritohunter.fragment.BottomPagerMarkerPanel;
 
 public class BottomPagerPanel
 {
-  private MyViewPager _viewPager;
+  public static MyViewPager _viewPager;
   private ViewPagerAdapter _viewPagerAdapter;
-  private static BottomPagerPanel _instance;
+  private static transient BottomPagerPanel _instance;
 
-  private BottomPagerButtonsPanel _buttonsPanel;
-  private BottomPagerMarkerPanel _markerPanel;
+  private static BottomPagerButtonsPanel _buttonsPanel;
+  private static BottomPagerMarkerPanel _markerPanel;
 
   
   public static final int PANEL_MARKER = 0;

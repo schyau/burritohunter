@@ -42,7 +42,7 @@ public class BurritoClickListeners
     @Override
     public void onClick( View v )
     {
-      BottomPagerMarkerPanel._viewPager.setCurrentItem( BottomPagerPanel.PANEL_MARKER, true );
+      BottomPagerPanel._viewPager.setCurrentItem( BottomPagerPanel.PANEL_MARKER, true );
     }
   }
 
@@ -283,7 +283,9 @@ public class BurritoClickListeners
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         Log.d( "FindMe", lat + ", lng: " + lng );
-        _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
+        LatLng newPosLatLng = new LatLng( lat, lng );
+        _mapFragment.updateAndDrawPivot( newPosLatLng );
+        _mapFragment.moveCameraToLatLng( newPosLatLng );
       }
       else
       {

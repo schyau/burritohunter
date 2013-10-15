@@ -41,7 +41,6 @@ public class BottomPagerMarkerPanel extends SherlockFragment
     _imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
     _imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
     _bottomPagerRightArrow.setOnClickListener( new BurritoClickListeners.RightButtonNavigation() );
-    
     View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
     linearLayout.setOnClickListener( new OnClickListener(){
 
@@ -54,7 +53,17 @@ public class BottomPagerMarkerPanel extends SherlockFragment
     });
     return vw;
   }
-
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    if ( MyOtherMapFragment.paneMarker != null && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) != null )
+    {
+      SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker );
+      BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+    }
+  }
+  
   // decouple using a dedicated bean, but searchresult works for now
   public void setViews( SearchResult sr )
   {

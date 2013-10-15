@@ -109,7 +109,7 @@ public class POIListFragment extends SherlockListFragment
       MapActivity.viewPagerAdapter.addFragment( single );
     }
     MapActivity.viewPagerAdapter.notifyDataSetChanged();
-    MapActivity.viewPager.setCurrentItem( 2 );
+    MapActivity.viewPager.setCurrentItem( 2, true );
 
   }
 

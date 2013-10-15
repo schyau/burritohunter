@@ -342,6 +342,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     //populate current selected and sliding, draw markers too
     _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+    _mapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT );  // TODO should change this arg to known location of saved list. 
     viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
     //change viewpager
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
@@ -467,6 +468,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
   }
 
+  // there's a handler somewhere that will turn off the shouldFindMe flag after 5000 ms
+  // this is to prevent the user from searching something, and oh hell all of a sudden camera changes
   @Override
   public void onConnected( Bundle dataBundle )
   {
@@ -475,7 +478,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     {
       double lat = mLocationClient.getLastLocation().getLatitude();
       double lng = mLocationClient.getLastLocation().getLongitude();
-      _mapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
+      LatLng lastKnownLatLng = new LatLng( lat, lng );
+      _mapFragment.updateAndDrawPivot( lastKnownLatLng );
+      _mapFragment.moveCameraToLatLng( lastKnownLatLng );
     }
   }
 
