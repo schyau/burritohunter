@@ -3,8 +3,10 @@
 package com.potato.burritohunter.activity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -55,8 +57,9 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     GooglePlayServicesClient.OnConnectionFailedListener
 {
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-  public static final HashMap<Marker, SearchResult> currentSearchResults = new HashMap<Marker, SearchResult>();
-  public static final ArrayList<Marker> selectedSearchResults = new ArrayList<Marker>();
+  public static final Map<Marker, SearchResult> currentSearchResults = Collections
+      .synchronizedMap( new HashMap<Marker, SearchResult>() );
+  public static final List<Marker> selectedSearchResults = Collections.synchronizedList( new ArrayList<Marker>() );
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;
@@ -92,17 +95,17 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     viewPager.setOffscreenPageLimit( 1 );
 
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
-    getSlidingMenu().setOnOpenedListener( new SlidingMenu.OnOpenedListener(){
-
-      @Override
-      public void onOpened()
+    getSlidingMenu().setOnOpenedListener( new SlidingMenu.OnOpenedListener()
       {
-        SomeUtil.hideSoftKeyboard( MapActivity.instance, MyOtherMapFragment.mySearchView );
-        
-      }
-      
-    });
-    
+
+        @Override
+        public void onOpened()
+        {
+          SomeUtil.hideSoftKeyboard( MapActivity.instance, MyOtherMapFragment.mySearchView );
+
+        }
+
+      } );
 
     slidingMenuAdapter = new SampleListFragment.SlidingMenuAdapter( _context );
     mFrag.setListAdapter( slidingMenuAdapter );
@@ -267,7 +270,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
         }
       }
 
-      if (mySearchResult.photoIcon == null || "".equals(mySearchResult.photoIcon) )
+      if ( mySearchResult.photoIcon == null || "".equals( mySearchResult.photoIcon ) )
       {
         //TODO set default pic here!!
         //mySearchResult.photoIcon = 
@@ -320,6 +323,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
    * R.id.viewinmap: viewInMapAction(); return true; } return super.onOptionsItemSelected( item ); }
    */
 
+  //TODO save map positions in db so you can restore it back
   public void viewInMapAction()
   {
     MapActivity.selectedSearchResults.clear();
@@ -342,7 +346,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     //populate current selected and sliding, draw markers too
     _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-    _mapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT );  // TODO should change this arg to known location of saved list. 
+    _mapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
     viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
     //change viewpager
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );

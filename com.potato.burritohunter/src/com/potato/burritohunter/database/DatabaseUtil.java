@@ -25,32 +25,6 @@ public class DatabaseUtil
   {
     return _dbHelper;
   }
-  
-  
-  /* retrieves all search results for screen 3 */
-  public static List<SearchResult> getSingleSearchResults(String foreignKey)
-  {
-    /*Cursor cursor = _dbHelper.retrievePoints( foreignKey );
-    List<SearchResult> list = new ArrayList<SearchResult>();
-    // looping through all rows and adding to list
-    if ( cursor.moveToFirst() )
-    {
-      int nameIndex = cursor.getColumnIndex( DatabaseHelper.KEY_NAME );
-      int lngIndex = cursor.getColumnIndex( DatabaseHelper.KEY_LNG );
-      int latIndex = cursor.getColumnIndex( DatabaseHelper.KEY_LAT );
-      do
-      {
-        SearchResult searchResult = new SearchResult();
-        searchResult._name = cursor.getString( nameIndex );
-        double lat = Double.parseDouble( cursor.getString( latIndex ) );
-        double lng = Double.parseDouble( cursor.getString( lngIndex ) );
-        searchResult._lat = lat;
-        searchResult._lng = lng;
-        list.add( searchResult );
-      } while ( cursor.moveToNext() );
-    }
-    return list;*/return null;
-  }
 
   public static List<SavedListItem> getSavedList()
   {

@@ -2,23 +2,16 @@ package com.potato.burritohunter.fragment;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -31,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -49,12 +41,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
-import com.potato.burritohunter.database.DatabaseHelper;
-import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
 import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SetupThread;
 import com.potato.burritohunter.stuff.SomeUtil;
 
 // this class should contain the map logic now...
@@ -73,19 +64,19 @@ public class MyOtherMapFragment extends SherlockFragment
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
   /* save pivot to sharedprefs keys */
-  private final static String PIVOT_LAT_KEY = "PIVOT LAT KEY";
-  private final static String PIVOT_LNG_KEY = "PIVOT LNG KEY";
+  public final static String PIVOT_LAT_KEY = "PIVOT LAT KEY";
+  public final static String PIVOT_LNG_KEY = "PIVOT LNG KEY";
 
   /* save camerato shared prefs keys */
-  private final static String CAMERA_ZOOM_KEY = "CAMERA ZOOM KEY";
-  private final static String CAMERA_TILT_KEY = "CAMERA TILT KEY";
-  private final static String CAMERA_BEARING_KEY = "CAMERA BEARING KEY";
-  private final static String CAMERA_LAT_KEY = "CAMERA LAT KEY";
-  private final static String CAMERA_LNG_KEY = "CAMERA LNG KEY";
+  public final static String CAMERA_ZOOM_KEY = "CAMERA ZOOM KEY";
+  public final static String CAMERA_TILT_KEY = "CAMERA TILT KEY";
+  public final static String CAMERA_BEARING_KEY = "CAMERA BEARING KEY";
+  public final static String CAMERA_LAT_KEY = "CAMERA LAT KEY";
+  public final static String CAMERA_LNG_KEY = "CAMERA LNG KEY";
 
   public static final String SEARCH_RESULT_SERIALIZED_STRING_KEY = "SEARCH RESULT SERIALIZED STRING KEY"; // search results 
   public static final String SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY = "SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY"; // selected search result
-  private static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
+  public static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
 
   public static boolean shouldFindMe = false;
   private static boolean ONSTOPLOCK = true; //should we skip on stop?
@@ -174,7 +165,7 @@ public class MyOtherMapFragment extends SherlockFragment
     return map;
   }
 
-  public void updateAndDrawPivot( LatLng latLng )
+  public static void updateAndDrawPivot( LatLng latLng )
   {
     PIVOT = latLng;
     if ( pivotMarker != null )
@@ -189,7 +180,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
   private static final int ZOOM_THRESHOLD = 7;
 
-  public void moveCameraToLatLng( LatLng latlng )
+  public static void moveCameraToLatLng( LatLng latlng )
   {
     CameraPosition currentCP = map.getCameraPosition();
     CameraPosition.Builder updateCP = new CameraPosition.Builder().target( latlng );
@@ -210,165 +201,12 @@ public class MyOtherMapFragment extends SherlockFragment
 
     // Connect the client.
     MapActivity.mLocationClient.connect();
-    SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
-
-    // inflate search results
-    String searchResultSerializedString = prefs.getString( SEARCH_RESULT_SERIALIZED_STRING_KEY, "" );
-    HashMap<String, Marker> reverseSearchResultHashMap = new HashMap<String, Marker>();
     MapActivity.clearSearchResults();
-    for ( int i = 0; i < searchResultSerializedString.length(); i += 24 )
-    {
-      String id = searchResultSerializedString.substring( i, i + 24 );
-      DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-      Cursor c = dbHelper.retrieveSinglePoint( id );
-      SearchResult sr = dbHelper.getSearchResult( c );
-
-      // TODO make a big ass Marker class with its own onclicklistener
-      Marker marker = getMap()
-          .addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-                          .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
-
-      MapActivity.currentSearchResults.put( marker, sr );
-      reverseSearchResultHashMap.put( id, marker );
-
-      MapActivity.slidingMenuAdapter.add( marker );
-    }
-
-    //inflate selected search results
-    String searchResultSelectedSerializedString = prefs.getString( SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY, "" );
-    for ( int i = 0; i < searchResultSelectedSerializedString.length(); i += 24 )
-    {
-      String id = searchResultSelectedSerializedString.substring( i, i + 24 );
-      Marker marker = reverseSearchResultHashMap.get( id );
-      MapActivity.selectedSearchResults.add( marker );
-      //change marker state 
-      marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
-      SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
-    }
-    //TODO set save panemarker in onstop and set to last chosen panemarker here
-    // restore the search result that was typed
-    double lat = Double.parseDouble( prefs.getString( PIVOT_LAT_KEY, "181" ) );
-    double lng = Double.parseDouble( prefs.getString( PIVOT_LNG_KEY, "181" ) );
-    // first, check to see if shared prefs values exist for pivot
-    if ( lat == 181 || lng == 181 )
-    { //if no, draw marker to hardcoded place, place camera there.
-      updateAndDrawPivot( PIVOT );
-
-      CameraUpdate cp = CameraUpdateFactory.newCameraPosition( new CameraPosition.Builder().target( PIVOT ).build() );
-      map.animateCamera( cp );
-
-      final Context thisContext = getActivity();
-      new AlertDialog.Builder( getActivity() )
-
-      .setMessage( "Would you like to find your current location?" )
-          .setPositiveButton( "Yes", new DialogInterface.OnClickListener()
-            {
-              public void onClick( DialogInterface dialog, int whichButton )
-              {
-                if ( MapActivity.mLocationClient.isConnected() )
-                {
-                  Location loc = MapActivity.mLocationClient.getLastLocation();
-                  if ( loc == null )
-                  {
-                    Toast.makeText( thisContext, "an error occurred, apologies", Toast.LENGTH_SHORT ).show();
-                  }
-                  else
-                  {
-                    double lat = MapActivity.mLocationClient.getLastLocation().getLatitude();
-                    double lng = MapActivity.mLocationClient.getLastLocation().getLongitude();
-                    LatLng lastKnownLatLng = new LatLng( lat, lng );
-                    updateAndDrawPivot( lastKnownLatLng );
-                    moveCameraToLatLng( lastKnownLatLng );
-                  }
-                }
-                else
-                {
-                  //  new Thread(                 //MapActivity.mLocationClient.getLastLocation();)
-                  Handler handler = new Handler();
-                  handler.postDelayed( new Runnable()
-                    {
-                      public void run()
-                      {
-                        MyOtherMapFragment.shouldFindMe = false;
-                      }
-                    }, 5000 );
-
-                  shouldFindMe = true;
-                }
-              }
-
-            } ).setNegativeButton( "No", new DialogInterface.OnClickListener()
-            {
-              public void onClick( DialogInterface dialog, int whichButton )
-              {
-                /* User clicked cancel so do some stuff */
-              }
-            } ).create().show();
-    }
-    else
-    {
-      // else reload values, draw pivot
-      updateAndDrawPivot( new LatLng( lat, lng ) );
-      //retrieve paneMarker if one exists()
-      String paneMarkerId = prefs.getString( PANEMARKER_ID_KEY, PANEMARKER_ID_CLEAR_VALUE );
-
-      // check if paneMarker should be inflated
-      if ( PANEMARKER_ID_CLEAR_VALUE.equals( paneMarkerId ) )
-      {//no
-        paneMarker = null;
-      }
-      else
-      {//yes
-        paneMarker = reverseSearchResultHashMap.get( paneMarkerId );
-      }
-
-      // update camera to the last known configuration
-      float zoom = prefs.getFloat( CAMERA_ZOOM_KEY, Float.MAX_VALUE );
-      float tilt = prefs.getFloat( CAMERA_TILT_KEY, Float.MAX_VALUE );
-      float bearing = prefs.getFloat( CAMERA_BEARING_KEY, Float.MAX_VALUE );
-      String latStr = prefs.getString( CAMERA_LAT_KEY, CAMERA_DEFAULT_VAL );
-      String lngStr = prefs.getString( CAMERA_LNG_KEY, CAMERA_DEFAULT_VAL );
-      CameraPosition currentCP = map.getCameraPosition();
-
-      LatLng latlng = PIVOT;
-      if ( CAMERA_DEFAULT_VAL.compareTo( latStr ) != 0 && CAMERA_DEFAULT_VAL.compareTo( lngStr ) != 0 )
-      {
-        try
-        {
-          double latDbl = Double.parseDouble( latStr );
-          double lngDbl = Double.parseDouble( lngStr );
-          latlng = new LatLng( latDbl, lngDbl );
-        }
-        catch ( Exception e )
-        {
-          //somewhere, Joshua Bloch is crying.
-        }
-
-      }
-      CameraPosition.Builder updateCP = new CameraPosition.Builder().target( latlng );
-      if ( zoom != Float.MAX_VALUE )
-      {
-        updateCP = updateCP.zoom( zoom ); // (zoomzoom)
-      }
-      if ( tilt != Float.MAX_VALUE )
-      {
-        updateCP = updateCP.tilt( tilt );
-      }
-      if ( bearing != Float.MAX_VALUE )
-      {
-        updateCP = updateCP.bearing( bearing );
-      }
-
-      CameraUpdate cp = CameraUpdateFactory.newCameraPosition( updateCP.build() );
-      map.animateCamera( cp );
-    }
-
-    String searchQuery = prefs.getString( SEARCH_QUERY_KEY, "" );
+    new SetupThread ( getActivity() ).execute( );
     ONSTOPLOCK = false;
   }
 
-  private static final String CAMERA_DEFAULT_VAL = Float.MAX_VALUE + "";
+  public static final String CAMERA_DEFAULT_VAL = Float.MAX_VALUE + "";
 
   // save pivot, current search results, selected search results, query, and disconnect location client
   @Override
@@ -499,8 +337,8 @@ public class MyOtherMapFragment extends SherlockFragment
     }
   }
 
-  private static final String PANEMARKER_ID_KEY = "panemarker_id_key";
-  private static final String PANEMARKER_ID_CLEAR_VALUE = "panemarker_id_clear_value";
+  public static final String PANEMARKER_ID_KEY = "panemarker_id_key";
+  public static final String PANEMARKER_ID_CLEAR_VALUE = "panemarker_id_clear_value";
 
   public void saveCameraSettings()
   {

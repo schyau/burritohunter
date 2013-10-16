@@ -81,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     db.execSQL( CREATE_FOREIGN_KEYS_TABLE );
   }
 
-  public void insertPoint( SearchResult searchResult )
+  public synchronized void insertPoint( SearchResult searchResult )
   {
     String lat = searchResult._lat + "";
     String lng = searchResult._lng + "";
@@ -120,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
   }
 
-  public long saveList( String name )
+  public synchronized long saveList( String name )
   {
     ContentValues values = new ContentValues();
     values.put( KEY_NAME, name );
@@ -129,7 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   }
 
   // should be called after saveList
-  public void saveForeignKey( String id, long foreignKey )
+  public synchronized void saveForeignKey( String id, long foreignKey )
   {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
@@ -140,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
   // pretty sure you can use a left join to make this one sql stmt
   // get all points related to the list foreign key
-  public List<SearchResult> retrievePoints( String foreignKey )
+  public synchronized List<SearchResult> retrievePoints( String foreignKey )
   {
     String selectQuery = "select " + KEY_ID + " from " + TABLE_FOREIGN_KEY + " where " + KEY_FOREIGN_KEY + " = "
                          + foreignKey;
@@ -166,7 +166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   }
 
   //provide a cursor with a single item and we'll grab its column info
-  public SearchResult getSearchResult( Cursor cursorSingle )
+  public synchronized SearchResult getSearchResult( Cursor cursorSingle )
   {
     cursorSingle.moveToFirst();
     SearchResult searchResult = new SearchResult();
@@ -186,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     return searchResult;
   }
 
-  public Cursor retrieveSinglePoint( String id )
+  public synchronized Cursor retrieveSinglePoint( String id )
   {
     SQLiteDatabase db = this.getReadableDatabase();
     String selectSingleQuery = "select * from " + TABLE_SINGLE_POI + " where " + TABLE_SINGLE_POI + "." + KEY_ID + "='"
@@ -211,7 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   // add POI list
 
   //TODO should have a middle layer abstract this out
-  public void addPOIList( String listName, List<SearchResult> poiList )
+  public synchronized void addPOIList( String listName, List<SearchResult> poiList )
   {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues listValues = new ContentValues();
@@ -237,14 +237,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
   }
 
-  public Cursor queryAllListPOIs()
+  public synchronized Cursor queryAllListPOIs()
   {
     String selectQuery = "SELECT  * FROM " + TABLE_LIST_POI;
     SQLiteDatabase db = this.getWritableDatabase();
     return db.rawQuery( selectQuery, null );
   }
 
-  public void deleteListRow( long id )
+  public synchronized void deleteListRow( long id )
   {
     SQLiteDatabase db = this.getWritableDatabase();
     db.delete( TABLE_LIST_POI, KEY_ID + "=" + id, null );
@@ -253,7 +253,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
   }
 
-  public void deleteSingle( String id, long foreignKey )
+  public synchronized void deleteSingle( String id, long foreignKey )
   {
     SQLiteDatabase db = this.getWritableDatabase();
     String WHERE_CLAUSE = KEY_ID + "='"+id+"'"+" AND "+ KEY_FOREIGN_KEY+"=" + foreignKey ; //oops swapped the foreignkey vs id logic
