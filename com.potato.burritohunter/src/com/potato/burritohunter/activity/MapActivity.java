@@ -4,9 +4,9 @@ package com.potato.burritohunter.activity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -57,9 +57,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     GooglePlayServicesClient.OnConnectionFailedListener
 {
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-  public static final Map<Marker, SearchResult> currentSearchResults = Collections
-      .synchronizedMap( new HashMap<Marker, SearchResult>() );
-  public static final List<Marker> selectedSearchResults = Collections.synchronizedList( new ArrayList<Marker>() );
+  public static final Map<Marker, SearchResult> currentSearchResults =  new ConcurrentHashMap<Marker, SearchResult>();
+  public static final List<Marker> selectedSearchResults = new ArrayList<Marker>() ;
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;

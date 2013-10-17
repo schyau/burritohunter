@@ -34,7 +34,7 @@ import com.potato.burritohunter.fragment.MyOtherMapFragment;
 public class SetupThread extends AsyncTask<Void, Void, Void>
 {
   private Activity activity;
-  
+
   //camera
   float zoom;
   float tilt;
@@ -43,17 +43,18 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
   String latStr;
 
   // pivot
-  double lat; 
+  double lat;
   double lng;
-  
-  List<SearchResult>listOfSearializedSearchResults = new ArrayList<SearchResult>();;
-  Map <String,Marker> reverseSearchResultHashMap = new HashMap<String, Marker>();
+
+  List<SearchResult> listOfSearializedSearchResults = new ArrayList<SearchResult>();;
+  Map<String, Marker> reverseSearchResultHashMap = new HashMap<String, Marker>();
   String searchResultSelectedSerializedString;
-  
+
   String paneMarkerId;
-  
+
   String searchQuery;
-  public SetupThread ( Activity activity )
+
+  public SetupThread( Activity activity )
   {
     this.activity = activity;
   }
@@ -65,7 +66,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     // inflate search results
     String searchResultSerializedString = prefs.getString( MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY, "" );
 
-    searchResultSelectedSerializedString = prefs.getString( MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY, "" );
+    searchResultSelectedSerializedString = prefs
+        .getString( MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY, "" );
 
     for ( int i = 0; i < searchResultSerializedString.length(); i += 24 )
     {
@@ -73,12 +75,12 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
       Cursor c = dbHelper.retrieveSinglePoint( id );
       SearchResult sr = dbHelper.getSearchResult( c );
-      listOfSearializedSearchResults.add(sr);
+      listOfSearializedSearchResults.add( sr );
     }
 
     lat = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LAT_KEY, "181" ) );
     lng = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LNG_KEY, "181" ) );
-    
+
     // update camera to the last known configuration
     zoom = prefs.getFloat( MyOtherMapFragment.CAMERA_ZOOM_KEY, Float.MAX_VALUE );
     tilt = prefs.getFloat( MyOtherMapFragment.CAMERA_TILT_KEY, Float.MAX_VALUE );
@@ -95,10 +97,9 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
   {
     for ( SearchResult sr : listOfSearializedSearchResults )
     {
-    // TODO make a big ass Marker class with its own onclicklistener
-      Marker marker = MyOtherMapFragment.map
-        .addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-                        .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
+      // TODO make a big ass Marker class with its own onclicklistener
+      Marker marker = MyOtherMapFragment.map.addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
+          .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
 
       MapActivity.currentSearchResults.put( marker, sr );
       reverseSearchResultHashMap.put( sr.id, marker );
@@ -122,7 +123,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     { //if no, draw marker to hardcoded place, place camera there.
       MyOtherMapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
 
-      CameraUpdate cp = CameraUpdateFactory.newCameraPosition( new CameraPosition.Builder().target( MyOtherMapFragment.PIVOT ).build() );
+      CameraUpdate cp = CameraUpdateFactory.newCameraPosition( new CameraPosition.Builder()
+          .target( MyOtherMapFragment.PIVOT ).build() );
       MyOtherMapFragment.map.animateCamera( cp );
 
       final Context thisContext = activity;
@@ -178,23 +180,25 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       // else reload values, draw pivot
       MyOtherMapFragment.updateAndDrawPivot( new LatLng( lat, lng ) );
       //retrieve paneMarker if one exists()
-      
 
       // check if paneMarker should be inflated
       if ( MyOtherMapFragment.PANEMARKER_ID_CLEAR_VALUE.equals( paneMarkerId ) )
       {//no
         MyOtherMapFragment.paneMarker = null;
+        BottomPagerPanel.getInstance().disableMarkerPanel();
       }
       else
       {//yes
         MyOtherMapFragment.paneMarker = reverseSearchResultHashMap.get( paneMarkerId );
+        SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker );
+        BottomPagerPanel.getInstance().enableMarkerPanel( sr );
       }
-
 
       CameraPosition currentCP = MyOtherMapFragment.map.getCameraPosition();
 
       LatLng latlng = MyOtherMapFragment.PIVOT;
-      if ( MyOtherMapFragment.CAMERA_DEFAULT_VAL.compareTo( latStr ) != 0 && MyOtherMapFragment.CAMERA_DEFAULT_VAL.compareTo( lngStr ) != 0 )
+      if ( MyOtherMapFragment.CAMERA_DEFAULT_VAL.compareTo( latStr ) != 0
+           && MyOtherMapFragment.CAMERA_DEFAULT_VAL.compareTo( lngStr ) != 0 )
       {
         try
         {
@@ -227,5 +231,3 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     }
   }
 }
-
-

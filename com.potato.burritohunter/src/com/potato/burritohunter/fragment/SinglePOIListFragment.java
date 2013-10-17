@@ -57,6 +57,7 @@ public class SinglePOIListFragment extends SherlockListFragment
   {
     SinglePOIListAdapter adapter = new SinglePOIListAdapter( this, singlePOIs );
     setListAdapter( adapter );
+    adapter.notifyDataSetChanged();
   }
 
   @Override

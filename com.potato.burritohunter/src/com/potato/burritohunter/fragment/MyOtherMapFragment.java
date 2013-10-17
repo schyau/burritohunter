@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -88,6 +89,7 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
+    Log.d("asdf", "oncreateview");
     if ( vw != null )
     {
       ViewGroup parent = (ViewGroup) vw.getParent();
@@ -149,6 +151,7 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public void onCreate( Bundle b )
   {
+    Log.d("asdf", "oncreate");
     super.onCreate( b );
 
     //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -198,7 +201,14 @@ public class MyOtherMapFragment extends SherlockFragment
   public void onStart()
   {
     super.onStart();
-
+    Log.d("asdf", "onstart");
+    //clear maps and disconnect location client
+    MapActivity.selectedSearchResults.clear();
+    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    {
+      m.remove();
+    }
+    map.clear();
     // Connect the client.
     MapActivity.mLocationClient.connect();
     MapActivity.clearSearchResults();
@@ -212,14 +222,7 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public void onStop()
   {
-    // we have a problem with on stop being called twice... so this will be our ghetto solution.
-    if ( ONSTOPLOCK ) //should we skip onstop?
-    {
-
-      super.onStop();
-      return;
-    }
-    ONSTOPLOCK = true;
+    Log.d("asdf", "onstop");
     //save pivot
     saveCameraSettings();
 
@@ -237,16 +240,6 @@ public class MyOtherMapFragment extends SherlockFragment
 
     //save query
     saveSearchQueryToSharedPrefs();
-
-    //clear maps and disconnect location client
-    MapActivity.selectedSearchResults.clear();
-    for ( Marker m : MapActivity.currentSearchResults.keySet() )
-    {
-      m.remove();
-    }
-    map.clear();
-    MapActivity.currentSearchResults.clear();
-    MapActivity.slidingMenuAdapter.clear();
     MapActivity.mLocationClient.disconnect();
     super.onStop();
   }
@@ -255,8 +248,7 @@ public class MyOtherMapFragment extends SherlockFragment
   public void onResume()
   {
     super.onResume();
-    if ( paneMarker == null )
-      BottomPagerPanel.getInstance().disableMarkerPanel();
+    Log.d("asdf", "onResume");
   }
 
   //TODO chyauchyau save searchQuery
@@ -305,6 +297,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
   public void onDestroyView()
   {
+    Log.d("asdf", "ondestroyview");
     super.onDestroyView();
     try
     {

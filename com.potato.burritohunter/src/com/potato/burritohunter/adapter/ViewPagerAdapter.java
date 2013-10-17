@@ -38,6 +38,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter
     fragments.add( frag );
   }
   
+  public void setFirst(Fragment frag)
+  {
+    fragments.add( 0, frag );
+  }
+  public void setSecond(Fragment frag)
+  {
+    fragments.add( 1, frag );
+  }
+  
   // http://stackoverflow.com/questions/13664155/dynamically-add-and-remove-view-to-viewpager
   public int removeView (ViewPager pager, int position)
   {

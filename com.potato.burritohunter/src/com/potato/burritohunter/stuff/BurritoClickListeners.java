@@ -70,7 +70,7 @@ public class BurritoClickListeners
         MapActivity.selectedSearchResults.remove( m );
         MapActivity.slidingMenuAdapter.remove( m );
       }
-      if ( MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
+      if (  MyOtherMapFragment.paneMarker != null && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
       {
         BottomPagerPanel.getInstance().disableMarkerPanel();
         MyOtherMapFragment.paneMarker = null;

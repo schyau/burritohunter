@@ -50,13 +50,13 @@ public class BottomPagerPanel
     _markerPanel = new BottomPagerMarkerPanel();
 
     _viewPager = (MyViewPager) vw.findViewById( R.id.pagerBottom );
-
+    _viewPager.setAdapter( null );
     _viewPagerAdapter = new ViewPagerAdapter( fragmentActivity.getSupportFragmentManager() );
 
-    _viewPagerAdapter.addFragment( _markerPanel );
-    _viewPagerAdapter.addFragment( _buttonsPanel );
+    _viewPagerAdapter.setFirst( _markerPanel );
+    _viewPagerAdapter.setSecond ( _buttonsPanel );
 
-    _viewPager.setAdapter( _instance._viewPagerAdapter );
+    _viewPager.setAdapter( _viewPagerAdapter );
     _viewPager.setCurrentItem( PANEL_BUTTONS );
     _buttonsPanel.setViewPager( _viewPager );
     _markerPanel.setViewPager( _viewPager );
@@ -98,10 +98,5 @@ public class BottomPagerPanel
   {
     _viewPagerAdapter.removeView( _viewPager, 1 );
     _viewPagerAdapter.removeView( _viewPager, 0 );
-    _viewPagerAdapter = null;
-    _viewPager = null;
-    _markerPanel = null;
-    _buttonsPanel = null;
-    _instance = null;
   }
 }
