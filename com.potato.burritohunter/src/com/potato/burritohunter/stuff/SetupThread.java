@@ -81,6 +81,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     lat = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LAT_KEY, "181" ) );
     lng = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LNG_KEY, "181" ) );
 
+    
     // update camera to the last known configuration
     zoom = prefs.getFloat( MyOtherMapFragment.CAMERA_ZOOM_KEY, Float.MAX_VALUE );
     tilt = prefs.getFloat( MyOtherMapFragment.CAMERA_TILT_KEY, Float.MAX_VALUE );
@@ -89,12 +90,14 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     lngStr = prefs.getString( MyOtherMapFragment.CAMERA_LNG_KEY, MyOtherMapFragment.CAMERA_DEFAULT_VAL );
     searchQuery = prefs.getString( MyOtherMapFragment.SEARCH_QUERY_KEY, "" );
     paneMarkerId = prefs.getString( MyOtherMapFragment.PANEMARKER_ID_KEY, MyOtherMapFragment.PANEMARKER_ID_CLEAR_VALUE );
+    
     return null;
   }
 
   @Override
   protected void onPostExecute( Void result )
   {
+    Log.d("asdf", "zoom, tilt, bearing, latStr, lngStr: "+zoom+", "+ tilt+", "+bearing+", "+latStr+", "+lngStr);
     for ( SearchResult sr : listOfSearializedSearchResults )
     {
       // TODO make a big ass Marker class with its own onclicklistener

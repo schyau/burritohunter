@@ -81,43 +81,54 @@ public class DatabaseHelper extends SQLiteOpenHelper
     db.execSQL( CREATE_FOREIGN_KEYS_TABLE );
   }
 
-  public synchronized void insertPoint( SearchResult searchResult )
+  public synchronized void insertPoint( final SearchResult searchResult )
   {
-    String lat = searchResult._lat + "";
-    String lng = searchResult._lng + "";
-    String name = searchResult._name;
-    String address = searchResult.address;
-    String id = searchResult.id;
-    String photoIcon = searchResult.photoIcon;
+    final DatabaseHelper instance = this;
+    new Thread(new Runnable(){
 
-    ContentValues values = new ContentValues();
-    values.put( KEY_ID, id );
-    values.put( KEY_LAT, lat );
-    values.put( KEY_LNG, lng );
-    values.put( KEY_NAME, name );
-    values.put( KEY_ADDRESS, address );
-    values.put( KEY_ICON, photoIcon);
+      @Override
+      public void run()
+      {
+        String lat = searchResult._lat + "";
+        String lng = searchResult._lng + "";
+        String name = searchResult._name;
+        String address = searchResult.address;
+        String id = searchResult.id;
+        String photoIcon = searchResult.photoIcon;
 
-    SQLiteDatabase db = this.getWritableDatabase();;
-    try
-    {
-      db.insertOrThrow( TABLE_SINGLE_POI, null, values );
-    }
-    catch ( SQLException e )
-    {
-      try
-      {
-        db.replace( TABLE_SINGLE_POI, null, values );
-      }
-      catch ( SQLException replaceE )
-      {
-        Log.d( "DatabaseHelper", "couldn't insert or update point!" );
-        if ( replaceE != null )
+        ContentValues values = new ContentValues();
+        values.put( KEY_ID, id );
+        values.put( KEY_LAT, lat );
+        values.put( KEY_LNG, lng );
+        values.put( KEY_NAME, name );
+        values.put( KEY_ADDRESS, address );
+        values.put( KEY_ICON, photoIcon);
+
+        SQLiteDatabase db = instance.getWritableDatabase();;
+        try
         {
-          replaceE.printStackTrace();
+          db.insertOrThrow( TABLE_SINGLE_POI, null, values );
         }
+        catch ( SQLException e )
+        {
+          try
+          {
+            db.replace( TABLE_SINGLE_POI, null, values );
+          }
+          catch ( SQLException replaceE )
+          {
+            Log.d( "DatabaseHelper", "couldn't insert or update point!" );
+            if ( replaceE != null )
+            {
+              replaceE.printStackTrace();
+            }
+          }
+        }
+        
       }
-    }
+      
+    }).start();
+
   }
 
   public synchronized long saveList( String name )

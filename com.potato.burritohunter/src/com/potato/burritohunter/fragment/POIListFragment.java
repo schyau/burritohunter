@@ -47,9 +47,7 @@ public class POIListFragment extends SherlockListFragment
         @Override
         protected Void doInBackground( Void... params )
         {
-
           list = DatabaseUtil.getSavedList();
-
           return null;
         }
 
@@ -160,7 +158,6 @@ public class POIListFragment extends SherlockListFragment
 
   public void onDestroy()
   {
-    //listAdapter.whenFragmentOnStop();
     super.onDestroy();
   }
 }

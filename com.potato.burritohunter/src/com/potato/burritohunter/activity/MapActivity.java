@@ -13,6 +13,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
@@ -57,8 +58,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     GooglePlayServicesClient.OnConnectionFailedListener
 {
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-  public static final Map<Marker, SearchResult> currentSearchResults =  new ConcurrentHashMap<Marker, SearchResult>();
-  public static final List<Marker> selectedSearchResults = new ArrayList<Marker>() ;
+  public static final Map<Marker, SearchResult> currentSearchResults = new ConcurrentHashMap<Marker, SearchResult>();
+  public static final List<Marker> selectedSearchResults = new ArrayList<Marker>();
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;
@@ -157,9 +158,12 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     selectedSearchResults.clear();
   }
 
+  static Marker newPaneMarker;
+
   @Subscribe
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
+    newPaneMarker = null;
     List<Venue> venues = new ArrayList<Venue>();
     Response response = searchResult.getResponse();
 
@@ -176,7 +180,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     ArrayList<String> ids = new ArrayList<String>();
 
     String paneMarkerId = null;
-    Marker newPaneMarker = null; // so when it's remade, we can store the value
+
     if ( MyOtherMapFragment.paneMarker != null )
     {
       //wow race condition.  i actually saw this.
@@ -199,95 +203,122 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     clearSearchResults();
     /* new */
 
+    final String fPaneMarkerId = paneMarkerId;
     // restore ids, repopulate currentsearchresults and slidermenuadapter
-    DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-    for ( String id : ids )
+    Object reallySadLock = new Object();
+    final DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+    synchronized ( reallySadLock )
     {
-      Cursor c = dbHelper.retrieveSinglePoint( id );
-      SearchResult sr = dbHelper.getSearchResult( c );
-
-      LatLng pos = new LatLng( sr._lat, sr._lng );
-      Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
-                                                           .position( pos )
-                                                           .title( sr._name )
-                                                           .snippet( "Kiel is cool" )
-                                                           .icon( BitmapDescriptorFactory
-                                                                      .fromResource( R.drawable.item_unselected ) ) );
-      if ( sr.id.equals( paneMarkerId ) )
+      for ( final String id : ids )
       {
-        newPaneMarker = marker;
-      }
-      //selectedSearchResults.add( marker ); // this iwll be done in changemarkerstate
-      currentSearchResults.put( marker, sr );
-      slidingMenuAdapter.add( marker );
-      MyOtherMapFragment.paneMarker = marker;
-      MyOtherMapFragment.changeMarkerState( marker );
-    }
-    MyOtherMapFragment.paneMarker = newPaneMarker;
-    /* end new */
-    for ( Venue venue : venues )
-    {
-      Location location = venue.getLocation();
-      String id = venue.getId();
-      String name = venue.getName();
-      if ( ids.contains( id ) ) //already accounted for, // new todo: 
-      {
-        continue;
-      }
-      if ( location == null || id == null || name == null )
-        continue;
-      double lat = location.getLat();
-      double lng = location.getLng();
-      String address = location.getAddress();
-      if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
-        continue;
-
-      SearchResult mySearchResult = new SearchResult();
-      mySearchResult._lat = lat;
-      mySearchResult._lng = lng;
-      mySearchResult._name = name;
-      mySearchResult.address = address;
-      mySearchResult.id = id;
-      mySearchResult._canonicalAddress = venue.getCanonicalUrl();
-
-      List<Category> categories = venue.getCategories();
-      if ( categories != null && categories.size() > 0 )
-      {
-        Category category = categories.get( 0 );
-        if ( category != null )
-        {
-          Icon icon = category.getIcon();
-          if ( icon != null )
+        ( new AsyncTask<Void, Void, Void>()
           {
-            String prefix = icon.getPrefix();
-            String bg = "bg_";
-            String imageSize = "32";
-            String suffix = icon.getSuffix();
-            String iconUrl = prefix + bg + imageSize + suffix;
-            mySearchResult.photoIcon = iconUrl;
+
+            Marker marker;
+            SearchResult sr;
+
+            @Override
+            protected Void doInBackground( Void... params )
+            {
+              Cursor c = dbHelper.retrieveSinglePoint( id );
+              sr = dbHelper.getSearchResult( c );
+
+              LatLng pos = new LatLng( sr._lat, sr._lng );
+              marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                            .position( pos )
+                                                            .title( sr._name )
+                                                            .snippet( "Kiel is cool" )
+                                                            .icon( BitmapDescriptorFactory
+                                                                       .fromResource( R.drawable.item_unselected ) ) );
+              return null;
+            }
+
+            @Override
+            protected void onPostExecute( Void result )
+            {
+              if ( sr.id.equals( fPaneMarkerId ) )
+              {
+                newPaneMarker = marker;
+              }
+              //selectedSearchResults.add( marker ); // this iwll be done in changemarkerstate
+              currentSearchResults.put( marker, sr );
+              slidingMenuAdapter.add( marker );
+              MyOtherMapFragment.paneMarker = marker;
+              MyOtherMapFragment.changeMarkerState( marker );
+            }
+
+          } ).execute();
+      }
+
+      MyOtherMapFragment.paneMarker = newPaneMarker;
+    }
+    synchronized ( reallySadLock )
+    {
+      /* end new */
+      for ( Venue venue : venues )
+      {
+        Location location = venue.getLocation();
+        String id = venue.getId();
+        String name = venue.getName();
+        if ( ids.contains( id ) ) //already accounted for, // new todo: 
+        {
+          continue;
+        }
+        if ( location == null || id == null || name == null )
+          continue;
+        double lat = location.getLat();
+        double lng = location.getLng();
+        String address = location.getAddress();
+        if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
+          continue;
+
+        SearchResult mySearchResult = new SearchResult();
+        mySearchResult._lat = lat;
+        mySearchResult._lng = lng;
+        mySearchResult._name = name;
+        mySearchResult.address = address;
+        mySearchResult.id = id;
+        mySearchResult._canonicalAddress = venue.getCanonicalUrl();
+
+        List<Category> categories = venue.getCategories();
+        if ( categories != null && categories.size() > 0 )
+        {
+          Category category = categories.get( 0 );
+          if ( category != null )
+          {
+            Icon icon = category.getIcon();
+            if ( icon != null )
+            {
+              String prefix = icon.getPrefix();
+              String bg = "bg_";
+              String imageSize = "32";
+              String suffix = icon.getSuffix();
+              String iconUrl = prefix + bg + imageSize + suffix;
+              mySearchResult.photoIcon = iconUrl;
+            }
           }
         }
+
+        if ( mySearchResult.photoIcon == null || "".equals( mySearchResult.photoIcon ) )
+        {
+          //TODO set default pic here!!
+          //mySearchResult.photoIcon = 
+        }
+        //mySearchResult.photoUrl = 
+        dbHelper.insertPoint( mySearchResult );
+        LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
+        // TODO make a big ass Marker class with its own onclicklistener
+        Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                             .position( pos )
+                                                             .title( mySearchResult._name )
+                                                             .snippet( "Kiel is cool" )
+                                                             .icon( BitmapDescriptorFactory
+                                                                        .fromResource( R.drawable.item_unselected ) ) );
+
+        currentSearchResults.put( marker, mySearchResult );
+
+        slidingMenuAdapter.add( marker );
       }
-
-      if ( mySearchResult.photoIcon == null || "".equals( mySearchResult.photoIcon ) )
-      {
-        //TODO set default pic here!!
-        //mySearchResult.photoIcon = 
-      }
-      //mySearchResult.photoUrl = 
-      dbHelper.insertPoint( mySearchResult );
-      LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
-      // TODO make a big ass Marker class with its own onclicklistener
-      Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
-                                                           .position( pos )
-                                                           .title( mySearchResult._name )
-                                                           .snippet( "Kiel is cool" )
-                                                           .icon( BitmapDescriptorFactory
-                                                                      .fromResource( R.drawable.item_unselected ) ) );
-
-      currentSearchResults.put( marker, mySearchResult );
-
-      slidingMenuAdapter.add( marker );
     }
 
   }
@@ -344,8 +375,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                        MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
 
     //populate current selected and sliding, draw markers too
-    _mapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-    _mapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
+    MyOtherMapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+    MyOtherMapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
     viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
     //change viewpager
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
