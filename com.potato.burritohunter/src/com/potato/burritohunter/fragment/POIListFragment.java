@@ -1,12 +1,14 @@
 package com.potato.burritohunter.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +39,28 @@ public class POIListFragment extends SherlockListFragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
-    //Cursor c = DatabaseUtil.getDatabaseHelper().queryAllListPOIs();
-    //SavedCursorAdapter adapter = new SavedCursorAdapter(getActivity().getApplicationContext(), c, true);
-    List<SavedListItem> list = DatabaseUtil.getSavedList();
-    listAdapter = new SavedListAdapter( this, list );
-    setListAdapter( listAdapter );
+    final POIListFragment frag = this;
+    ( new AsyncTask<Void, Void, Void>()
+      {
+        List<SavedListItem> list;
+
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+
+          list = DatabaseUtil.getSavedList();
+
+          return null;
+        }
+
+        @Override
+        protected void onPostExecute( Void param )
+        {
+          listAdapter = new SavedListAdapter( frag, list );
+          setListAdapter( listAdapter );
+        }
+      } ).execute();
+
     View vw = inflater.inflate( R.layout.poi_list_fragment_layout, container, false );
     //medalsList.setDividerHeight(1);
     //vw.setBackgroundColor( Color.WHITE );
@@ -56,19 +75,32 @@ public class POIListFragment extends SherlockListFragment
     getListView().setOnItemLongClickListener( new OnItemLongClickListener()
       {
         @Override
-        public boolean onItemLongClick( AdapterView<?> arg0, final View arg1, int arg2, long arg3 )
+        public boolean onItemLongClick( AdapterView<?> arg0, final View arg1, final int position, long arg3 )
         {
           final String title = ( (TextView) arg1.findViewById( R.id.title ) ).getText().toString();
+
+          //Log.d("asdf", position+", and "+arg3);
           new AlertDialog.Builder( _ctx ).setMessage( "Are you sure you want to delete " + title + "?" )
               .setPositiveButton( "Continue", new DialogInterface.OnClickListener()
                 {
                   public void onClick( DialogInterface dialog, int whichButton )
                   {
-                    long id = ( (SavedListAdapter.ViewHolder) arg1.getTag() ).id;
-                    DatabaseUtil.getDatabaseHelper().deleteListRow( id );
-                    List<SavedListItem> list = DatabaseUtil.getSavedList();
-                    SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
-                    MapActivity._listFragment.setListAdapter( adapter );
+                    new Thread(new Runnable()
+                    {
+                      @Override
+                      public void run()
+                      {
+                        long id = ( (SavedListAdapter.ViewHolder) arg1.getTag() ).id;
+                        DatabaseUtil.getDatabaseHelper().deleteListRow( id );
+                      }
+                      
+                    }).start();
+                    //List<SavedListItem> list = DatabaseUtil.getSavedList();
+                    //SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
+                    //MapActivity._listFragment.setListAdapter( adapter );
+                    listAdapter.removeItem( position );
+                    listAdapter.notifyDataSetChanged();
+                    
                     Toast.makeText( _ctx, title + " deleted!", Toast.LENGTH_SHORT ).show();
                   }
 
@@ -88,23 +120,36 @@ public class POIListFragment extends SherlockListFragment
   @Override
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
-    SavedListItem savedListItem = (SavedListItem) parent.getItemAtPosition( position );
-    long foreignKey = savedListItem._id;
-    List<SearchResult> list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
 
-    single.setSinglePOIs( list, foreignKey );
-    single.setAdapter();
-    
-    if ( MapActivity.viewPagerAdapter.getCount() == 3 )
+    if ( MapActivity.viewPagerAdapter.getCount() != 3 )
     {
-    }
-    else
-    {
+      single.setSinglePOIs( new ArrayList<SearchResult>(), -1 );
       MapActivity.viewPagerAdapter.addFragment( single );
+      MapActivity.viewPagerAdapter.notifyDataSetChanged();
     }
-    MapActivity.viewPagerAdapter.notifyDataSetChanged();
     MapActivity.viewPager.setCurrentItem( 2, true );
+    SavedListItem savedListItem = (SavedListItem) parent.getItemAtPosition( position );
+    final long foreignKey = savedListItem._id;
 
+    ( new AsyncTask<Void, Void, Void>()
+      {
+        List<SearchResult> list;
+
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+          list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
+
+          return null;
+        }
+
+        @Override
+        protected void onPostExecute( Void param )
+        {
+          single.setSinglePOIs( list, foreignKey );
+          single.setAdapter();
+        }
+      } ).execute();
   }
 
   public void onPause()

@@ -57,6 +57,15 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     return photoUrls;
   }
 
+  public void removeItem(int location)
+  {
+    if (rowItems!=null)
+    {
+      rowItems.remove( location );
+    }
+    //else{why is this null!??}
+  }
+  
   @Override
   public View getView( int position, View convertView, ViewGroup parent )
   {
