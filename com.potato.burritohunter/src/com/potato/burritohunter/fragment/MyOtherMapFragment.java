@@ -80,7 +80,6 @@ public class MyOtherMapFragment extends SherlockFragment
   public static final String SEARCH_QUERY_KEY = "SEARCH QUERY KEY";
 
   public static boolean shouldFindMe = false;
-  private static boolean ONSTOPLOCK = true; //should we skip on stop?
 
   private static View vw;
   public static View loadingView;
@@ -213,7 +212,6 @@ public class MyOtherMapFragment extends SherlockFragment
     MapActivity.mLocationClient.connect();
     MapActivity.clearSearchResults();
     new SetupThread ( getActivity() ).execute( );
-    ONSTOPLOCK = false;
   }
 
   public static final String CAMERA_DEFAULT_VAL = Float.MAX_VALUE + "";
@@ -224,7 +222,10 @@ public class MyOtherMapFragment extends SherlockFragment
   {
     Log.d("asdf", "onstop");
     //save pivot
-    saveCameraSettings();
+
+    CameraPosition cameraPosition = map.getCameraPosition();
+    saveCameraSettings(getActivity(), cameraPosition);
+    
 
     // save current search results
     saveSearchResultsToSharedPrefs( getActivity(), MapActivity.currentSearchResults.values(),
@@ -333,9 +334,9 @@ public class MyOtherMapFragment extends SherlockFragment
   public static final String PANEMARKER_ID_KEY = "panemarker_id_key";
   public static final String PANEMARKER_ID_CLEAR_VALUE = "panemarker_id_clear_value";
 
-  public void saveCameraSettings()
+  public static void saveCameraSettings(Activity activity, CameraPosition cameraPosition )
   {
-    SharedPreferences prefs = getActivity().getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    SharedPreferences prefs = activity.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
 
     // save panemarker
@@ -364,9 +365,8 @@ public class MyOtherMapFragment extends SherlockFragment
       prefs.edit().putString( PIVOT_LNG_KEY, lng ).commit();
       prefs.edit().clear();
     }
-    LatLng target = map.getCameraPosition().target;
-    double latitude = target.latitude;
-    double longitude = target.longitude;
+    double latitude = cameraPosition.target.latitude;
+    double longitude = cameraPosition.target.longitude;
     if ( latitude == 0 && longitude == 0 )
     {
 
@@ -374,9 +374,9 @@ public class MyOtherMapFragment extends SherlockFragment
     else
     {
 
-      float zoom = map.getCameraPosition().zoom;
-      float tilt = map.getCameraPosition().tilt;
-      float bearing = map.getCameraPosition().bearing;
+      float zoom = cameraPosition.zoom;
+      float tilt = cameraPosition.tilt;
+      float bearing = cameraPosition.bearing;
       
       prefs.edit().putFloat( CAMERA_ZOOM_KEY, zoom ).commit();
       prefs.edit().clear();

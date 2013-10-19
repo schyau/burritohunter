@@ -35,7 +35,7 @@ public class SampleListFragment extends ListFragment
     super.onListItemClick( l, v, position, id );
     Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
-    MyOtherMapFragment.changeMarkerState( m );
+    //MyOtherMapFragment.changeMarkerState( m );
     SearchResult sr = MapActivity.currentSearchResults.get( m );
     BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
     MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );

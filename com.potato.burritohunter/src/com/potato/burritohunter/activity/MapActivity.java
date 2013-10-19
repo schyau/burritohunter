@@ -4,8 +4,10 @@ package com.potato.burritohunter.activity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import android.app.Activity;
@@ -27,6 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -50,6 +53,7 @@ import com.potato.burritohunter.fragment.SinglePOIListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.GalleryPoiList;
 import com.potato.burritohunter.stuff.SearchResult;
+import com.potato.burritohunter.stuff.SetupThread;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.squareup.otto.Subscribe;
 
@@ -59,7 +63,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 {
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
   public static final Map<Marker, SearchResult> currentSearchResults = new ConcurrentHashMap<Marker, SearchResult>();
-  public static final List<Marker> selectedSearchResults = new ArrayList<Marker>();
+  public static final Set<Marker> selectedSearchResults = Collections.synchronizedSet( new HashSet<Marker>() );
   private static final String TAG = MapActivity.class.getName();
   public static ViewPagerAdapter viewPagerAdapter;
   public static ViewPager viewPager;
@@ -92,7 +96,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     viewPager.setAdapter( viewPagerAdapter );
     viewPager.setOnPageChangeListener( new ViewPagerOnPageChangeListener( getSlidingMenu() ) );
     viewPager.setCurrentItem( 0 );
-    viewPager.setOffscreenPageLimit( 1 );
+    viewPager.setOffscreenPageLimit( 2 );
 
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
     getSlidingMenu().setOnOpenedListener( new SlidingMenu.OnOpenedListener()
@@ -222,20 +226,18 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
             {
               Cursor c = dbHelper.retrieveSinglePoint( id );
               sr = dbHelper.getSearchResult( c );
-
-              LatLng pos = new LatLng( sr._lat, sr._lng );
-              marker = _mapFragment.getMap().addMarker( new MarkerOptions()
-                                                            .position( pos )
-                                                            .title( sr._name )
-                                                            .snippet( "Kiel is cool" )
-                                                            .icon( BitmapDescriptorFactory
-                                                                       .fromResource( R.drawable.item_unselected ) ) );
               return null;
             }
 
             @Override
             protected void onPostExecute( Void result )
             {
+              LatLng pos = new LatLng( sr._lat, sr._lng );
+              marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                            .position( pos )
+                                                            .title( sr._name )
+                                                            .icon( BitmapDescriptorFactory
+                                                                       .fromResource( R.drawable.item_unselected ) ) );
               if ( sr.id.equals( fPaneMarkerId ) )
               {
                 newPaneMarker = marker;
@@ -356,28 +358,60 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   //TODO save map positions in db so you can restore it back
   public void viewInMapAction()
   {
-    MapActivity.selectedSearchResults.clear();
+    /*MapActivity.selectedSearchResults.clear();
     for ( Marker m : MapActivity.currentSearchResults.keySet() )
     {
       m.remove();
     }
     _mapFragment.getMap().clear();
     MapActivity.currentSearchResults.clear();
-    MapActivity.slidingMenuAdapter.clear();
+    MapActivity.slidingMenuAdapter.clear();*/
 
     // clear current, selected, and sliding
     // retrieve points.
-    DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-    List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
-    MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,
-                                                       MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
-    MyOtherMapFragment.saveSearchResultsToSharedPrefs( this, searchResults,
-                                                       MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+    final CameraPosition cameraPosition =MyOtherMapFragment.map.getCameraPosition();
+    (new AsyncTask<Void,Void,Void>()
+    {
 
+      @Override
+      protected Void doInBackground( Void... params )
+      {
+        DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+        List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( MapActivity.instance, searchResults,
+                                                           MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( MapActivity.instance, searchResults,
+                                                           MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+        MyOtherMapFragment.paneMarker = null; //
+        
+        //saveCameraSettings will check to see if paneMarker is null and write to sp accordingly
+        MyOtherMapFragment.saveCameraSettings( MapActivity.instance, cameraPosition );
+        //MyOtherMapFragment.`
+        return null;
+      }
+      
+      @Override
+      protected void onPostExecute(Void params)
+      {
+        MapActivity.selectedSearchResults.clear();
+        for ( Marker m : MapActivity.currentSearchResults.keySet() )
+        {
+          m.remove();
+        }
+        _mapFragment.getMap().clear();
+        MapActivity.currentSearchResults.clear();
+        MapActivity.slidingMenuAdapter.clear();
+        (new SetupThread(MapActivity.instance)).execute();
+      }
+
+    }).execute();
+
+
+    //will the gb claim this?  if so we are fuarked.
     //populate current selected and sliding, draw markers too
-    MyOtherMapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-    MyOtherMapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
-    viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
+    //MyOtherMapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
+    //MyOtherMapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
+    //viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
     //change viewpager
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
     viewPager.setCurrentItem( 0 );
