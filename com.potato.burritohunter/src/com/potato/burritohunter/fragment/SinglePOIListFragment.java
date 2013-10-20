@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -45,6 +46,13 @@ public class SinglePOIListFragment extends SherlockListFragment
      */
     setAdapter();
     View vw = inflater.inflate( R.layout.single_list_fragment_layout, container, false );
+    vw.findViewById( R.id.view_in_map ).setOnClickListener( new OnClickListener(){
+      @Override
+      public void onClick( View v )
+      {
+        MapActivity.instance.viewInMapAction();
+      }
+    });
     return vw;
     //return super.onCreateView( inflater, container, savedInstanceState );
 
@@ -63,12 +71,6 @@ public class SinglePOIListFragment extends SherlockListFragment
   @Override
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
-    /* start of shitty code */
-    if ( position == 0 )
-    {// plz delete this when you can figure out where to put viewin map.  kthx
-      MapActivity.instance.viewInMapAction();
-      return;
-    }
     /* end of shitty code */
     SearchResult searchResult = (SearchResult) parent.getItemAtPosition( position );
     String srId = searchResult.id;

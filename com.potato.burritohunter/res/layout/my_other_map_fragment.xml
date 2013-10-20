@@ -7,14 +7,14 @@
     <FrameLayout
         android:id="@+id/frame"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/bottom_button"
         android:layout_alignParentBottom="true" >
 
         <com.potato.burritohunter.stuff.MyViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/pagerBottom"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
         </com.potato.burritohunter.stuff.MyViewPager>
 
         <!-- hack to fix ugly black artefact with maps v2 -->
