@@ -1,9 +1,9 @@
 package com.potato.burritohunter.stuff;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 
@@ -26,6 +26,7 @@ public final class ADS
   private static String YELP_CONSUMER_SECRET = "";
   private static String FOURSQUARE_CLIENT_ID;
   private static String FOURSQUARE_CLIENT_SECRET;
+  private static SharedPreferences prefs;
   public static final Animation an = new RotateAnimation(0.0f, 360.0f );;
 
   private ADS()
@@ -54,8 +55,14 @@ public final class ADS
     an.setFillAfter(true);               // keep rotation after animation
     initKeys();
     DatabaseUtil.setDatabaseHelper( new DatabaseHelper( context ) );
+    prefs = context.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
   }
 
+  public SharedPreferences getSharedPreferences()
+  {
+    return prefs;
+  }
+  
   private void initKeys()
   {
     if ( _context == null )

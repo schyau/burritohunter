@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -115,6 +114,11 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     {
       String id = searchResultSelectedSerializedString.substring( i, i + 24 );
       Marker marker = reverseSearchResultHashMap.get( id );
+      if (marker == null )
+      {
+        Log.e( "com.potato.burritohunter", "hey, this is bad, selected marker was inflated without an entry in current search results");
+        continue; // not sure when this will happen, but if it ever gets in an unstable state then just don't inflate it.
+      }
       MapActivity.selectedSearchResults.add( marker );
       //change marker state 
       marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
@@ -231,6 +235,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
 
       CameraUpdate cp = CameraUpdateFactory.newCameraPosition( updateCP.build() );
       MyOtherMapFragment.map.animateCamera( cp );
+      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
     }
   }
 }

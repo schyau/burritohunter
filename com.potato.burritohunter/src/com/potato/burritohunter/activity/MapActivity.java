@@ -51,6 +51,7 @@ import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.fragment.SinglePOIListFragment;
 import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
+import com.potato.burritohunter.stuff.ADS;
 import com.potato.burritohunter.stuff.GalleryPoiList;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SetupThread;
@@ -372,15 +373,14 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     final CameraPosition cameraPosition =MyOtherMapFragment.map.getCameraPosition();
     (new AsyncTask<Void,Void,Void>()
     {
-
       @Override
       protected Void doInBackground( Void... params )
       {
         DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
         List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( MapActivity.instance, searchResults,
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
                                                            MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( MapActivity.instance, searchResults,
+        MyOtherMapFragment.saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
                                                            MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
         MyOtherMapFragment.paneMarker = null; //
         

@@ -44,6 +44,7 @@ import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
+import com.potato.burritohunter.stuff.ADS;
 import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SetupThread;
@@ -88,7 +89,7 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
   {
-    Log.d("asdf", "oncreateview");
+    Log.d( "asdf", "oncreateview" );
     if ( vw != null )
     {
       ViewGroup parent = (ViewGroup) vw.getParent();
@@ -150,7 +151,7 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public void onCreate( Bundle b )
   {
-    Log.d("asdf", "oncreate");
+    Log.d( "asdf", "oncreate" );
     super.onCreate( b );
 
     //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -200,7 +201,7 @@ public class MyOtherMapFragment extends SherlockFragment
   public void onStart()
   {
     super.onStart();
-    Log.d("asdf", "onstart");
+    Log.d( "asdf", "onstart" );
     //clear maps and disconnect location client
     MapActivity.selectedSearchResults.clear();
     for ( Marker m : MapActivity.currentSearchResults.keySet() )
@@ -211,7 +212,7 @@ public class MyOtherMapFragment extends SherlockFragment
     // Connect the client.
     MapActivity.mLocationClient.connect();
     MapActivity.clearSearchResults();
-    new SetupThread ( getActivity() ).execute( );
+    new SetupThread( getActivity() ).execute();
   }
 
   public static final String CAMERA_DEFAULT_VAL = Float.MAX_VALUE + "";
@@ -220,15 +221,14 @@ public class MyOtherMapFragment extends SherlockFragment
   @Override
   public void onStop()
   {
-    Log.d("asdf", "onstop");
+    Log.d( "asdf", "onstop" );
     //save pivot
 
     CameraPosition cameraPosition = map.getCameraPosition();
-    saveCameraSettings(getActivity(), cameraPosition);
-    
+    saveCameraSettings( getActivity(), cameraPosition );
 
     // save current search results
-    saveSearchResultsToSharedPrefs( getActivity(), MapActivity.currentSearchResults.values(),
+    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), MapActivity.currentSearchResults.values(),
                                     SEARCH_RESULT_SERIALIZED_STRING_KEY );
 
     //save selected points
@@ -237,7 +237,7 @@ public class MyOtherMapFragment extends SherlockFragment
     {
       selectedSearchResults.add( MapActivity.currentSearchResults.get( m ) );
     }
-    saveSearchResultsToSharedPrefs( getActivity(), selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
 
     //save query
     saveSearchQueryToSharedPrefs();
@@ -249,7 +249,7 @@ public class MyOtherMapFragment extends SherlockFragment
   public void onResume()
   {
     super.onResume();
-    Log.d("asdf", "onResume");
+    Log.d( "asdf", "onResume" );
   }
 
   //TODO chyauchyau save searchQuery
@@ -298,7 +298,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
   public void onDestroyView()
   {
-    Log.d("asdf", "ondestroyview");
+    Log.d( "asdf", "ondestroyview" );
     super.onDestroyView();
     try
     {
@@ -334,7 +334,7 @@ public class MyOtherMapFragment extends SherlockFragment
   public static final String PANEMARKER_ID_KEY = "panemarker_id_key";
   public static final String PANEMARKER_ID_CLEAR_VALUE = "panemarker_id_clear_value";
 
-  public static void saveCameraSettings(Activity activity, CameraPosition cameraPosition )
+  public static void saveCameraSettings( Activity activity, CameraPosition cameraPosition )
   {
     SharedPreferences prefs = activity.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
@@ -377,7 +377,7 @@ public class MyOtherMapFragment extends SherlockFragment
       float zoom = cameraPosition.zoom;
       float tilt = cameraPosition.tilt;
       float bearing = cameraPosition.bearing;
-      
+
       prefs.edit().putFloat( CAMERA_ZOOM_KEY, zoom ).commit();
       prefs.edit().clear();
       prefs.edit().putFloat( CAMERA_TILT_KEY, tilt ).commit();
@@ -393,10 +393,9 @@ public class MyOtherMapFragment extends SherlockFragment
     //    prefs.edit().commit();
   }
 
-  public static void saveSearchResultsToSharedPrefs( Activity activity, Collection<SearchResult> searchResults,
+  public static void saveSearchResultsToSharedPrefs( SharedPreferences prefs, Collection<SearchResult> searchResults,
                                                      String key )
   {
-    SharedPreferences prefs = activity.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
     prefs.edit().clear();
 
     // bundle up all searchresult ids
@@ -408,6 +407,9 @@ public class MyOtherMapFragment extends SherlockFragment
     }
     String serializedString = sb.toString();
     prefs.edit().putString( key, serializedString ).commit(); //SEARCH_RESULT_SERIALIZED_STRING_KEY
+
+    if ( key.compareTo( SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY ) == 0 )
+      Log.d( "asdf", "just wrote " + serializedString );
   }
 
   public static void changeMarkerState( Marker marker )
