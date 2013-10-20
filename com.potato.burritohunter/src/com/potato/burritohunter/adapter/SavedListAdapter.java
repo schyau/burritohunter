@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
   }
   
   @Override
-  public View getView( int position, View convertView, ViewGroup parent )
+  public View getView( final int position, View convertView, ViewGroup parent )
   {
     ViewHolder holder = null;
 
@@ -81,34 +82,77 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
       holder.imageView = (ImageView) convertView.findViewById( R.id.icon );
       holder.imageView1 = (ImageView) convertView.findViewById( R.id.icon1 );
       holder.viewFlipper = (ViewFlipper) convertView.findViewById( R.id.view_flipper );
-      holder.galleryPoiList = new GalleryPoiList( holder, getPhotoUrls( position ) );
+      final ViewHolder fHolder = holder;
+      (new AsyncTask<Void,Void,Void>(){
+        List<String> photoUrlsList;
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+          photoUrlsList = getPhotoUrls( position );
+          
+          return null;
+        }
+        @Override
+        protected void onPostExecute( Void result )
+        {
+          fHolder.galleryPoiList = new GalleryPoiList( fHolder, photoUrlsList );
+          fHolder.galleryPoiList.start();
+          gallery.add( fHolder.galleryPoiList );
+          String numViewsStr = "";
+          if ( photoUrlsList == null )
+          {
+            numViewsStr = "0";
+          }
+          numViewsStr = ""+photoUrlsList.size();     
+         
+          fHolder.numViews.setText( numViewsStr );
+        }
+        
+      }).execute();
+      
       holder.numViews = (TextView) convertView.findViewById( R.id.poiCount );
-      gallery.add( holder.galleryPoiList );
+      
 
-      holder.galleryPoiList.start();
+      
       convertView.setTag( holder );
     }
     else
     {
       holder = (ViewHolder) convertView.getTag();
+      final ViewHolder fHolder = holder;
+      (new AsyncTask<Void,Void,Void>()
+      {
+        List<String> photoUrlsList;
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+          photoUrlsList = getPhotoUrls( position );
+          return null;
+        }
+        @Override
+        protected void onPostExecute( Void val )
+        {
+          fHolder.galleryPoiList.setViewsAndUrls( photoUrlsList );
+          fHolder.galleryPoiList.start();
+          String numViewsStr = "";
+          if ( photoUrlsList == null )
+          {
+            numViewsStr = "0";
+          }
+          numViewsStr = ""+photoUrlsList.size();     
+         
+          fHolder.numViews.setText( numViewsStr );
+        }
+        
+      }).execute();
+
     }
 
     SavedListItem rowItem = (SavedListItem) getItem( position );
 
     holder.txtDesc.setText( "luls this is the primary key " + rowItem.get_id() );
     holder.txtTitle.setText( rowItem.get_title() );
-    List<String> photoUrlsList = getPhotoUrls( position );
-    holder.galleryPoiList.setViewsAndUrls( photoUrlsList );
-    holder.galleryPoiList.start();
     holder.id = rowItem._id;
-    String numViewsStr = "";
-    if ( photoUrlsList == null )
-    {
-      numViewsStr = "0";
-    }
-    numViewsStr = ""+photoUrlsList.size();     
-   
-    holder.numViews.setText( numViewsStr );
     //holder.imageView.setImageResource(rowItem.getImageId());
 
     return convertView;
