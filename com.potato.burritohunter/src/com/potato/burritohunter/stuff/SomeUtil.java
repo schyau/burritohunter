@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.potato.burritohunter.R;
 import com.squareup.otto.Bus;
 
 public final class SomeUtil
@@ -55,9 +56,10 @@ public final class SomeUtil
     //should put a null check here before launching into the wild
     if (view == null )
       return;
+    Animation a = AnimationUtils.loadAnimation(view.getContext(), R.anim.rotate);
 
     // Aply animation to image view
-    view.startAnimation(ADS.an);
+    view.startAnimation(a);
     view.setVisibility( View.VISIBLE );
   }
   public static void stopLoadingRotate(View view)
