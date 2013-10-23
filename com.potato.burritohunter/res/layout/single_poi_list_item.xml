@@ -38,4 +38,14 @@
         android:textSize="@dimen/desc_text_size"
         android:ellipsize="end"
         android:singleLine="true" />
+    <TextView
+        android:id="@+id/content_not_available"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_desc"
+        android:textSize="@dimen/desc_text_size"
+        android:layout_centerInParent="true"
+        android:text="content not available"
+        android:ellipsize="end"
+        android:singleLine="true" />
 </RelativeLayout>

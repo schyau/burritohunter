@@ -24,6 +24,9 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SavedListAdapter;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.database.SavedListItem;
+import com.potato.burritohunter.foursquare.explore.FoursquareDetailSearch;
+import com.potato.burritohunter.foursquare.explore.FoursquareExploreService;
+import com.potato.burritohunter.foursquare.search.Venue;
 import com.potato.burritohunter.stuff.SearchResult;
 
 // funfax: every fragment must have a default ctor so don't override that
@@ -83,22 +86,22 @@ public class POIListFragment extends SherlockListFragment
                 {
                   public void onClick( DialogInterface dialog, int whichButton )
                   {
-                    new Thread(new Runnable()
-                    {
-                      @Override
-                      public void run()
+                    new Thread( new Runnable()
                       {
-                        long id = ( (SavedListAdapter.ViewHolder) arg1.getTag() ).id;
-                        DatabaseUtil.getDatabaseHelper().deleteListRow( id );
-                      }
-                      
-                    }).start();
+                        @Override
+                        public void run()
+                        {
+                          long id = ( (SavedListAdapter.ViewHolder) arg1.getTag() ).id;
+                          DatabaseUtil.getDatabaseHelper().deleteListRow( id );
+                        }
+
+                      } ).start();
                     //List<SavedListItem> list = DatabaseUtil.getSavedList();
                     //SavedListAdapter adapter = new SavedListAdapter( MapActivity._listFragment, list );
                     //MapActivity._listFragment.setListAdapter( adapter );
                     listAdapter.removeItem( position );
                     listAdapter.notifyDataSetChanged();
-                    
+
                     Toast.makeText( _ctx, title + " deleted!", Toast.LENGTH_SHORT ).show();
                   }
 
@@ -144,10 +147,79 @@ public class POIListFragment extends SherlockListFragment
         @Override
         protected void onPostExecute( Void param )
         {
+
           single.setSinglePOIs( list, foreignKey );
           single.setAdapter();
+          final List<SearchResult> outOfDateSearchResults = new ArrayList<SearchResult>();
+          for ( SearchResult sr : list )
+          {
+            if ( SinglePOIListFragment.shouldUpdateSearchResult( sr ) )
+            {
+              outOfDateSearchResults.add( sr );
+            }
+          }
+
+          if ( outOfDateSearchResults.size() > 0 )
+          {
+
+            //Log.d("asdf", position+", and "+arg3);
+            new AlertDialog.Builder( MapActivity.instance )
+                .setMessage( "You need to update some of the items in this list before being able to view them.  Would you like to do that now?" )
+                .setPositiveButton( "Yes", new DialogInterface.OnClickListener()
+                  {
+                    public void onClick( DialogInterface dialog, int whichButton )
+                    {
+                      for ( final SearchResult sr : outOfDateSearchResults )
+                      {
+                        Log.d("asdf","asdf");
+                        ( new AsyncTask<Void, Void, Void>()
+                          {
+                            @Override
+                            public Void doInBackground( Void... params )
+                            {// do it serially, easier to code
+
+                              FoursquareDetailSearch fsqds = FoursquareExploreService.searchDetail( sr.id );
+                              if ( fsqds.getResponse() == null || fsqds.getResponse().getVenue() == null )
+                              {
+                                return null;
+                              }
+                              Venue venue = fsqds.getResponse().getVenue();
+                              SearchResult newSearchResult = MapActivity.convertVenueToSearchResult( venue );
+                              DatabaseUtil.getDatabaseHelper().insertPoint( newSearchResult );
+
+                              list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
+                              return null;
+                            }
+
+                            @Override
+                            public void onPostExecute( Void something )
+                            {
+                              for ( SearchResult sr : list )
+                              {
+                                Log.d( "asdf", sr._name );
+                              }
+                              single.setSinglePOIs( list, foreignKey );
+                              single.setAdapter();
+
+                            }
+                          } ).execute();
+                      }
+                    }
+
+                  } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
+                  {
+                    public void onClick( DialogInterface dialog, int whichButton )
+                    {
+                      /* User clicked cancel so do some stuff */
+                    }
+                  } ).create().show();
+          }
+          else
+          {
+          }
         }
       } ).execute();
+
   }
 
   public void onPause()

@@ -15,13 +15,14 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.fragment.SinglePOIListFragment;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 
 public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickListener // can practice using variant/invariant generics here!
 {
   Fragment frag;
-  List<SearchResult> rowItems;
+  public List<SearchResult> rowItems;
 
   public SinglePOIListAdapter( Fragment frag, List<SearchResult> rowItems )
   {
@@ -53,6 +54,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
     public String id;
     ImageView imageView;
     TextView txtDesc;
+    TextView notAvail;
   }
 
   @Override
@@ -63,6 +65,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
 
     LayoutInflater mInflater = (LayoutInflater) frag.getActivity().getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
     SearchResult sr = ( (SearchResult) getItem( position ) );
+      
     if ( convertView == null )
     {
       convertView = mInflater.inflate( R.layout.single_poi_list_item, null );
@@ -71,6 +74,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
       holder.txtTitle = (TextView) convertView.findViewById( R.id.title );
       holder.txtDesc = (TextView) convertView.findViewById( R.id.desc );
       holder.imageView = (ImageView) convertView.findViewById( R.id.icon );
+      holder.notAvail = (TextView) convertView.findViewById( R.id.content_not_available );
       convertView.setTag( holder );
     }
     else
@@ -81,6 +85,21 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
     holder.txtDesc.setText( sr.address );
     holder.id = sr.id;
     ImageLoader.getInstance().displayImage( sr.photoIcon, holder.imageView, SomeUtil.getImageOptions() );
+    
+    if (SinglePOIListFragment.shouldUpdateSearchResult( sr ))
+    {
+      holder.txtTitle.setVisibility( View.INVISIBLE );
+      holder.txtDesc.setVisibility( View.INVISIBLE );
+      holder.imageView.setVisibility( View.INVISIBLE );
+      holder.notAvail.setVisibility( View.VISIBLE );
+    }
+    else
+    {
+      holder.txtTitle.setVisibility( View.VISIBLE );
+      holder.txtDesc.setVisibility( View.VISIBLE );
+      holder.imageView.setVisibility( View.VISIBLE );
+      holder.notAvail.setVisibility( View.INVISIBLE );
+    }
 
     return convertView;
   }

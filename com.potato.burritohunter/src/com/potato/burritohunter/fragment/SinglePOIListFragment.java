@@ -35,7 +35,7 @@ public class SinglePOIListFragment extends SherlockListFragment
 {
   private List<SearchResult> singlePOIs;
   public static long staticForeignKey;
-  private static SinglePOIListAdapter  adapter;
+  public static SinglePOIListAdapter  adapter;
   
   public void setSinglePOIs( List<SearchResult> singlePOIs, long foreignKey )
   {
@@ -71,22 +71,32 @@ public class SinglePOIListFragment extends SherlockListFragment
   //remove from here and try to set somewhere else
   public void setAdapter()
   {
-    adapter = new SinglePOIListAdapter( this, singlePOIs );
-    setListAdapter( adapter );
+    if ( adapter == null )
+    {
+      adapter = new SinglePOIListAdapter( this, singlePOIs );
+      setListAdapter( adapter );
+      }
+    else
+    {
+      adapter.rowItems = singlePOIs;
+    }
+    
+    
     adapter.notifyDataSetChanged();
   }
 
   @Override
-  public void onListItemClick( ListView parent, View view, int position, long id )
+  public void onListItemClick( final ListView parent, View view, int position, long id )
   {
     /* end of shitty code */
     final SearchResult searchResult = (SearchResult) parent.getItemAtPosition( position );
+    final SinglePOIListFragment frag = this;
     if (shouldUpdateSearchResult( searchResult))
     {
-      // popup something
+      // TODO pop up menu asking user 
       (new AsyncTask<Void,Void,Void>()
       {
-
+        List<SearchResult> list;
         @Override
         protected Void doInBackground( Void... params )
         {
@@ -96,22 +106,22 @@ public class SinglePOIListFragment extends SherlockListFragment
           Venue venue = response.getVenue();
           SearchResult sr = MapActivity.convertVenueToSearchResult( venue );
           DatabaseUtil.getDatabaseHelper().insertPointInSameThread (sr);
+          list = DatabaseUtil.getDatabaseHelper().retrievePoints( staticForeignKey + "" );
+          
           Log.d("asdf", venue.getName());
           return null;
         }
         @Override
         protected void onPostExecute(Void nothing )
         {
+          frag.setSinglePOIs( list, staticForeignKey );
+          frag.setAdapter();
           adapter.notifyDataSetChanged();
         }
         
       }).execute();
       
-    }
-    //else if ( updatingFlag )
-    //{
-      // swallow touch event
-    //}
+    } // we can use an updating flag, but I'm ok with multiple updates and notifying adapter of changes.
     else
     {
       String srId = searchResult.id;
@@ -121,8 +131,8 @@ public class SinglePOIListFragment extends SherlockListFragment
 
   public static boolean shouldUpdateSearchResult( SearchResult sr )
   {
-    //return ( System.currentTimeMillis() - Long.parseLong( sr.time ) ) > TIME_THRESHOLD;
-    return true;
+    return ( System.currentTimeMillis() - Long.parseLong( sr.time ) ) > TIME_THRESHOLD;
+
   }
 
   public static final long TIME_THRESHOLD = 10000;
@@ -144,18 +154,29 @@ public class SinglePOIListFragment extends SherlockListFragment
                 {
                   public void onClick( DialogInterface dialog, int whichButton )
                   {
-                    String id = ( (SinglePOIListAdapter.ViewHolder) arg1.getTag() ).id;
-                    DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-                    dbHelper.deleteSingle( id, staticForeignKey ); //id and foreignkey is flipped.
-                    List<SearchResult> searchResults = dbHelper.retrievePoints( staticForeignKey + "" );
-                    frag.setSinglePOIs( searchResults, staticForeignKey );
-                    frag.setAdapter();
-
-                    POIListFragment.listAdapter.notifyDataSetChanged();
-
-                    Toast.makeText( _ctx, title + " deleted!", Toast.LENGTH_SHORT ).show();
+                    (new AsyncTask<Void,Void,Void>()
+                    {
+                      List<SearchResult> searchResults;
+                      @Override
+                      protected Void doInBackground( Void... params )
+                      {
+                        String id = ( (SinglePOIListAdapter.ViewHolder) arg1.getTag() ).id;
+                        DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+                        dbHelper.deleteSingle( id, staticForeignKey ); //id and foreignkey is flipped.
+                        searchResults = dbHelper.retrievePoints( staticForeignKey + "" );
+                        return null;
+                      }
+                      
+                      @Override
+                      protected void onPostExecute( Void param )
+                      {
+                        frag.setSinglePOIs( searchResults, staticForeignKey );
+                        frag.setAdapter();
+                        POIListFragment.listAdapter.notifyDataSetChanged();
+                        Toast.makeText( _ctx, title + " deleted!", Toast.LENGTH_SHORT ).show();
+                      }
+                    }).execute();
                   }
-
                 } ).setNegativeButton( "Cancel", new DialogInterface.OnClickListener()
                 {
                   public void onClick( DialogInterface dialog, int whichButton )
