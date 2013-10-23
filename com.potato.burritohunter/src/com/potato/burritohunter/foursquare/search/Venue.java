@@ -124,14 +124,7 @@ public class Venue
   {
     this.url = url;
   }
-  public Hours getHours()
-  {
-    return hours;
-  }
-  public void setHours( Hours hours )
-  {
-    this.hours = hours;
-  }
+
   public Price getPrice()
   {
     return price;
@@ -170,7 +163,7 @@ public class Venue
   private HereNow hereNow;
   private String referralId;
   private String url;
-  private Hours hours;
+  //private Hours hours;
   private Price price;
   private String storeId;
   private String description;

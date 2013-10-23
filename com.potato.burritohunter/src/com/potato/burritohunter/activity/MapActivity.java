@@ -165,6 +165,56 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
   static Marker newPaneMarker;
 
+  public static SearchResult convertVenueToSearchResult( Venue venue )
+  {
+    Location location = venue.getLocation();
+    String id = venue.getId();
+    String name = venue.getName();
+
+    if ( location == null || id == null || name == null )
+      return null;
+    double lat = location.getLat();
+    double lng = location.getLng();
+    String address = location.getAddress();
+    if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
+      return null;
+
+    SearchResult mySearchResult = new SearchResult();
+    mySearchResult._lat = lat;
+    mySearchResult._lng = lng;
+    mySearchResult._name = name;
+    mySearchResult.address = address;
+    mySearchResult.id = id;
+    mySearchResult._canonicalAddress = venue.getCanonicalUrl();
+    mySearchResult.time = ""+System.currentTimeMillis();
+
+    List<Category> categories = venue.getCategories();
+    if ( categories != null && categories.size() > 0 )
+    {
+      Category category = categories.get( 0 );
+      if ( category != null )
+      {
+        Icon icon = category.getIcon();
+        if ( icon != null )
+        {
+          String prefix = icon.getPrefix();
+          String bg = "bg_";
+          String imageSize = "32";
+          String suffix = icon.getSuffix();
+          String iconUrl = prefix + bg + imageSize + suffix;
+          mySearchResult.photoIcon = iconUrl;
+        }
+      }
+    }
+
+    if ( mySearchResult.photoIcon == null || "".equals( mySearchResult.photoIcon ) )
+    {
+      //TODO set default pic here!!
+      //mySearchResult.photoIcon = 
+    }
+    return mySearchResult;
+  }
+
   @Subscribe
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
@@ -260,55 +310,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       /* end new */
       for ( Venue venue : venues )
       {
-        Location location = venue.getLocation();
-        String id = venue.getId();
-        String name = venue.getName();
-        if ( ids.contains( id ) ) //already accounted for, // new todo: 
-        {
+        SearchResult mySearchResult = convertVenueToSearchResult( venue );
+        if(mySearchResult == null)
           continue;
-        }
-        if ( location == null || id == null || name == null )
-          continue;
-        double lat = location.getLat();
-        double lng = location.getLng();
-        String address = location.getAddress();
-        if ( lat == Double.MIN_VALUE || lng == Double.MIN_VALUE )
-          continue;
-
-        SearchResult mySearchResult = new SearchResult();
-        mySearchResult._lat = lat;
-        mySearchResult._lng = lng;
-        mySearchResult._name = name;
-        mySearchResult.address = address;
-        mySearchResult.id = id;
-        mySearchResult._canonicalAddress = venue.getCanonicalUrl();
-
-        List<Category> categories = venue.getCategories();
-        if ( categories != null && categories.size() > 0 )
-        {
-          Category category = categories.get( 0 );
-          if ( category != null )
-          {
-            Icon icon = category.getIcon();
-            if ( icon != null )
-            {
-              String prefix = icon.getPrefix();
-              String bg = "bg_";
-              String imageSize = "32";
-              String suffix = icon.getSuffix();
-              String iconUrl = prefix + bg + imageSize + suffix;
-              mySearchResult.photoIcon = iconUrl;
-            }
-          }
-        }
-
-        if ( mySearchResult.photoIcon == null || "".equals( mySearchResult.photoIcon ) )
-        {
-          //TODO set default pic here!!
-          //mySearchResult.photoIcon = 
-        }
         //mySearchResult.photoUrl = 
         dbHelper.insertPoint( mySearchResult );
+        if ( ids.contains( mySearchResult.id ) ) //already accounted for, // new todo: 
+        {
+          continue;
+        }
         LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
         // TODO make a big ass Marker class with its own onclicklistener
         Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
@@ -406,13 +416,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     }).execute();
 
-
-    //will the gb claim this?  if so we are fuarked.
-    //populate current selected and sliding, draw markers too
-    //MyOtherMapFragment.updateAndDrawPivot( MyOtherMapFragment.PIVOT );
-    //MyOtherMapFragment.moveCameraToLatLng( MyOtherMapFragment.PIVOT ); // TODO should change this arg to known location of saved list. 
-    //viewPagerAdapter.replaceView( viewPager, 0, _mapFragment );
-    //change viewpager
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
     viewPager.setCurrentItem( 0 );
   }
@@ -547,8 +550,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       double lat = mLocationClient.getLastLocation().getLatitude();
       double lng = mLocationClient.getLastLocation().getLongitude();
       LatLng lastKnownLatLng = new LatLng( lat, lng );
-      _mapFragment.updateAndDrawPivot( lastKnownLatLng );
-      _mapFragment.moveCameraToLatLng( lastKnownLatLng );
+      MyOtherMapFragment.updateAndDrawPivot( lastKnownLatLng );
+      MyOtherMapFragment.moveCameraToLatLng( lastKnownLatLng );
     }
   }
 

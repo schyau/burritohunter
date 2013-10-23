@@ -81,7 +81,7 @@ public class SinglePOIListAdapter extends BaseAdapter implements OnItemClickList
     holder.txtDesc.setText( sr.address );
     holder.id = sr.id;
     ImageLoader.getInstance().displayImage( sr.photoIcon, holder.imageView, SomeUtil.getImageOptions() );
-    //holder.imageView.setText( sr._name );
+
     return convertView;
   }
 

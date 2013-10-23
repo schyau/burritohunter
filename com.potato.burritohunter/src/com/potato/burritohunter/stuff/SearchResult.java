@@ -14,6 +14,8 @@ public class SearchResult
 	public String id;
 	public String _canonicalAddress;
 	public String photoIcon;
+	public String longTime;
+	public String time;
 	
 	public void serialize ( )
 	{

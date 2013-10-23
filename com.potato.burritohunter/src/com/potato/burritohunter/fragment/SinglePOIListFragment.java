@@ -5,7 +5,9 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +24,10 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.adapter.SinglePOIListAdapter;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
+import com.potato.burritohunter.foursquare.explore.FoursquareDetailSearch;
+import com.potato.burritohunter.foursquare.explore.FoursquareExploreService;
+import com.potato.burritohunter.foursquare.explore.Item;
+import com.potato.burritohunter.foursquare.search.Venue;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 
@@ -29,7 +35,8 @@ public class SinglePOIListFragment extends SherlockListFragment
 {
   private List<SearchResult> singlePOIs;
   public static long staticForeignKey;
-
+  private static SinglePOIListAdapter  adapter;
+  
   public void setSinglePOIs( List<SearchResult> singlePOIs, long foreignKey )
   {
     this.singlePOIs = singlePOIs;
@@ -46,13 +53,14 @@ public class SinglePOIListFragment extends SherlockListFragment
      */
     setAdapter();
     View vw = inflater.inflate( R.layout.single_list_fragment_layout, container, false );
-    vw.findViewById( R.id.view_in_map ).setOnClickListener( new OnClickListener(){
-      @Override
-      public void onClick( View v )
+    vw.findViewById( R.id.view_in_map ).setOnClickListener( new OnClickListener()
       {
-        MapActivity.instance.viewInMapAction();
-      }
-    });
+        @Override
+        public void onClick( View v )
+        {
+          MapActivity.instance.viewInMapAction();
+        }
+      } );
     return vw;
     //return super.onCreateView( inflater, container, savedInstanceState );
 
@@ -63,7 +71,7 @@ public class SinglePOIListFragment extends SherlockListFragment
   //remove from here and try to set somewhere else
   public void setAdapter()
   {
-    SinglePOIListAdapter adapter = new SinglePOIListAdapter( this, singlePOIs );
+    adapter = new SinglePOIListAdapter( this, singlePOIs );
     setListAdapter( adapter );
     adapter.notifyDataSetChanged();
   }
@@ -72,10 +80,52 @@ public class SinglePOIListFragment extends SherlockListFragment
   public void onListItemClick( ListView parent, View view, int position, long id )
   {
     /* end of shitty code */
-    SearchResult searchResult = (SearchResult) parent.getItemAtPosition( position );
-    String srId = searchResult.id;
-    SomeUtil.launchFourSquareDetail( MapActivity.instance, srId );
+    final SearchResult searchResult = (SearchResult) parent.getItemAtPosition( position );
+    if (shouldUpdateSearchResult( searchResult))
+    {
+      // popup something
+      (new AsyncTask<Void,Void,Void>()
+      {
+
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+          // 
+          FoursquareDetailSearch fsqdetailsearch = FoursquareExploreService.searchDetail( searchResult.id );
+          Item response = fsqdetailsearch.getResponse();
+          Venue venue = response.getVenue();
+          SearchResult sr = MapActivity.convertVenueToSearchResult( venue );
+          DatabaseUtil.getDatabaseHelper().insertPointInSameThread (sr);
+          Log.d("asdf", venue.getName());
+          return null;
+        }
+        @Override
+        protected void onPostExecute(Void nothing )
+        {
+          adapter.notifyDataSetChanged();
+        }
+        
+      }).execute();
+      
+    }
+    //else if ( updatingFlag )
+    //{
+      // swallow touch event
+    //}
+    else
+    {
+      String srId = searchResult.id;
+      SomeUtil.launchFourSquareDetail( MapActivity.instance, srId );
+    }
   }
+
+  public static boolean shouldUpdateSearchResult( SearchResult sr )
+  {
+    //return ( System.currentTimeMillis() - Long.parseLong( sr.time ) ) > TIME_THRESHOLD;
+    return true;
+  }
+
+  public static final long TIME_THRESHOLD = 10000;
 
   @Override
   public void onActivityCreated( Bundle b )

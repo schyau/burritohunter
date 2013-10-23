@@ -109,7 +109,7 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
         }
         
       }).execute();
-      
+
       holder.numViews = (TextView) convertView.findViewById( R.id.poiCount );
       
 

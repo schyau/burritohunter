@@ -1,5 +1,9 @@
 package com.potato.burritohunter.foursquare.explore;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -10,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -74,8 +79,35 @@ public class FoursquareExploreService
     }
     catch ( Exception e )
     {
-
+      Log.e( "asdf", "wtfmate " + e );
     }
     return response;
+  }
+
+  public static FoursquareDetailSearch searchDetail( String id )
+  {
+    String getURL = "https://api.foursquare.com/v2/venues/" + id + "?" + "&client_id="
+                    + ADS.getInstance().getFoursquareClientId() + "&client_secret="
+                    + ADS.getInstance().getFoursquareClientSecret() + "&v=20131010";
+
+    Log.d( TAG, "detail url: " + getURL );
+    String response = search( getURL );
+    //File dir = Environment.getExternalStorageDirectory();
+    //File yourFile = new File( dir, "x" );
+    //String response ="";
+    
+   //   response = readFile( yourFile.getAbsolutePath() );
+    
+    Log.d( TAG, "Response: " + response );
+    FoursquareDetailSearch foursquareDetailSearch = null;
+    try
+    {
+      foursquareDetailSearch = gson.fromJson( response, FoursquareDetailSearch.class );
+    }
+    catch ( JsonSyntaxException ex )
+    {
+      Log.e( TAG, ex.getCause() + " : " + ex.getLocalizedMessage() );
+    }
+    return foursquareDetailSearch;
   }
 }
