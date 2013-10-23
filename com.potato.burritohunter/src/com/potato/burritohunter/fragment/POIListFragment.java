@@ -199,7 +199,7 @@ public class POIListFragment extends SherlockListFragment
                                 Log.d( "asdf", sr._name );
                               }
                               single.setSinglePOIs( list, foreignKey );
-                              single.setAdapter();
+                              single.setAdapter(); // TODO missing last one
 
                             }
                           } ).execute();

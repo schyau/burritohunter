@@ -29,6 +29,7 @@ import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.database.DatabaseHelper;
 import com.potato.burritohunter.database.DatabaseUtil;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
+import com.potato.burritohunter.fragment.SinglePOIListFragment;
 
 public class SetupThread extends AsyncTask<Void, Void, Void>
 {
@@ -99,6 +100,10 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     Log.d("asdf", "zoom, tilt, bearing, latStr, lngStr: "+zoom+", "+ tilt+", "+bearing+", "+latStr+", "+lngStr);
     for ( SearchResult sr : listOfSearializedSearchResults )
     {
+      if (SinglePOIListFragment.shouldUpdateSearchResult( sr ))
+      {
+        continue;
+      }
       // TODO make a big ass Marker class with its own onclicklistener
       Marker marker = MyOtherMapFragment.map.addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
           .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
@@ -116,8 +121,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       Marker marker = reverseSearchResultHashMap.get( id );
       if (marker == null )
       {
-        Log.e( "com.potato.burritohunter", "hey, this is bad, selected marker was inflated without an entry in current search results");
-        continue; // not sure when this will happen, but if it ever gets in an unstable state then just don't inflate it.
+        Log.e( "com.potato.burritohunter", "selected marker was inflated without an entry in current search results, maybe it's outtadate");
+        continue; // this is also defensive impl, in case other shit fucks up
       }
       MapActivity.selectedSearchResults.add( marker );
       //change marker state 
@@ -197,8 +202,15 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       else
       {//yes
         MyOtherMapFragment.paneMarker = reverseSearchResultHashMap.get( paneMarkerId );
-        SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker );
-        BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+        if (MyOtherMapFragment.paneMarker!=null)
+        { //well now check to see that it exsits in currentSearchResults, it could possibly have been skipped if it's out of date
+          SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ); //TODO make sure every call to this concurrent map can not be null otherwise shit hits the fan
+          BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+        }
+        else
+        {
+          BottomPagerPanel.getInstance().disableMarkerPanel();
+        }
       }
 
       CameraPosition currentCP = MyOtherMapFragment.map.getCameraPosition();
