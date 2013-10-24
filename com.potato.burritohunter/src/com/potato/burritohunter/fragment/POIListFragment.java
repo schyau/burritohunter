@@ -185,7 +185,7 @@ public class POIListFragment extends SherlockListFragment
                               }
                               Venue venue = fsqds.getResponse().getVenue();
                               SearchResult newSearchResult = MapActivity.convertVenueToSearchResult( venue );
-                              DatabaseUtil.getDatabaseHelper().insertPoint( newSearchResult );
+                              DatabaseUtil.getDatabaseHelper().insertPointInSameThread( newSearchResult );
 
                               list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
                               return null;
