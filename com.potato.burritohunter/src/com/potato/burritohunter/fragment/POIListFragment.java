@@ -174,33 +174,34 @@ public class POIListFragment extends SherlockListFragment
                         Log.d("asdf","asdf");
                         ( new AsyncTask<Void, Void, Void>()
                           {
+                            boolean success = false;
                             @Override
                             public Void doInBackground( Void... params )
                             {// do it serially, easier to code
-
-                              FoursquareDetailSearch fsqds = FoursquareExploreService.searchDetail( sr.id );
-                              if ( fsqds.getResponse() == null || fsqds.getResponse().getVenue() == null )
+                              success = SinglePOIListFragment.updateSearchResult( sr.id );
+                              if (success)
                               {
-                                return null;
+                                list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
                               }
-                              Venue venue = fsqds.getResponse().getVenue();
-                              SearchResult newSearchResult = MapActivity.convertVenueToSearchResult( venue );
-                              DatabaseUtil.getDatabaseHelper().insertPointInSameThread( newSearchResult );
-
-                              list = DatabaseUtil.getDatabaseHelper().retrievePoints( foreignKey + "" );
                               return null;
                             }
 
                             @Override
                             public void onPostExecute( Void something )
                             {
-                              for ( SearchResult sr : list )
+                              if (success)
                               {
-                                Log.d( "asdf", sr._name );
+                                for ( SearchResult sr : list )
+                                {
+                                  Log.d( "asdf", sr._name );
+                                }
+                                single.setSinglePOIs( list, foreignKey );
+                                single.setAdapter(); 
                               }
-                              single.setSinglePOIs( list, foreignKey );
-                              single.setAdapter(); // TODO missing last one
-
+                              else
+                              {
+                             // TODO toast failure?
+                              }
                             }
                           } ).execute();
                       }

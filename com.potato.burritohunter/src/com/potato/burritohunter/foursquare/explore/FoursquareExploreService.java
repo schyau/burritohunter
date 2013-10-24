@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -95,9 +96,9 @@ public class FoursquareExploreService
     //File dir = Environment.getExternalStorageDirectory();
     //File yourFile = new File( dir, "x" );
     //String response ="";
-    
-   //   response = readFile( yourFile.getAbsolutePath() );
-    
+
+    //   response = readFile( yourFile.getAbsolutePath() );
+
     Log.d( TAG, "Response: " + response );
     FoursquareDetailSearch foursquareDetailSearch = null;
     try
@@ -106,6 +107,8 @@ public class FoursquareExploreService
     }
     catch ( JsonSyntaxException ex )
     {
+      Toast.makeText( ADS.getInstance().getContext(), "There was a problem reaching the network", Toast.LENGTH_SHORT )
+          .show();
       Log.e( TAG, ex.getCause() + " : " + ex.getLocalizedMessage() );
     }
     return foursquareDetailSearch;

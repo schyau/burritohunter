@@ -58,6 +58,11 @@ public final class ADS
     prefs = context.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
   }
 
+  public Context getContext()
+  {
+    return _context;
+  }
+  
   public SharedPreferences getSharedPreferences()
   {
     return prefs;

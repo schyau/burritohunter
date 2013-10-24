@@ -81,7 +81,6 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     lat = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LAT_KEY, "181" ) );
     lng = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LNG_KEY, "181" ) );
 
-    
     // update camera to the last known configuration
     zoom = prefs.getFloat( MyOtherMapFragment.CAMERA_ZOOM_KEY, Float.MAX_VALUE );
     tilt = prefs.getFloat( MyOtherMapFragment.CAMERA_TILT_KEY, Float.MAX_VALUE );
@@ -90,17 +89,18 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     lngStr = prefs.getString( MyOtherMapFragment.CAMERA_LNG_KEY, MyOtherMapFragment.CAMERA_DEFAULT_VAL );
     searchQuery = prefs.getString( MyOtherMapFragment.SEARCH_QUERY_KEY, "" );
     paneMarkerId = prefs.getString( MyOtherMapFragment.PANEMARKER_ID_KEY, MyOtherMapFragment.PANEMARKER_ID_CLEAR_VALUE );
-    
+
     return null;
   }
 
   @Override
   protected void onPostExecute( Void result )
   {
-    Log.d("asdf", "zoom, tilt, bearing, latStr, lngStr: "+zoom+", "+ tilt+", "+bearing+", "+latStr+", "+lngStr);
+    Log.d( "asdf", "zoom, tilt, bearing, latStr, lngStr: " + zoom + ", " + tilt + ", " + bearing + ", " + latStr + ", "
+                   + lngStr );
     for ( SearchResult sr : listOfSearializedSearchResults )
     {
-      if (SinglePOIListFragment.shouldUpdateSearchResult( sr ))
+      if ( SinglePOIListFragment.shouldUpdateSearchResult( sr ) )
       {
         continue;
       }
@@ -119,9 +119,10 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
     {
       String id = searchResultSelectedSerializedString.substring( i, i + 24 );
       Marker marker = reverseSearchResultHashMap.get( id );
-      if (marker == null )
+      if ( marker == null )
       {
-        Log.e( "com.potato.burritohunter", "selected marker was inflated without an entry in current search results, maybe it's outtadate");
+        Log.e( "com.potato.burritohunter",
+               "selected marker was inflated without an entry in current search results, maybe it's outtadate" );
         continue; // this is also defensive impl, in case other shit fucks up
       }
       MapActivity.selectedSearchResults.add( marker );
@@ -202,7 +203,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       else
       {//yes
         MyOtherMapFragment.paneMarker = reverseSearchResultHashMap.get( paneMarkerId );
-        if (MyOtherMapFragment.paneMarker!=null)
+        if ( MyOtherMapFragment.paneMarker != null )
         { //well now check to see that it exsits in currentSearchResults, it could possibly have been skipped if it's out of date
           SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ); //TODO make sure every call to this concurrent map can not be null otherwise shit hits the fan
           BottomPagerPanel.getInstance().enableMarkerPanel( sr );
@@ -247,7 +248,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
 
       CameraUpdate cp = CameraUpdateFactory.newCameraPosition( updateCP.build() );
       MyOtherMapFragment.map.animateCamera( cp );
-      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
+      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
+                                                                                    .size() + "" );
     }
   }
 }

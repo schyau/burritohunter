@@ -85,6 +85,20 @@ public class SinglePOIListFragment extends SherlockListFragment
     adapter.notifyDataSetChanged();
   }
 
+  public static boolean updateSearchResult( String id )
+  {
+    FoursquareDetailSearch fsqds = FoursquareExploreService.searchDetail( id );
+    if ( fsqds == null || fsqds.getResponse() == null || fsqds.getResponse().getVenue() == null )
+    { // bad connection, 
+      return false;
+    }
+    Item response = fsqds.getResponse();
+    Venue venue = response.getVenue();
+    SearchResult sr = MapActivity.convertVenueToSearchResult( venue );
+    DatabaseUtil.getDatabaseHelper().insertPointInSameThread (sr);
+    return true;
+  }
+  
   @Override
   public void onListItemClick( final ListView parent, View view, int position, long id )
   {
@@ -101,14 +115,12 @@ public class SinglePOIListFragment extends SherlockListFragment
         protected Void doInBackground( Void... params )
         {
           // 
-          FoursquareDetailSearch fsqdetailsearch = FoursquareExploreService.searchDetail( searchResult.id );
-          Item response = fsqdetailsearch.getResponse();
-          Venue venue = response.getVenue();
-          SearchResult sr = MapActivity.convertVenueToSearchResult( venue );
-          DatabaseUtil.getDatabaseHelper().insertPointInSameThread (sr);
-          list = DatabaseUtil.getDatabaseHelper().retrievePoints( staticForeignKey + "" );
-          
-          Log.d("asdf", venue.getName());
+          boolean success = updateSearchResult( searchResult.id );
+          if( success )
+          {
+            list = DatabaseUtil.getDatabaseHelper().retrievePoints( staticForeignKey + "" );
+          }
+
           return null;
         }
         @Override
@@ -135,7 +147,7 @@ public class SinglePOIListFragment extends SherlockListFragment
 
   }
 
-  public static final long TIME_THRESHOLD = 10000;
+  public static final long TIME_THRESHOLD = 100000;
 
   @Override
   public void onActivityCreated( Bundle b )

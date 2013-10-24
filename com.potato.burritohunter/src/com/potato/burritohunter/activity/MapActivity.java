@@ -12,8 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -121,6 +123,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   protected void onStart()
   {
     super.onStart();
+
+    SharedPreferences prefs = getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    if ( prefs.contains( ENTERED_GRACEFULLY ) )
+    { // onstop wasn't called, clear shared prefs
+
+      prefs.edit().clear().commit();
+    }
+
+    prefs.edit().putString( ENTERED_GRACEFULLY, "blah" ).commit();  
   }
 
   // Called when the Activity is no longer visible.
@@ -128,8 +139,12 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   protected void onStop()
   {
     super.onStop();
-
+    // delete from sp
+    SharedPreferences prefs = getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    prefs.edit().remove( ENTERED_GRACEFULLY ).commit();
   }
+
+  public static final String ENTERED_GRACEFULLY = "entered gracefully";
 
   @Override
   public void onPause()
@@ -186,7 +201,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     mySearchResult.address = address;
     mySearchResult.id = id;
     mySearchResult._canonicalAddress = venue.getCanonicalUrl();
-    mySearchResult.time = ""+System.currentTimeMillis();
+    mySearchResult.time = "" + System.currentTimeMillis();
 
     List<Category> categories = venue.getCategories();
     if ( categories != null && categories.size() > 0 )
@@ -311,7 +326,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       for ( Venue venue : venues )
       {
         SearchResult mySearchResult = convertVenueToSearchResult( venue );
-        if(mySearchResult == null)
+        if ( mySearchResult == null )
           continue;
         //mySearchResult.photoUrl = 
         dbHelper.insertPoint( mySearchResult );
@@ -369,52 +384,50 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   //TODO save map positions in db so you can restore it back
   public void viewInMapAction()
   {
-    /*MapActivity.selectedSearchResults.clear();
-    for ( Marker m : MapActivity.currentSearchResults.keySet() )
-    {
-      m.remove();
-    }
-    _mapFragment.getMap().clear();
-    MapActivity.currentSearchResults.clear();
-    MapActivity.slidingMenuAdapter.clear();*/
+    /*
+     * MapActivity.selectedSearchResults.clear(); for ( Marker m : MapActivity.currentSearchResults.keySet() ) {
+     * m.remove(); } _mapFragment.getMap().clear(); MapActivity.currentSearchResults.clear();
+     * MapActivity.slidingMenuAdapter.clear();
+     */
 
     // clear current, selected, and sliding
     // retrieve points.
-    final CameraPosition cameraPosition =MyOtherMapFragment.map.getCameraPosition();
-    (new AsyncTask<Void,Void,Void>()
-    {
-      @Override
-      protected Void doInBackground( Void... params )
+    final CameraPosition cameraPosition = MyOtherMapFragment.map.getCameraPosition();
+    ( new AsyncTask<Void, Void, Void>()
       {
-        DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-        List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
-                                                           MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
-        MyOtherMapFragment.saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
-                                                           MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
-        MyOtherMapFragment.paneMarker = null; //
-        
-        //saveCameraSettings will check to see if paneMarker is null and write to sp accordingly
-        MyOtherMapFragment.saveCameraSettings( MapActivity.instance, cameraPosition );
-        //MyOtherMapFragment.`
-        return null;
-      }
-      
-      @Override
-      protected void onPostExecute(Void params)
-      {
-        MapActivity.selectedSearchResults.clear();
-        for ( Marker m : MapActivity.currentSearchResults.keySet() )
+        @Override
+        protected Void doInBackground( Void... params )
         {
-          m.remove();
-        }
-        _mapFragment.getMap().clear();
-        MapActivity.currentSearchResults.clear();
-        MapActivity.slidingMenuAdapter.clear();
-        (new SetupThread(MapActivity.instance)).execute();
-      }
+          DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
+          List<SearchResult> searchResults = dbHelper.retrievePoints( SinglePOIListFragment.staticForeignKey + "" );
+          MyOtherMapFragment.saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
+                                                             MyOtherMapFragment.SEARCH_RESULT_SERIALIZED_STRING_KEY );
+          MyOtherMapFragment
+              .saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), searchResults,
+                                               MyOtherMapFragment.SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+          MyOtherMapFragment.paneMarker = null; //
 
-    }).execute();
+          //saveCameraSettings will check to see if paneMarker is null and write to sp accordingly
+          MyOtherMapFragment.saveCameraSettings( MapActivity.instance, cameraPosition );
+          //MyOtherMapFragment.`
+          return null;
+        }
+
+        @Override
+        protected void onPostExecute( Void params )
+        {
+          MapActivity.selectedSearchResults.clear();
+          for ( Marker m : MapActivity.currentSearchResults.keySet() )
+          {
+            m.remove();
+          }
+          _mapFragment.getMap().clear();
+          MapActivity.currentSearchResults.clear();
+          MapActivity.slidingMenuAdapter.clear();
+          ( new SetupThread( MapActivity.instance ) ).execute();
+        }
+
+      } ).execute();
 
     getSlidingMenu().setTouchModeAbove( SlidingMenu.LEFT );
     viewPager.setCurrentItem( 0 );
