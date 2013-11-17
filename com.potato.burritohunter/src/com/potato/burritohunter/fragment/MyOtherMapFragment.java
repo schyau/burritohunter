@@ -96,14 +96,17 @@ public class MyOtherMapFragment extends SherlockFragment
       if ( parent != null )
         parent.removeView( vw );
     }
+
     try
     {
-      vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );
+      vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );  
     }
-    catch ( InflateException e )
+    catch ( Exception e )
     {
-      /* map is already there, just return view as it is */
+      e.printStackTrace();
     }
+    
+
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();

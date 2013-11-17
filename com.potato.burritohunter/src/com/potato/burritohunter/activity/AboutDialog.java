@@ -1,22 +1,21 @@
 package com.potato.burritohunter.activity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.potato.burritohunter.R;
 
-public class AboutDialog extends Activity
+public class AboutDialog extends SherlockFragmentActivity
 {
 
   @Override
   public void onCreate( Bundle b )
   {
     super.onCreate( b );
-
+    getSupportActionBar().hide();
     Dialog dialog = new Dialog( this );
     dialog.setContentView( R.layout.about_textview );
     dialog.setCancelable( true );

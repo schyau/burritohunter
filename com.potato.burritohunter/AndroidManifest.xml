@@ -8,10 +8,12 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
 
-    <uses-permission android:name="android.permission.INTERNET" />\
+    <uses-permission android:name="android.permission.INTERNET" />
+\
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -21,38 +23,46 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock"
-        android:screenOrientation="portrait" >
+        android:screenOrientation="portrait"
+        android:theme="@style/Theme.Sherlock" >
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".activity.AboutDialog"
             android:label="label"
             android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <action android:name=".activity.AboutDialog" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.Settings" />
         <activity
             android:name=".activity.OpenSourceLicenseDialog"
             android:label="label"
             android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <action android:name=".activity.OpenSourceLicenseDialog" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.potato.burritohunter.activity.StartUpActivity"
-            android:label="@string/app_name"
-             >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.potato.burritohunter.activity.MapActivity" 
-            android:screenOrientation="portrait">
+        <activity
+            android:name="com.potato.burritohunter.activity.MapActivity"
+            android:screenOrientation="portrait" >
         </activity>
 
         <meta-data

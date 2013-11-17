@@ -3,8 +3,10 @@ package com.potato.burritohunter.stuff;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.activity.Settings;
 import com.potato.burritohunter.foursquare.explore.FoursquareExploreResult;
 import com.potato.burritohunter.foursquare.explore.FoursquareExploreService;
 import com.potato.burritohunter.fragment.MyOtherMapFragment;
@@ -12,9 +14,6 @@ import com.squareup.otto.Bus;
 
 public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, FoursquareExploreResult>
 {
-  private static final String MAX_RESULT_KEY = "MaxSearchResults";
-  private static final String RADIUS_KEY = "SearchRadius";
-  private static final int MULTIPLIER_TO_KM = 1000;
   //Context _context;
   MapActivity mapActivity;
   Double _lat;
@@ -35,9 +34,11 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   @Override
   protected FoursquareExploreResult doInBackground( Void... params )
   {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( mapActivity );
-    int maxResults = preferences.getInt( MAX_RESULT_KEY, 10 ) + 1;
-    int radius = (preferences.getInt( RADIUS_KEY, 10 ) + 1 ) * MULTIPLIER_TO_KM;
+    SharedPreferences preferences = ADS.getInstance().getSharedPreferences();
+    int maxResults = preferences.getInt( Settings.SEARCH_RESULTS_KEY, 10 ) + 1;
+    int radiusProgress = ( preferences.getInt( Settings.DISTANCE_KEY, 50 ) );
+    double radiusMiles = Settings.convertProgressToMileage( radiusProgress );
+    double radius = Settings.milesToKm( radiusMiles );
     return FoursquareExploreService.search( _lat, _lng, _query, radius, maxResults );
     // TODO: purge stale shits
     // return FoursquareService.searchVenueDetail( "43e879cbf964a5200f2f1fe3" );
@@ -49,8 +50,15 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
     //TODO what about error cases?  do we handle that?
     super.onPostExecute( result );
     SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
-    if ( result == null ) 
+    if ( result == null || result.getResponse() == null || result.getResponse().getGroups() == null )
+    {
+      if (result == null)
+      {
+        
+      }
+      Toast.makeText( mapActivity, "Search failed.  Check connectivity", Toast.LENGTH_SHORT ).show();
       return; //_eventBus.post( result );
+    }
     mapActivity.subscriberWithASillyName( result );
   }
 }

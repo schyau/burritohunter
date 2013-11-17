@@ -24,4 +24,6 @@
     
     
     <dimen name="bottom_button">50dp</dimen>
+    
+    <dimen name="seekbar_icon">25dp</dimen>
 </resources>

@@ -200,7 +200,8 @@ public class POIListFragment extends SherlockListFragment
                               }
                               else
                               {
-                             // TODO toast failure?
+                                // there's gotta be a better way to do this...
+                                Toast.makeText(getActivity(), "Problem updating "+sr._name, Toast.LENGTH_SHORT).show();
                               }
                             }
                           } ).execute();

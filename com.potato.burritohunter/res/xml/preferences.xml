@@ -25,5 +25,9 @@
         android:title="About" >
         <intent android:action=".activity.AboutDialog" />
     </PreferenceScreen>
-
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="Reset Data" >
+        <intent android:action=".activity.AboutDialog" />
+    </PreferenceScreen>
 </PreferenceScreen>

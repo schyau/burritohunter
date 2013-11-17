@@ -113,7 +113,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
 
       MapActivity.slidingMenuAdapter.add( marker );
     }
-
+    boolean outOfDate = false;
     //inflate selected search results
     for ( int i = 0; i < searchResultSelectedSerializedString.length(); i += 24 )
     {
@@ -121,6 +121,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       Marker marker = reverseSearchResultHashMap.get( id );
       if ( marker == null )
       {
+        outOfDate = true;
         Log.e( "com.potato.burritohunter",
                "selected marker was inflated without an entry in current search results, maybe it's outtadate" );
         continue; // this is also defensive impl, in case other shit fucks up
@@ -130,6 +131,11 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
       Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
+    }
+    if ( outOfDate )
+    {
+      Toast.makeText( activity, "Some places need to be updated before they can be shown",
+                      Toast.LENGTH_SHORT ).show();
     }
     // first, check to see if shared prefs values exist for pivot
     if ( lat == 181 || lng == 181 )

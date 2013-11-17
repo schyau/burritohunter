@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/distancetitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="distance" />
+
+    <TextView
+        android:id="@+id/distancetext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="miles" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/distanceicon"
+            android:layout_width="@dimen/seekbar_icon"
+            android:layout_height="@dimen/seekbar_icon"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_launcher" />
+
+        <SeekBar
+            android:id="@+id/distance_seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:max="100"
+            android:layout_toRightOf="@id/distanceicon"
+            android:progress="0" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/searchlimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="searchlimit" />
+
+    <TextView
+        android:id="@+id/searchlimitText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="searches" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/distanceicon"
+            android:layout_width="@dimen/seekbar_icon"
+            android:layout_height="@dimen/seekbar_icon"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_launcher" />
+
+        <SeekBar
+            android:id="@+id/searchresults_seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@id/distanceicon"
+            android:max="99"
+            android:progress="0" />
+    </RelativeLayout>
+
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/open_source"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Open Source"/>
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/About"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="About" />
+
+</LinearLayout>

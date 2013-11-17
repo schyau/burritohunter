@@ -89,7 +89,7 @@ public class SinglePOIListFragment extends SherlockListFragment
   {
     FoursquareDetailSearch fsqds = FoursquareExploreService.searchDetail( id );
     if ( fsqds == null || fsqds.getResponse() == null || fsqds.getResponse().getVenue() == null )
-    { // bad connection, 
+    {
       return false;
     }
     Item response = fsqds.getResponse();
@@ -111,24 +111,30 @@ public class SinglePOIListFragment extends SherlockListFragment
       (new AsyncTask<Void,Void,Void>()
       {
         List<SearchResult> list;
+        boolean success = false;
         @Override
         protected Void doInBackground( Void... params )
         {
-          // 
-          boolean success = updateSearchResult( searchResult.id );
+          success = updateSearchResult( searchResult.id );
           if( success )
           {
             list = DatabaseUtil.getDatabaseHelper().retrievePoints( staticForeignKey + "" );
           }
-
           return null;
         }
         @Override
         protected void onPostExecute(Void nothing )
         {
-          frag.setSinglePOIs( list, staticForeignKey );
-          frag.setAdapter();
-          adapter.notifyDataSetChanged();
+          if (!success)
+          {
+            Toast.makeText(getActivity(), "Problem updating "+searchResult._name, Toast.LENGTH_SHORT).show();
+          }
+          else
+          {
+            frag.setSinglePOIs( list, staticForeignKey );
+            frag.setAdapter();
+            adapter.notifyDataSetChanged();
+          }
         }
         
       }).execute();

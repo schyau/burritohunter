@@ -38,7 +38,7 @@ public class BaseActivity extends SlidingFragmentActivity
           @Override
           public void onClick( View v )
           {
-            startActivity( new Intent( _context, EditPreferencesHC.class ) );
+            startActivity( new Intent( _context, Settings.class ) );
           }
         } );
       t.commit();

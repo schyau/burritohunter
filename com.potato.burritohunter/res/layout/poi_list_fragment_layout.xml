@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:textColor="@color/gray_background"
         android:background="@color/red_color"
-        android:textSize="40sp" />
+        android:textSize="@dimen/screen_title_text_size" />
 
     <ListView
         android:id="@android:id/list"

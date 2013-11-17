@@ -31,7 +31,7 @@ public class FoursquareExploreService
       .create();
 
   // use a builder for disssss
-  public static FoursquareExploreResult search( Double lat, Double lng, String term, int radius, int maxResults )
+  public static FoursquareExploreResult search( Double lat, Double lng, String term, double radius, int maxResults )
   {
     try
     {
