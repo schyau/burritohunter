@@ -56,6 +56,7 @@ public final class ADS
     initKeys();
     DatabaseUtil.setDatabaseHelper( new DatabaseHelper( context ) );
     prefs = context.getSharedPreferences( "com.potato.burritohunter", Context.MODE_PRIVATE );
+    Spot.initSpots();
   }
 
   public Context getContext()

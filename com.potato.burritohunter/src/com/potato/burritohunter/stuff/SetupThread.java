@@ -106,7 +106,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       }
       // TODO make a big ass Marker class with its own onclicklistener
       Marker marker = MyOtherMapFragment.map.addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-          .icon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) ) );
+          .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, false ) ) ) );
 
       MapActivity.currentSearchResults.put( marker, sr );
       reverseSearchResultHashMap.put( sr.id, marker );
@@ -128,14 +128,13 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       }
       MapActivity.selectedSearchResults.add( marker );
       //change marker state 
-      marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
+      marker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, true ) ) );
       Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
     }
     if ( outOfDate )
     {
-      Toast.makeText( activity, "Some places need to be updated before they can be shown",
-                      Toast.LENGTH_SHORT ).show();
+      Toast.makeText( activity, "Some places need to be updated before they can be shown", Toast.LENGTH_SHORT ).show();
     }
     // first, check to see if shared prefs values exist for pivot
     if ( lat == 181 || lng == 181 )

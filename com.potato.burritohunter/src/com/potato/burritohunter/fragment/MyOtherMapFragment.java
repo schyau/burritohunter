@@ -8,12 +8,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +42,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.stuff.ADS;
 import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
-import com.potato.burritohunter.stuff.ADS;
 import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SetupThread;
 import com.potato.burritohunter.stuff.SomeUtil;
+import com.potato.burritohunter.stuff.Spot;
 
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
@@ -424,14 +425,17 @@ public class MyOtherMapFragment extends SherlockFragment
       {
         if ( selected )
         {
-          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) );
+          //marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_unselected ) );
           MapActivity.selectedSearchResults.remove( marker );
         }
         else
         {
-          marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
+          //marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
           MapActivity.selectedSearchResults.add( marker );
         }
+        SearchResult sr = MapActivity.currentSearchResults.get( marker );
+        Bitmap bmp = Spot.ratingToBitmap( sr.rating, !selected );
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap( bmp ));
         BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
                                                                                       .size() + "" );
         //checkBox.setChecked( !selected );    //chyauchyau

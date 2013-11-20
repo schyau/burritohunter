@@ -39,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
   public static final String KEY_ADDRESS = "address";
   public static final String KEY_ICON = "icon";
   public static final String KEY_TIME = "time";
+  public static final String KEY_RATING = "rating";
 
   public DatabaseHelper( Context context )
   {
@@ -67,12 +68,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
     // create table single_poi 
     // (
     //   id text primary key not null unique,
-    //   name text, lat text, lng text, address text, icon text
+    //   name text, lat text, lng text, address text, icon text, rating text
     // )
     String CREATE_POI_SINGLE_TABLE = "CREATE TABLE " + TABLE_SINGLE_POI + "(" + KEY_ID
                                      + " TEXT PRIMARY KEY NOT NULL UNIQUE, " + KEY_NAME + " TEXT, " + KEY_LAT
                                      + " TEXT, " + KEY_LNG + " TEXT, " + KEY_ADDRESS + " TEXT, " + KEY_ICON + " TEXT, "
-                                     + KEY_TIME + " TEXT )";
+                                     + KEY_TIME + " TEXT, " + KEY_RATING + " TEXT )";
 
     Log.d( TAG, CREATE_POI_LIST_TABLE );
     Log.d( TAG, CREATE_POI_SINGLE_TABLE );
@@ -83,12 +84,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
     db.execSQL( CREATE_FOREIGN_KEYS_TABLE );
   }
 
-  public synchronized void insertPointInSameThread ( final SearchResult searchResult )
+  public synchronized void insertPointInSameThread( final SearchResult searchResult )
   {
     insertPointWorker( searchResult, this );
   }
-  
-  private static synchronized void insertPointWorker ( final SearchResult searchResult, final DatabaseHelper instance)
+
+  private static synchronized void insertPointWorker( final SearchResult searchResult, final DatabaseHelper instance )
   {
     String lat = searchResult._lat + "";
     String lng = searchResult._lng + "";
@@ -97,6 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     String id = searchResult.id;
     String photoIcon = searchResult.photoIcon;
     String time = searchResult.time;
+    String rating = searchResult.rating + "";
 
     ContentValues values = new ContentValues();
     values.put( KEY_ID, id );
@@ -106,19 +108,20 @@ public class DatabaseHelper extends SQLiteOpenHelper
     values.put( KEY_ADDRESS, address );
     values.put( KEY_ICON, photoIcon );
     values.put( KEY_TIME, time );
+    values.put( KEY_RATING, rating );
 
     SQLiteDatabase db = instance.getWritableDatabase();;
     try
     {
       db.insertOrThrow( TABLE_SINGLE_POI, null, values );
-      System.out.println("time: "+time+" was just added for "+id);
+      System.out.println( "time: " + time + " was just added for " + id );
     }
     catch ( SQLException e )
     {
       try
       {
         db.replace( TABLE_SINGLE_POI, null, values );
-        System.out.println("time: "+time+" was replaced added for "+id);
+        System.out.println( "time: " + time + " was replaced added for " + id );
       }
       catch ( SQLException replaceE )
       {
@@ -131,7 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
   }
-  
+
   public synchronized void insertPoint( final SearchResult searchResult )
   {
     final DatabaseHelper instance = this;
@@ -140,7 +143,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         @Override
         public void run()
         {
-          insertPointWorker( searchResult, instance);
+          insertPointWorker( searchResult, instance );
         }
 
       } ).start();
@@ -205,6 +208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     int addressKey = cursorSingle.getColumnIndex( KEY_ADDRESS );
     int photoIconKey = cursorSingle.getColumnIndex( KEY_ICON );
     int timeKey = cursorSingle.getColumnIndex( KEY_TIME );
+    int ratingKey = cursorSingle.getColumnIndex( KEY_RATING );
     searchResult.id = cursorSingle.getString( idKey );
     searchResult._name = cursorSingle.getString( nameKey );
     searchResult._lat = cursorSingle.getDouble( latKey );
@@ -212,6 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     searchResult.address = cursorSingle.getString( addressKey );
     searchResult.photoIcon = cursorSingle.getString( photoIconKey );
     searchResult.time = cursorSingle.getString( timeKey );
+    searchResult.rating = Double.parseDouble( cursorSingle.getString( ratingKey ) );
     return searchResult;
   }
 

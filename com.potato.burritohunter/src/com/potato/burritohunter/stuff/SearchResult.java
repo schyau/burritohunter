@@ -16,6 +16,7 @@ public class SearchResult
 	public String photoIcon;
 	public String longTime;
 	public String time;
+	public double rating;
 	
 	public void serialize ( )
 	{

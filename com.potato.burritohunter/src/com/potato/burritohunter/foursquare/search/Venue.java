@@ -12,6 +12,16 @@ public class Venue
   private List<Category> categories;
   private boolean verified;
   private boolean restricted;
+  private double rating;
+  
+  public double getRating()
+  {
+    return rating;
+  }
+  public void setRating( double rating )
+  {
+    this.rating = rating;
+  }
   public String getId()
   {
     return id;

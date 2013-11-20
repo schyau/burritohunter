@@ -52,12 +52,13 @@ import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.POIListFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.fragment.SinglePOIListFragment;
-import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.ADS;
+import com.potato.burritohunter.stuff.BurritoClickListeners.ViewPagerOnPageChangeListener;
 import com.potato.burritohunter.stuff.GalleryPoiList;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SetupThread;
 import com.potato.burritohunter.stuff.SomeUtil;
+import com.potato.burritohunter.stuff.Spot;
 import com.squareup.otto.Subscribe;
 
 // should be renamed to something else, like main screen, because it holds a viewpager now instead of a map
@@ -131,7 +132,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       prefs.edit().clear().commit();
     }
 
-    prefs.edit().putString( ENTERED_GRACEFULLY, "blah" ).commit();  
+    prefs.edit().putString( ENTERED_GRACEFULLY, "blah" ).commit();
   }
 
   // Called when the Activity is no longer visible.
@@ -195,6 +196,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
       return null;
 
     SearchResult mySearchResult = new SearchResult();
+    mySearchResult.rating = venue.getRating();
     mySearchResult._lat = lat;
     mySearchResult._lng = lng;
     mySearchResult._name = name;
@@ -302,8 +304,8 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
               marker = _mapFragment.getMap().addMarker( new MarkerOptions()
                                                             .position( pos )
                                                             .title( sr._name )
-                                                            .icon( BitmapDescriptorFactory
-                                                                       .fromResource( R.drawable.item_unselected ) ) );
+                                                            .icon( BitmapDescriptorFactory.fromBitmap( Spot
+                                                                       .ratingToBitmap( sr.rating, false ) ) ) );
               if ( sr.id.equals( fPaneMarkerId ) )
               {
                 newPaneMarker = marker;
@@ -335,13 +337,15 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
           continue;
         }
         LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
+
         // TODO make a big ass Marker class with its own onclicklistener
-        Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
-                                                             .position( pos )
-                                                             .title( mySearchResult._name )
-                                                             .snippet( "Kiel is cool" )
-                                                             .icon( BitmapDescriptorFactory
-                                                                        .fromResource( R.drawable.item_unselected ) ) );
+        Marker marker = _mapFragment.getMap()
+            .addMarker( new MarkerOptions()
+                            .position( pos )
+                            .title( mySearchResult._name )
+                            .snippet( "Kiel is cool" )
+                            .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( mySearchResult.rating,
+                                                                                            false ) ) ) );
 
         currentSearchResults.put( marker, mySearchResult );
 
