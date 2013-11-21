@@ -20,6 +20,7 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   Double _lng;
   String _query;
   Bus _eventBus;
+  public boolean wasCanceled = false;
 
   public FoursquareRequestAsyncTask( Double lat, Double lng, String query, Bus eventBus, MapActivity mapActivity )//Context context ) //yep, just took a shit here :)
   { // TODO plz design this better, maybe pass in a POJO
@@ -47,18 +48,22 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   @Override
   protected void onPostExecute( FoursquareExploreResult result )
   {
-    //TODO what about error cases?  do we handle that?
-    super.onPostExecute( result );
-    SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
-    if ( result == null || result.getResponse() == null || result.getResponse().getGroups() == null )
+    if (!wasCanceled)
     {
-      if (result == null)
+      MyOtherMapFragment.fsqrat = null; 
+      SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
+      //TODO what about error cases?  do we handle that?
+      super.onPostExecute( result );
+      if ( result == null || result.getResponse() == null || result.getResponse().getGroups() == null )
       {
-        
+        if (result == null)
+        {
+          
+        }
+        Toast.makeText( mapActivity, "Search failed.  Check connectivity", Toast.LENGTH_SHORT ).show();
+        return; //_eventBus.post( result );
       }
-      Toast.makeText( mapActivity, "Search failed.  Check connectivity", Toast.LENGTH_SHORT ).show();
-      return; //_eventBus.post( result );
+      mapActivity.subscriberWithASillyName( result );
     }
-    mapActivity.subscriberWithASillyName( result );
   }
 }

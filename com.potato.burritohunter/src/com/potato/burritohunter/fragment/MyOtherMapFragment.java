@@ -97,6 +97,7 @@ public class MyOtherMapFragment extends SherlockFragment
 
   private static String id;
 
+  public static FoursquareRequestAsyncTask fsqrat;
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -134,9 +135,14 @@ public class MyOtherMapFragment extends SherlockFragment
           {
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
+            if(fsqrat !=null )
+            {
+              fsqrat.wasCanceled = true;
+              SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
+            }
             SomeUtil.startLoadingRotate( MyOtherMapFragment.loadingView );
-            new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance )
-                .execute(); // need to get this info
+            fsqrat = new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance );
+            fsqrat.execute(); // need to get this info
             return false;
           }
           return false;
@@ -151,6 +157,12 @@ public class MyOtherMapFragment extends SherlockFragment
         {
           mySearchView.setText( "" );
           BurritoClickListeners.clearUnsaved();
+          if(fsqrat !=null )
+          {
+            fsqrat.wasCanceled = true;
+            fsqrat=null;
+            SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
+          }
         }
       } );
     cancelView.setOnLongClickListener( new OnLongClickListener() {
