@@ -78,11 +78,11 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       listOfSearializedSearchResults.add( sr );
     }
 
-    lat = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LAT_KEY, "181" ) );
-    lng = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LNG_KEY, "181" ) );
+    lat = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LAT_KEY, "40.761212506165194" ) );
+    lng = Double.parseDouble( prefs.getString( MyOtherMapFragment.PIVOT_LNG_KEY, "-73.97558882832527" ) );
 
     // update camera to the last known configuration
-    zoom = prefs.getFloat( MyOtherMapFragment.CAMERA_ZOOM_KEY, Float.MAX_VALUE );
+    zoom = prefs.getFloat( MyOtherMapFragment.CAMERA_ZOOM_KEY, 12 );
     tilt = prefs.getFloat( MyOtherMapFragment.CAMERA_TILT_KEY, Float.MAX_VALUE );
     bearing = prefs.getFloat( MyOtherMapFragment.CAMERA_BEARING_KEY, Float.MAX_VALUE );
     latStr = prefs.getString( MyOtherMapFragment.CAMERA_LAT_KEY, MyOtherMapFragment.CAMERA_DEFAULT_VAL );
@@ -203,7 +203,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       if ( MyOtherMapFragment.PANEMARKER_ID_CLEAR_VALUE.equals( paneMarkerId ) )
       {//no
         MyOtherMapFragment.paneMarker = null;
-        BottomPagerPanel.getInstance().disableMarkerPanel();
+        MyOtherMapFragment.disablePane();
       }
       else
       {//yes
@@ -211,11 +211,11 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
         if ( MyOtherMapFragment.paneMarker != null )
         { //well now check to see that it exsits in currentSearchResults, it could possibly have been skipped if it's out of date
           SearchResult sr = MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ); //TODO make sure every call to this concurrent map can not be null otherwise shit hits the fan
-          BottomPagerPanel.getInstance().enableMarkerPanel( sr );
+          MyOtherMapFragment.enablePane( sr );
         }
         else
         {
-          BottomPagerPanel.getInstance().disableMarkerPanel();
+          MyOtherMapFragment.disablePane();
         }
       }
 
@@ -253,8 +253,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
 
       CameraUpdate cp = CameraUpdateFactory.newCameraPosition( updateCP.build() );
       MyOtherMapFragment.map.animateCamera( cp );
-      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
-                                                                                    .size() + "" );
+
+      MyOtherMapFragment.setBottomNumSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
     }
   }
 }

@@ -4,39 +4,83 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <FrameLayout
-        android:id="@+id/frame"
+    <RelativeLayout
+        android:id="@+id/bottomPanel"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_button"
         android:layout_alignParentBottom="true" >
 
-        <com.potato.burritohunter.stuff.MyViewPager
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/pagerBottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </com.potato.burritohunter.stuff.MyViewPager>
+        <ImageView
+            android:id="@+id/bottom_pager_marker_picture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_alignParentLeft="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/rufknkddngme" />
 
-        <!-- hack to fix ugly black artefact with maps v2 -->
-
-        <FrameLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/num_selectedRL"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent" />
-    </FrameLayout>
+            android:layout_alignParentRight="true" >
+
+            <ImageView
+                android:layout_margin="5dp"
+                android:id="@+id/rating_numselected"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/num_selected"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/gray_background"
+                android:textSize="25sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomPagerMarkerLL"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@id/num_selectedRL"
+            android:layout_toRightOf="@id/bottom_pager_marker_picture"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/bottomPagerMarkerTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/gray_title"
+                android:textSize="@dimen/title_text_size" />
+
+            <TextView
+                android:id="@+id/bottomPagerMarkerDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/gray_desc"
+                android:textSize="@dimen/desc_text_size" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/map_frag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/frame"
+        android:layout_above="@id/bottomPanel"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
     <ImageView
         android:id="@+id/foursquare_attribution"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_above="@id/frame"
+        android:layout_above="@id/bottomPanel"
         android:layout_alignParentRight="true"
         android:background="@drawable/foursquare" />
 

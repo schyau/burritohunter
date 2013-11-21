@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -40,11 +41,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
 import com.potato.burritohunter.stuff.ADS;
-import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.BurritoClickListeners.MapOnMarkerClickListener;
+import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.FoursquareRequestAsyncTask;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SetupThread;
@@ -86,6 +88,15 @@ public class MyOtherMapFragment extends SherlockFragment
   private static View vw;
   public static View loadingView;
 
+  public static TextView title;
+  public static TextView desc;
+  public static TextView numSelectedTextView;
+  public static ImageView imageIcon;
+
+  public static ImageView ratingNumselected;
+
+  private static String id;
+
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -100,14 +111,12 @@ public class MyOtherMapFragment extends SherlockFragment
 
     try
     {
-      vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );  
+      vw = inflater.inflate( R.layout.my_other_map_fragment, container, false );
     }
     catch ( Exception e )
     {
       e.printStackTrace();
     }
-    
-
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     map = mMapFragment.getMap();
@@ -141,12 +150,45 @@ public class MyOtherMapFragment extends SherlockFragment
         public void onClick( View v )
         {
           mySearchView.setText( "" );
+          BurritoClickListeners.clearUnsaved();
         }
       } );
-    //vw.findViewById( R.id.find_me )
-    //    .setOnClickListener( new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, this ) );
-    //may have to rebuild dynamically instead of using xml
-    BottomPagerPanel.makeInstance( vw, (SherlockFragmentActivity) getActivity() );
+    cancelView.setOnLongClickListener( new OnLongClickListener() {
+
+      @Override
+      public boolean onLongClick( View v )
+      {
+        BurritoClickListeners.clearAll();
+        return false;
+      }
+      
+    });
+    title = (TextView) vw.findViewById( R.id.bottomPagerMarkerTitle );
+    desc = (TextView) vw.findViewById( R.id.bottomPagerMarkerDesc );
+    numSelectedTextView = (TextView) vw.findViewById( R.id.num_selected );
+    imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
+    ratingNumselected = (ImageView) vw.findViewById( R.id.rating_numselected );
+    imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
+    View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
+    linearLayout.setOnClickListener( new OnClickListener()
+      {
+
+        @Override
+        public void onClick( View v )
+        {
+          if ( id != null )
+          {
+            SomeUtil.launchFourSquareDetail( MapActivity.instance, id );
+          }
+        }
+
+      } );
+
+    title.setText( "luls this is the title" );
+    desc.setText( "luls this is the desc" );
+    //BottomPagerPanel.makeInstance( vw, (SherlockFragmentActivity) getActivity() );
+
+    //rm bottom: make instance here
     initMap( map );
     //chyauchyau: set pane here
     return vw;
@@ -232,8 +274,8 @@ public class MyOtherMapFragment extends SherlockFragment
     saveCameraSettings( getActivity(), cameraPosition );
 
     // save current search results
-    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), MapActivity.currentSearchResults.values(),
-                                    SEARCH_RESULT_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(),
+                                    MapActivity.currentSearchResults.values(), SEARCH_RESULT_SERIALIZED_STRING_KEY );
 
     //save selected points
     ArrayList<SearchResult> selectedSearchResults = new ArrayList<SearchResult>();
@@ -241,7 +283,8 @@ public class MyOtherMapFragment extends SherlockFragment
     {
       selectedSearchResults.add( MapActivity.currentSearchResults.get( m ) );
     }
-    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), selectedSearchResults, SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
+    saveSearchResultsToSharedPrefs( ADS.getInstance().getSharedPreferences(), selectedSearchResults,
+                                    SEARCH_RESULT_SELECTED_SERIALIZED_STRING_KEY );
 
     //save query
     saveSearchQueryToSharedPrefs();
@@ -293,11 +336,31 @@ public class MyOtherMapFragment extends SherlockFragment
           InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
           imm.hideSoftInputFromWindow( mySearchView.getWindowToken(), 0 );
           paneMarker = null;
-          BottomPagerPanel.getInstance().disableMarkerPanel();
+          //BottomPagerPanel.getInstance().disableMarkerPanel();
+          disablePane();
+          //rm bottom: disable when clicked
         }
 
       } );
     map.setOnMarkerClickListener( new MapOnMarkerClickListener() );
+  }
+
+  public static void disablePane()
+  {
+    id = null;
+    title.setText( "title disabled" );
+    desc.setText( "desc Disabled" );
+    ratingNumselected.setImageBitmap( Spot.getGrayCircle() );
+    imageIcon.setImageResource( R.drawable.rufknkddngme );
+  }
+
+  public static void enablePane( SearchResult sr )
+  {
+    id = sr.id;
+    title.setText( sr._name );
+    desc.setText( sr.address ); //change round item according to rating
+    ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating ) );
+    ImageLoader.getInstance().displayImage( sr.photoIcon, imageIcon, SomeUtil.getImageOptions() );
   }
 
   public void onDestroyView()
@@ -310,7 +373,8 @@ public class MyOtherMapFragment extends SherlockFragment
       FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
       ft.remove( fragment );
       ft.commit();
-      BottomPagerPanel.getInstance().handleOnDestroy();
+      //BottomPagerPanel.getInstance().handleOnDestroy();
+      //
     }
     catch ( Exception e )
     {
@@ -435,9 +499,12 @@ public class MyOtherMapFragment extends SherlockFragment
         }
         SearchResult sr = MapActivity.currentSearchResults.get( marker );
         Bitmap bmp = Spot.ratingToBitmap( sr.rating, !selected );
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap( bmp ));
-        BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
-                                                                                      .size() + "" );
+        marker.setIcon( BitmapDescriptorFactory.fromBitmap( bmp ) );
+        //rm bottom: change textview with number
+        //BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
+        //                                                                            .size() + "" );
+        setBottomNumSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
+
         //checkBox.setChecked( !selected );    //chyauchyau
       }
       else
@@ -445,6 +512,16 @@ public class MyOtherMapFragment extends SherlockFragment
         //checkBox.setChecked( selected );    //chyauchyau
       }
     }
+  }
+
+  public static void setNumSelectedRatingToGray()
+  {
+    ratingNumselected.setImageBitmap( Spot.getGrayCircle() );
+  }
+
+  public static void setBottomNumSelectedTextView( String num )
+  {
+    numSelectedTextView.setText( num );
   }
 
   // Define a DialogFragment that displays the error dialog

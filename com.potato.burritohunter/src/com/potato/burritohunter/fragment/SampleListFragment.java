@@ -17,9 +17,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
-import com.potato.burritohunter.stuff.BottomPagerPanel;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
+import com.potato.burritohunter.stuff.Spot;
 
 public class SampleListFragment extends ListFragment
 {
@@ -37,7 +37,9 @@ public class SampleListFragment extends ListFragment
     MapActivity.instance.getSlidingMenu().toggle( true );
     //MyOtherMapFragment.changeMarkerState( m );
     SearchResult sr = MapActivity.currentSearchResults.get( m );
-    BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
+    //BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
+    //rm bottom
+    MyOtherMapFragment.enablePane( sr );
     MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );
     MyOtherMapFragment.paneMarker = m;
   }
@@ -65,6 +67,10 @@ public class SampleListFragment extends ListFragment
       title.setText( searchResult._name );
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
+      ImageView ratingImage = (ImageView) convertView.findViewById( R.id.rating_slidingIV);
+      ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating ) );
+      TextView ratingText = (TextView)convertView.findViewById( R.id.rating_slidingTV );
+      ratingText.setText( searchResult.rating+"" );
 
       // CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
       //checkBox.setOnCheckedChangeListener( new OnCheckedChangeListener() { 

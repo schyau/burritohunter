@@ -56,8 +56,8 @@ public class Settings extends FragmentActivity
     int search_results = prefs.getInt( SEARCH_RESULTS_KEY, -1 );
     if ( search_results < 0 || search_results > 100 )
     {
-      writeSharedPrefsInt( SEARCH_RESULTS_KEY, 50 );
-      search_results = 50;
+      writeSharedPrefsInt( SEARCH_RESULTS_KEY, 10 );
+      search_results = 10;
     }
     searchlimitText.setText( search_results + " results" );
     searchresults_seekbar.setProgress( search_results );
@@ -70,14 +70,14 @@ public class Settings extends FragmentActivity
     }
     distancetext.setText( convertProgressToMileage( distance ) + " miles away" );
     distance_seekbar.setProgress( distance );
-
+    searchresults_seekbar.setMax( 99 );
     searchresults_seekbar.setOnSeekBarChangeListener( new OnSeekBarChangeListener()
       {
 
         @Override
         public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
         {
-          searchlimitText.setText( progress + " results" );
+          searchlimitText.setText( (progress + 1) + " results" );
         }
 
         @Override
@@ -90,7 +90,7 @@ public class Settings extends FragmentActivity
         @Override
         public void onStopTrackingTouch( SeekBar seekBar )
         {
-          writeSharedPrefsInt( SEARCH_RESULTS_KEY, seekBar.getProgress() );
+          writeSharedPrefsInt( SEARCH_RESULTS_KEY, seekBar.getProgress()+1 );
         }
 
       } );

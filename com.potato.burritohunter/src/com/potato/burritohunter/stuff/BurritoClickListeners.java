@@ -55,47 +55,58 @@ public class BurritoClickListeners
     }
   }
 
+  //depracted lol
   public static class ClearUnsaved implements OnClickListener
   {
     @Override
     public void onClick( View v )
     {
-      Set<Marker> set = new HashSet<Marker>( MapActivity.currentSearchResults.keySet() );
-      for ( Marker m : set )
-      {
-        if ( MapActivity.selectedSearchResults.contains( m ) )
-          continue;
-        m.remove();
-        MapActivity.currentSearchResults.remove( m );
-        MapActivity.selectedSearchResults.remove( m );
-        MapActivity.slidingMenuAdapter.remove( m );
-      }
-      if (  MyOtherMapFragment.paneMarker != null && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
-      {
-        BottomPagerPanel.getInstance().disableMarkerPanel();
-        MyOtherMapFragment.paneMarker = null;
-      }
+      clearUnsaved();
     }
   }
 
+  public static void clearUnsaved()
+  {
+    Set<Marker> set = new HashSet<Marker>( MapActivity.currentSearchResults.keySet() );
+    for ( Marker m : set )
+    {
+      if ( MapActivity.selectedSearchResults.contains( m ) )
+        continue;
+      m.remove();
+      MapActivity.currentSearchResults.remove( m );
+      MapActivity.selectedSearchResults.remove( m );
+      MapActivity.slidingMenuAdapter.remove( m );
+    }
+    if (  MyOtherMapFragment.paneMarker != null && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
+    {
+      MyOtherMapFragment.disablePane();
+      MyOtherMapFragment.paneMarker = null;
+    }
+  }
+  
+  //deprecated
   public static class ClearAll implements OnLongClickListener
   {
-
     @Override
     public boolean onLongClick( View v )
     {
-      for ( Marker m : MapActivity.currentSearchResults.keySet() )
-      {
-        m.remove();
-      }
-      MapActivity.currentSearchResults.clear();
-      MapActivity.selectedSearchResults.clear();
-      MapActivity.slidingMenuAdapter.clear();
-      MyOtherMapFragment.paneMarker = null;
-      BottomPagerPanel.getInstance().disableMarkerPanel();
-      BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( "0" );
+      clearAll();
       return false;
+      
     }
+  }
+  public static void clearAll()
+  {
+    for ( Marker m : MapActivity.currentSearchResults.keySet() )
+    {
+      m.remove();
+    }
+    MapActivity.currentSearchResults.clear();
+    MapActivity.selectedSearchResults.clear();
+    MapActivity.slidingMenuAdapter.clear();
+    MyOtherMapFragment.paneMarker = null;
+    MyOtherMapFragment.disablePane();
+    MyOtherMapFragment.setBottomNumSelectedTextView( "0" );
   }
 
   public static class Save implements OnClickListener
@@ -202,10 +213,11 @@ public class BurritoClickListeners
     @Override
     public void onClick( View v )
     {
-      //TODO, add null check
-      //skipping the null check just because it shouldn't be null at this moment!
       Marker marker = MyOtherMapFragment.paneMarker;
-      onMarkerClicked( marker );
+      if ( marker != null ) //TODO, do something if it is null!
+      {
+        onMarkerClicked( marker );
+      }
     }
   }
 
@@ -214,8 +226,8 @@ public class BurritoClickListeners
     MyOtherMapFragment.changeMarkerState( marker );
     MyOtherMapFragment.paneMarker = marker;
     SearchResult sr = MapActivity.currentSearchResults.get( marker );
-    BottomPagerPanel.getInstance().enableMarkerPanel( sr );
-    MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
+    MyOtherMapFragment.enablePane( sr );
+    //MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
   }
 
   public static class ViewPagerOnPageChangeListener implements OnPageChangeListener

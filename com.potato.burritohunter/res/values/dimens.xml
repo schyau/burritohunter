@@ -18,8 +18,8 @@
 	<dimen name="divider_height">5px</dimen>
 	
     <integer name="num_cols">1</integer>
-    <dimen name="title_text_size">24sp</dimen>
-    <dimen name="desc_text_size">14sp</dimen>
+    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="desc_text_size">12sp</dimen>
     <dimen name="screen_title_text_size">35sp</dimen>
     
     

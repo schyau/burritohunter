@@ -13,11 +13,32 @@
         android:paddingRight="@dimen/icon_padding"
         android:src="@drawable/rufknkddngme" />
 
+    <RelativeLayout android:id="@+id/rating_slidingRL"
+        android:layout_width="@dimen/icon_width"
+        android:layout_height="@dimen/icon_height"
+        android:layout_alignParentRight="true"
+         >
+
+        <ImageView
+            android:id="@+id/rating_slidingIV"
+            android:layout_margin="5dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+             />
+
+        <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/rating_slidingTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/icon_sliding"
+        android:layout_toRightOf="@id/icon_sliding"
+        android:layout_toLeftOf="@id/rating_slidingRL"
         android:ellipsize="end"
         android:paddingTop="5dp"
         android:singleLine="true"
@@ -29,10 +50,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
-        android:layout_toRightOf="@+id/icon_sliding"
         android:layout_marginTop="-5dp"
+        android:layout_toLeftOf="@id/rating_slidingRL"
+        android:layout_toRightOf="@id/icon_sliding"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/gray_desc"
         android:textSize="@dimen/desc_text_size" />
+
 </RelativeLayout>

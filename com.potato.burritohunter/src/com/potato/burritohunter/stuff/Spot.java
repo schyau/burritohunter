@@ -22,6 +22,7 @@ public class Spot
   public static Bitmap yellowBmp;
   public static List<Bitmap> spotsBmpList;
   public static List<Bitmap> spotsBmpList_unselected;
+  public static List<Bitmap> spotsBmpHollow;
 
   //try oring
   //RED
@@ -39,29 +40,38 @@ public class Spot
   public static final int GREEN_CENTER_UNSELECTED = 0x7700FF00;
   public static final int GREEN_CENTER_SELECTED = 0xFF00FF00;
 
+  public static final int CLEAR = 0x00FFFFFF;
+  public static final int GREY_RING = 0xFF545454;
+
   public static void initSpots()
   {
     spotsBmpList = new ArrayList<Bitmap>();
     spotsBmpList_unselected = new ArrayList<Bitmap>();
+    spotsBmpHollow = new ArrayList<Bitmap>();
+
     Context context = ADS.getInstance().getContext();
     GradientDrawable shape = (GradientDrawable) context.getResources().getDrawable( R.drawable.something );
     spotsBmpList.add( makeSpotBitmap( shape, RED_RING, RED_CENTER_SELECTED ) );
     spotsBmpList.add( makeSpotBitmap( shape, RED_RING, RED_CENTER_UNSELECTED ) );
-    
+
     spotsBmpList.add( makeSpotBitmap( shape, YELLOW_RING, YELLOW_CENTER_SELECTED ) );
     spotsBmpList.add( makeSpotBitmap( shape, YELLOW_RING, YELLOW_CENTER_UNSELECTED ) );
 
     spotsBmpList.add( makeSpotBitmap( shape, GREEN_RING, GREEN_CENTER_SELECTED ) );
     spotsBmpList.add( makeSpotBitmap( shape, GREEN_RING, GREEN_CENTER_UNSELECTED ) );
-    
 
+    spotsBmpHollow.add( makeSpotBitmap( shape, RED_RING, CLEAR ) );
+    spotsBmpHollow.add( makeSpotBitmap( shape, YELLOW_RING, CLEAR ) );
+    spotsBmpHollow.add( makeSpotBitmap( shape, GREEN_RING, CLEAR ) );
+    spotsBmpHollow.add( makeSpotBitmap( shape, GREY_RING, CLEAR ) );
   }
 
-  private static Bitmap makeSpotBitmap( GradientDrawable shape, int ringColor, int center)
+  private static Bitmap makeSpotBitmap( GradientDrawable shape, int ringColor, int center )
   {
-    Bitmap bitmap = Bitmap.createBitmap( shape.getIntrinsicWidth()+3, shape.getIntrinsicHeight()+3, Config.ARGB_8888 );
+    Bitmap bitmap = Bitmap.createBitmap( shape.getIntrinsicWidth() + 3, shape.getIntrinsicHeight() + 3,
+                                         Config.ARGB_8888 );
     Canvas canvas = new Canvas( bitmap );
-    shape.setBounds( 1, 1, canvas.getWidth()-1, canvas.getHeight()-1 );
+    shape.setBounds( 1, 1, canvas.getWidth() - 1, canvas.getHeight() - 1 );
     shape.setStroke( 3, ringColor );
     shape.setColor( center );
     shape.draw( canvas );
@@ -72,9 +82,9 @@ public class Spot
   public static Bitmap ratingToBitmap( double rating, boolean selected )
   {
 
-    if( rating < RED_THRESHOLD )
+    if ( rating < RED_THRESHOLD )
     {
-      if( selected )
+      if ( selected )
       {
         return spotsBmpList.get( 0 );
       }
@@ -83,9 +93,9 @@ public class Spot
         return spotsBmpList.get( 1 );
       }
     }
-    else if( rating < YELLOW_THRESHOLD )
+    else if ( rating < YELLOW_THRESHOLD )
     {
-      if( selected )
+      if ( selected )
       {
         return spotsBmpList.get( 2 );
       }
@@ -94,14 +104,30 @@ public class Spot
         return spotsBmpList.get( 3 );
       }
     }
-    if( selected)
+    if ( selected )
     {
-      return spotsBmpList.get(4);
+      return spotsBmpList.get( 4 );
     }
     else
     {
-      return spotsBmpList.get(5);
+      return spotsBmpList.get( 5 );
     }
   }
 
+  public static Bitmap ratingToHollowBitmap( double rating )
+  {
+    if ( rating < RED_THRESHOLD )
+    {
+      return spotsBmpHollow.get( 0 );
+    }
+    else if ( rating < YELLOW_THRESHOLD )
+    {
+      return spotsBmpHollow.get( 1 );
+    }
+    return spotsBmpHollow.get( 2 );
+  }
+  public static Bitmap getGrayCircle( )
+  {
+    return spotsBmpHollow.get( 3 );
+  }
 }

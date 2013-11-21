@@ -49,7 +49,7 @@ public class BottomPagerPanel
     _buttonsPanel = new BottomPagerButtonsPanel();
     _markerPanel = new BottomPagerMarkerPanel();
 
-    _viewPager = (MyViewPager) vw.findViewById( R.id.pagerBottom );
+    //_viewPager = (MyViewPager) vw.findViewById( R.id.pagerBottom );
     _viewPager.setAdapter( null );
     _viewPagerAdapter = new ViewPagerAdapter( fragmentActivity.getSupportFragmentManager() );
 

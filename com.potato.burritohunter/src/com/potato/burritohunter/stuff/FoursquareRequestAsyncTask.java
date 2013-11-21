@@ -35,7 +35,7 @@ public class FoursquareRequestAsyncTask extends AsyncTask<Void, Void, Foursquare
   protected FoursquareExploreResult doInBackground( Void... params )
   {
     SharedPreferences preferences = ADS.getInstance().getSharedPreferences();
-    int maxResults = preferences.getInt( Settings.SEARCH_RESULTS_KEY, 10 ) + 1;
+    int maxResults = preferences.getInt( Settings.SEARCH_RESULTS_KEY, 10 );
     int radiusProgress = ( preferences.getInt( Settings.DISTANCE_KEY, 50 ) );
     double radiusMiles = Settings.convertProgressToMileage( radiusProgress );
     double radius = Settings.milesToKm( radiusMiles );
