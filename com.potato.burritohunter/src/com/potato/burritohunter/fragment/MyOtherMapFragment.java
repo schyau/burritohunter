@@ -179,6 +179,7 @@ public class MyOtherMapFragment extends SherlockFragment
     desc = (TextView) vw.findViewById( R.id.bottomPagerMarkerDesc );
     numSelectedTextView = (TextView) vw.findViewById( R.id.num_selected );
     imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
+    imageIcon.setBackgroundResource( R.drawable.border );
     ratingNumselected = (ImageView) vw.findViewById( R.id.rating_numselected );
     imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
     View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
