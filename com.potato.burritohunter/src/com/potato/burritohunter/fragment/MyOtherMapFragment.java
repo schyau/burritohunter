@@ -64,9 +64,6 @@ public class MyOtherMapFragment extends SherlockFragment
   public static Marker paneMarker;
   public static Marker pivotMarker;
 
-  private static OnClickListener bottomPicClick = new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener();
-  private static OnClickListener bottomNavClick;
-
   public static EditText mySearchView;
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -127,7 +124,6 @@ public class MyOtherMapFragment extends SherlockFragment
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
     num_selectedRL = (View) vw.findViewById( R.id.num_selectedRL );
     num_selectedRL.setOnClickListener( new BurritoClickListeners.Save( getActivity() ) );
-    bottomNavClick = new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, MyOtherMapFragment.this );
     map = mMapFragment.getMap();
 
     mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
@@ -190,6 +186,7 @@ public class MyOtherMapFragment extends SherlockFragment
     numSelectedTextView = (TextView) vw.findViewById( R.id.num_selected );
     imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
     imageIcon.setBackgroundResource( R.drawable.border );
+    imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
     ratingNumselected = (ImageView) vw.findViewById( R.id.rating_numselected );
     View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
     linearLayout.setOnClickListener( new OnClickListener()
@@ -356,9 +353,8 @@ public class MyOtherMapFragment extends SherlockFragment
           //chyauchyau -- marker should not be highlighted
           InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
           imm.hideSoftInputFromWindow( mySearchView.getWindowToken(), 0 );
-          paneMarker = null;
-          //BottomPagerPanel.getInstance().disableMarkerPanel();
           disablePane();
+          paneMarker = null;
           //rm bottom: disable when clicked
         }
 
@@ -372,8 +368,8 @@ public class MyOtherMapFragment extends SherlockFragment
     title.setText( "title disabled" );
     desc.setText( "desc Disabled" );
     ratingNumselected.setImageBitmap( Spot.getGrayCircle() );
+    MapActivity.setPaneMarkerBitmap(false);
     imageIcon.setImageResource( R.drawable.rufknkddngme );
-    imageIcon.setOnClickListener( bottomNavClick );
   }
 
   public static void enablePane( SearchResult sr )
@@ -382,8 +378,9 @@ public class MyOtherMapFragment extends SherlockFragment
     title.setText( sr._name );
     desc.setText( sr.address ); //change round item according to rating
     ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating ) );
+    MapActivity.setPaneMarkerBitmap(true);
+    //MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( bmp ) );
     ImageLoader.getInstance().displayImage( sr.photoIcon, imageIcon, SomeUtil.getImageOptions() );
-    imageIcon.setOnClickListener( bottomPicClick );
   }
 
   public void onDestroyView()
@@ -521,8 +518,7 @@ public class MyOtherMapFragment extends SherlockFragment
           MapActivity.selectedSearchResults.add( marker );
         }
         SearchResult sr = MapActivity.currentSearchResults.get( marker );
-        Bitmap bmp = Spot.ratingToBitmap( sr.rating, !selected );
-        marker.setIcon( BitmapDescriptorFactory.fromBitmap( bmp ) );
+        MapActivity.setPaneMarkerBitmap(true);
         //rm bottom: change textview with number
         //BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
         //                                                                            .size() + "" );

@@ -77,13 +77,14 @@ public class BurritoClickListeners
       MapActivity.selectedSearchResults.remove( m );
       MapActivity.slidingMenuAdapter.remove( m );
     }
-    if (  MyOtherMapFragment.paneMarker != null && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
+    if ( MyOtherMapFragment.paneMarker != null
+         && MapActivity.currentSearchResults.get( MyOtherMapFragment.paneMarker ) == null )
     {
       MyOtherMapFragment.disablePane();
       MyOtherMapFragment.paneMarker = null;
     }
   }
-  
+
   //deprecated
   public static class ClearAll implements OnLongClickListener
   {
@@ -92,9 +93,10 @@ public class BurritoClickListeners
     {
       clearAll();
       return false;
-      
+
     }
   }
+
   public static void clearAll()
   {
     for ( Marker m : MapActivity.currentSearchResults.keySet() )
@@ -220,9 +222,11 @@ public class BurritoClickListeners
       }
     }
   }
+
   public static void onMarkerClicked( Marker marker )
   {
     MyOtherMapFragment.changeMarkerState( marker );
+    MapActivity.setPaneMarkerBitmap( false );
     MyOtherMapFragment.paneMarker = marker;
     SearchResult sr = MapActivity.currentSearchResults.get( marker );
     MyOtherMapFragment.enablePane( sr );

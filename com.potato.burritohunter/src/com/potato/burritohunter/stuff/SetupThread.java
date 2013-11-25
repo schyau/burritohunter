@@ -106,7 +106,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       }
       // TODO make a big ass Marker class with its own onclicklistener
       Marker marker = MyOtherMapFragment.map.addMarker( new MarkerOptions().position( new LatLng( sr._lat, sr._lng ) )
-          .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, false ) ) ) );
+          .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, false, false ) ) ) );
 
       MapActivity.currentSearchResults.put( marker, sr );
       reverseSearchResultHashMap.put( sr.id, marker );
@@ -129,7 +129,7 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       MapActivity.selectedSearchResults.add( marker );
       //change marker state 
       SearchResult sr = MapActivity.currentSearchResults.get( marker );
-      marker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, true ) ) );
+      marker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, true, false ) ) );
       Log.d( "com.potato.burritohunter", "Here: " + sr._name + ",      id: " + id );
     }
     if ( outOfDate )
@@ -202,8 +202,8 @@ public class SetupThread extends AsyncTask<Void, Void, Void>
       // check if paneMarker should be inflated
       if ( MyOtherMapFragment.PANEMARKER_ID_CLEAR_VALUE.equals( paneMarkerId ) )
       {//no
-        MyOtherMapFragment.paneMarker = null;
         MyOtherMapFragment.disablePane();
+        MyOtherMapFragment.paneMarker = null;
       }
       else
       {//yes

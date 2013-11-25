@@ -305,7 +305,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                                                             .position( pos )
                                                             .title( sr._name )
                                                             .icon( BitmapDescriptorFactory.fromBitmap( Spot
-                                                                       .ratingToBitmap( sr.rating, false ) ) ) );
+                                                                       .ratingToBitmap( sr.rating, false, false ) ) ) );
               if ( sr.id.equals( fPaneMarkerId ) )
               {
                 newPaneMarker = marker;
@@ -345,15 +345,28 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                             .title( mySearchResult._name )
                             .snippet( "Kiel is cool" )
                             .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( mySearchResult.rating,
-                                                                                            false ) ) ) );
+                                                                                            false,false ) ) ) );
 
         currentSearchResults.put( marker, mySearchResult );
 
         slidingMenuAdapter.add( marker );
       }
     }
+    setPaneMarkerBitmap(true);
 
   }
+  
+  public static void setPaneMarkerBitmap(boolean enabled )
+  {
+    if ( MyOtherMapFragment.paneMarker != null )
+    {
+      SearchResult sr = currentSearchResults.get( MyOtherMapFragment.paneMarker );
+      boolean selected = selectedSearchResults.contains(MyOtherMapFragment.paneMarker);
+      MyOtherMapFragment.paneMarker
+          .setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, selected, enabled ) ) );
+    }
+  }
+
 
   public GoogleMap getMap()
   {
