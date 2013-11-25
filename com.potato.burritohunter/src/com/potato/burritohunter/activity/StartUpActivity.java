@@ -20,6 +20,7 @@ public class StartUpActivity extends SherlockActivity
   protected void onCreate( Bundle savedInstanceState )
   {
     super.onCreate( savedInstanceState );
+    getSupportActionBar().hide();
     final Context context = this;
     ADS.getInstance().init( getApplicationContext() );
     ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray_background" >
+
+    <TextView android:id="@+id/AttributionTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/AttributionDesc"
+        android:layout_below="@id/AttributionTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

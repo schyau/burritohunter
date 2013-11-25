@@ -220,7 +220,6 @@ public class BurritoClickListeners
       }
     }
   }
-
   public static void onMarkerClicked( Marker marker )
   {
     MyOtherMapFragment.changeMarkerState( marker );

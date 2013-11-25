@@ -64,6 +64,9 @@ public class MyOtherMapFragment extends SherlockFragment
   public static Marker paneMarker;
   public static Marker pivotMarker;
 
+  private static OnClickListener bottomPicClick = new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener();
+  private static OnClickListener bottomNavClick;
+
   public static EditText mySearchView;
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -93,11 +96,13 @@ public class MyOtherMapFragment extends SherlockFragment
   public static TextView numSelectedTextView;
   public static ImageView imageIcon;
 
+  public static View num_selectedRL;
   public static ImageView ratingNumselected;
 
   private static String id;
 
   public static FoursquareRequestAsyncTask fsqrat;
+
   // http://stackoverflow.com/questions/17476089/android-google-maps-fragment-and-viewpager-error-inflating-class-fragment
   @Override
   public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
@@ -120,6 +125,9 @@ public class MyOtherMapFragment extends SherlockFragment
     }
 
     mMapFragment = ( (SupportMapFragment) getFragmentManager().findFragmentById( R.id.map_frag ) );
+    num_selectedRL = (View) vw.findViewById( R.id.num_selectedRL );
+    num_selectedRL.setOnClickListener( new BurritoClickListeners.Save( getActivity() ) );
+    bottomNavClick = new BurritoClickListeners.FindMeOnClickListener( MapActivity.instance, MyOtherMapFragment.this );
     map = mMapFragment.getMap();
 
     mySearchView = (EditText) vw.findViewById( R.id.mySearchView );
@@ -135,13 +143,14 @@ public class MyOtherMapFragment extends SherlockFragment
           {
             double lat = MyOtherMapFragment.PIVOT.latitude;
             double lng = MyOtherMapFragment.PIVOT.longitude;
-            if(fsqrat !=null )
+            if ( fsqrat != null )
             {
               fsqrat.wasCanceled = true;
               SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
             }
             SomeUtil.startLoadingRotate( MyOtherMapFragment.loadingView );
-            fsqrat = new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(), MapActivity.instance );
+            fsqrat = new FoursquareRequestAsyncTask( lat, lng, v.getText().toString(), SomeUtil.getBus(),
+                                                     MapActivity.instance );
             fsqrat.execute(); // need to get this info
             return false;
           }
@@ -157,35 +166,34 @@ public class MyOtherMapFragment extends SherlockFragment
         {
           mySearchView.setText( "" );
           BurritoClickListeners.clearUnsaved();
-          if(fsqrat !=null )
+          if ( fsqrat != null )
           {
             fsqrat.wasCanceled = true;
-            fsqrat=null;
+            fsqrat = null;
             SomeUtil.stopLoadingRotate( MyOtherMapFragment.loadingView );
           }
         }
       } );
-    cancelView.setOnLongClickListener( new OnLongClickListener() {
-
-      @Override
-      public boolean onLongClick( View v )
+    cancelView.setOnLongClickListener( new OnLongClickListener()
       {
-        BurritoClickListeners.clearAll();
-        return false;
-      }
-      
-    });
+
+        @Override
+        public boolean onLongClick( View v )
+        {
+          BurritoClickListeners.clearAll();
+          return false;
+        }
+
+      } );
     title = (TextView) vw.findViewById( R.id.bottomPagerMarkerTitle );
     desc = (TextView) vw.findViewById( R.id.bottomPagerMarkerDesc );
     numSelectedTextView = (TextView) vw.findViewById( R.id.num_selected );
     imageIcon = (ImageView) vw.findViewById( R.id.bottom_pager_marker_picture );
     imageIcon.setBackgroundResource( R.drawable.border );
     ratingNumselected = (ImageView) vw.findViewById( R.id.rating_numselected );
-    imageIcon.setOnClickListener( new BurritoClickListeners.OnBottomMarkerPanelPictureClickListener() );
     View linearLayout = vw.findViewById( R.id.bottomPagerMarkerLL );
     linearLayout.setOnClickListener( new OnClickListener()
       {
-
         @Override
         public void onClick( View v )
         {
@@ -365,6 +373,7 @@ public class MyOtherMapFragment extends SherlockFragment
     desc.setText( "desc Disabled" );
     ratingNumselected.setImageBitmap( Spot.getGrayCircle() );
     imageIcon.setImageResource( R.drawable.rufknkddngme );
+    imageIcon.setOnClickListener( bottomNavClick );
   }
 
   public static void enablePane( SearchResult sr )
@@ -374,6 +383,7 @@ public class MyOtherMapFragment extends SherlockFragment
     desc.setText( sr.address ); //change round item according to rating
     ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating ) );
     ImageLoader.getInstance().displayImage( sr.photoIcon, imageIcon, SomeUtil.getImageOptions() );
+    imageIcon.setOnClickListener( bottomPicClick );
   }
 
   public void onDestroyView()

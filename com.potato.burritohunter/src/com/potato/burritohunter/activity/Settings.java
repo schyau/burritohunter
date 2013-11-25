@@ -1,10 +1,10 @@
 package com.potato.burritohunter.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,9 +12,10 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.potato.burritohunter.R;
 
-public class Settings extends FragmentActivity
+public class Settings extends SherlockFragmentActivity
 {
   private Context _context;
   private TextView aboutTv;
@@ -38,7 +39,8 @@ public class Settings extends FragmentActivity
   @Override
   public void onCreate( Bundle b )
   {
-    super.onCreate( b );
+    super.onCreate( b );    
+    getSupportActionBar().hide();
     // http://javatechig.com/android/android-seekbar-example/
     setContentView( R.layout.settings );
     aboutTv = (TextView) findViewById( R.id.About );
@@ -133,7 +135,7 @@ public class Settings extends FragmentActivity
         @Override
         public void onClick( View v )
         {
-
+          startActivity( new Intent( _context, Attribution.class ) );
         }
       } );
   }
