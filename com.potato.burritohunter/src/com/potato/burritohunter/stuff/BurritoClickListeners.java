@@ -67,6 +67,7 @@ public class BurritoClickListeners
 
   public static void clearUnsaved()
   {
+    MyOtherMapFragment.mySearchView.clearFocus();
     Set<Marker> set = new HashSet<Marker>( MapActivity.currentSearchResults.keySet() );
     for ( Marker m : set )
     {
@@ -99,6 +100,7 @@ public class BurritoClickListeners
 
   public static void clearAll()
   {
+    MyOtherMapFragment.mySearchView.clearFocus();
     for ( Marker m : MapActivity.currentSearchResults.keySet() )
     {
       m.remove();
@@ -123,6 +125,7 @@ public class BurritoClickListeners
     @Override
     public void onClick( View arg0 )
     {
+      MyOtherMapFragment.mySearchView.clearFocus();
       LayoutInflater factory = LayoutInflater.from( activity );
       final View textEntryView = factory.inflate( R.layout.save_dialog, null );
       final EditText editText = (EditText) textEntryView.findViewById( R.id.list_edit );
@@ -230,6 +233,8 @@ public class BurritoClickListeners
     MyOtherMapFragment.paneMarker = marker;
     SearchResult sr = MapActivity.currentSearchResults.get( marker );
     MyOtherMapFragment.enablePane( sr );
+
+    MyOtherMapFragment.mySearchView.clearFocus();
     //MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( marker.getPosition() ) );
   }
 
@@ -292,6 +297,7 @@ public class BurritoClickListeners
     @Override
     public void onClick( View v )
     {
+      MyOtherMapFragment.mySearchView.clearFocus();
       android.location.Location location = _mapActivity.getCurrentLocation();
       if ( location != null )
       {

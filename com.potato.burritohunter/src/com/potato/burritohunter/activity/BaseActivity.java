@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.potato.burritohunter.R;
+import com.potato.burritohunter.fragment.MyOtherMapFragment;
 import com.potato.burritohunter.fragment.SampleListFragment;
 import com.potato.burritohunter.preference.EditPreferencesHC;
 
@@ -38,6 +39,7 @@ public class BaseActivity extends SlidingFragmentActivity
           @Override
           public void onClick( View v )
           {
+            MyOtherMapFragment.mySearchView.clearFocus();
             startActivity( new Intent( _context, Settings.class ) );
           }
         } );

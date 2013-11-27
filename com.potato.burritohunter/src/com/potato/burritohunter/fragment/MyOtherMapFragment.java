@@ -153,7 +153,13 @@ public class MyOtherMapFragment extends SherlockFragment
           return false;
         }
       } );
-
+    mySearchView.setOnFocusChangeListener( new View.OnFocusChangeListener()
+      {
+        public void onFocusChange( View v, boolean hasFocus )
+        {
+          mySearchView.setCursorVisible( hasFocus );
+        }
+      } );
     ImageView cancelView = (ImageView) vw.findViewById( R.id.search_cancel );
     cancelView.setOnClickListener( new OnClickListener()
       {
@@ -196,6 +202,7 @@ public class MyOtherMapFragment extends SherlockFragment
         {
           if ( id != null )
           {
+            MyOtherMapFragment.mySearchView.clearFocus();
             SomeUtil.launchFourSquareDetail( MapActivity.instance, id );
           }
         }
@@ -340,6 +347,8 @@ public class MyOtherMapFragment extends SherlockFragment
         @Override
         public void onMapLongClick( LatLng point )
         {
+
+          MyOtherMapFragment.mySearchView.clearFocus();
           updateAndDrawPivot( point );
           moveCameraToLatLng( point );
         }
@@ -349,6 +358,8 @@ public class MyOtherMapFragment extends SherlockFragment
         @Override
         public void onMapClick( LatLng point )
         {
+
+          MyOtherMapFragment.mySearchView.clearFocus();
           //chyauchyau -- show button screen
           //chyauchyau -- marker should not be highlighted
           InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE );
@@ -368,7 +379,7 @@ public class MyOtherMapFragment extends SherlockFragment
     title.setText( "title disabled" );
     desc.setText( "desc Disabled" );
     ratingNumselected.setImageBitmap( Spot.getGrayCircle() );
-    MapActivity.setPaneMarkerBitmap(false);
+    MapActivity.setPaneMarkerBitmap( false );
     imageIcon.setImageResource( R.drawable.rufknkddngme );
   }
 
@@ -378,7 +389,7 @@ public class MyOtherMapFragment extends SherlockFragment
     title.setText( sr._name );
     desc.setText( sr.address ); //change round item according to rating
     ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating, false ) );
-    MapActivity.setPaneMarkerBitmap(true);
+    MapActivity.setPaneMarkerBitmap( true );
     //MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( bmp ) );
     ImageLoader.getInstance().displayImage( sr.photoIcon, imageIcon, SomeUtil.getImageOptions() );
   }
@@ -517,11 +528,12 @@ public class MyOtherMapFragment extends SherlockFragment
           //marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
           MapActivity.selectedSearchResults.add( marker );
         }
-        MapActivity.setPaneMarkerBitmap(true);
+        MapActivity.setPaneMarkerBitmap( true );
         //rm bottom: change textview with number
         //BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults
         //                                                                            .size() + "" );
         setBottomNumSelectedTextView( MapActivity.selectedSearchResults.size() + "" );
+        MapActivity.slidingMenuAdapter.notifyDataSetChanged();
 
         //checkBox.setChecked( !selected );    //chyauchyau
       }

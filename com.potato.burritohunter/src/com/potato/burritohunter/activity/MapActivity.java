@@ -282,7 +282,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     ( new AsyncTask<Void, Void, Void>()
       {
 
-
         @Override
         protected Void doInBackground( Void... params )
         {
@@ -290,7 +289,6 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
           for ( final String id : ids )
           {
 
-           
             Cursor c = dbHelper.retrieveSinglePoint( id );
 
             final SearchResult sr = dbHelper.getSearchResult( c );
@@ -302,12 +300,12 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
                 {
 
                   LatLng pos = new LatLng( sr._lat, sr._lng );
-                  Marker marker = _mapFragment.getMap()
-                      .addMarker( new MarkerOptions()
-                                      .position( pos )
-                                      .title( sr._name )
-                                      .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, true,
-                                                                                                      false ) ) ) );
+                  Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                                       .position( pos )
+                                                                       .title( sr._name )
+                                                                       .icon( BitmapDescriptorFactory.fromBitmap( Spot
+                                                                                  .ratingToBitmap( sr.rating, true,
+                                                                                                   false ) ) ) );
                   if ( sr.id.equals( fPaneMarkerId ) )
                   {
                     newPaneMarker = marker;
@@ -357,7 +355,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
           }
 
           setPaneMarkerBitmap( true );
-          if(MyOtherMapFragment.paneMarker!=null)
+          if ( MyOtherMapFragment.paneMarker != null )
           {
             SearchResult sr = currentSearchResults.get( MyOtherMapFragment.paneMarker );
             MyOtherMapFragment.enablePane( sr );
@@ -372,9 +370,13 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     if ( MyOtherMapFragment.paneMarker != null )
     {
       SearchResult sr = currentSearchResults.get( MyOtherMapFragment.paneMarker );
-      boolean selected = selectedSearchResults.contains( MyOtherMapFragment.paneMarker );
-      MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot
-          .ratingToBitmap( sr.rating, selected, enabled ) ) );
+      if ( sr != null ) //it happens when clearing points from map that don't persist
+      {
+        boolean selected = selectedSearchResults.contains( MyOtherMapFragment.paneMarker );
+        MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating,
+                                                                                                        selected,
+                                                                                                        enabled ) ) );
+      }
     }
   }
 

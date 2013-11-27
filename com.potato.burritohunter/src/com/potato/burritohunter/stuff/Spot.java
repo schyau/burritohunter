@@ -169,6 +169,8 @@ public class Spot
       }
     }
   }
+  
+  //the isselected is a nice to have feature, but i'm afraid of breaking shit so i'll stray away for now
 
   public static Bitmap ratingToHollowBitmap( double rating, boolean isSelected )
   {

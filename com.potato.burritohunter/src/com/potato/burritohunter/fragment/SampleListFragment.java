@@ -3,7 +3,6 @@ package com.potato.burritohunter.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.potato.burritohunter.R;
 import com.potato.burritohunter.activity.MapActivity;
+import com.potato.burritohunter.stuff.BurritoClickListeners;
 import com.potato.burritohunter.stuff.SearchResult;
 import com.potato.burritohunter.stuff.SomeUtil;
 import com.potato.burritohunter.stuff.Spot;
@@ -35,13 +35,12 @@ public class SampleListFragment extends ListFragment
     super.onListItemClick( l, v, position, id );
     Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
+    BurritoClickListeners.onMarkerClicked( m );
 
-    SearchResult sr = MapActivity.currentSearchResults.get( m );
-    //BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
-    //rm bottom
-    MyOtherMapFragment.enablePane( sr );
     MyOtherMapFragment.map.animateCamera( CameraUpdateFactory.newLatLng( m.getPosition() ) );
-    MyOtherMapFragment.paneMarker = m;
+
+
+
   }
 
   public static class SlidingMenuAdapter extends ArrayAdapter<Marker>
@@ -67,11 +66,11 @@ public class SampleListFragment extends ListFragment
       title.setText( searchResult._name );
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
-      ImageView ratingImage = (ImageView) convertView.findViewById( R.id.rating_slidingIV);
-      boolean selected = MapActivity.selectedSearchResults.contains(key);
-      ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating,selected ) );
-      TextView ratingText = (TextView)convertView.findViewById( R.id.rating_slidingTV );
-      ratingText.setText( searchResult.rating+"" );
+      ImageView ratingImage = (ImageView) convertView.findViewById( R.id.rating_slidingIV );
+      boolean selected = MapActivity.selectedSearchResults.contains( key );
+      ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating, false ) );
+      TextView ratingText = (TextView) convertView.findViewById( R.id.rating_slidingTV );
+      ratingText.setText( searchResult.rating + "" );
 
       // CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
       //checkBox.setOnCheckedChangeListener( new OnCheckedChangeListener() { 

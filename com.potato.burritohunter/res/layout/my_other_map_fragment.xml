@@ -99,7 +99,8 @@
         android:orientation="vertical"
         android:paddingLeft="10px"
         android:paddingRight="10px"
-        android:paddingTop="10px" >
+        android:paddingTop="10px"
+android:descendantFocusability="beforeDescendants" >
 
         <ImageView
             android:id="@+id/search_cancel"
@@ -124,6 +125,10 @@
 
         <EditText
             android:id="@+id/mySearchView"
+            android:textCursorDrawable="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:cursorVisible="true"
             android:layout_width="fill_parent"
             android:layout_height="34dp"
             android:layout_marginLeft="5dp"
