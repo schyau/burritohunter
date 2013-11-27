@@ -12,9 +12,16 @@
         android:text="Search Results"
         android:gravity="center"
         android:layout_alignParentTop="true"
-        android:textColor="@color/gray_background"
+        android:textColor="@color/black_color"
         android:background="@color/red_color"
+        android:padding="@dimen/screen_title_margin"
         android:textSize="@dimen/screen_title_text_size" />
+    <View
+        android:id="@+id/list_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/tv"
+        android:background="@color/lightgray_border" />
     <ImageView
         android:id="@+id/settings_button"
         android:layout_width="fill_parent"
@@ -25,12 +32,19 @@
         android:background="@color/red_color"
         android:scaleType="fitCenter"
         android:src="@drawable/settings" />
-
+    <View
+        android:id="@+id/bottom_list_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_above="@id/settings_button"
+        android:background="@color/lightgray_border" />
     <FrameLayout
+        android:paddingTop="8dp"
+        android:background="@color/white_color"
         android:id="@+id/menu_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/settings_button"
-        android:layout_below="@id/tv" />
+        android:layout_above="@id/bottom_list_divider"
+        android:layout_below="@id/list_divider" />
 
 </RelativeLayout>

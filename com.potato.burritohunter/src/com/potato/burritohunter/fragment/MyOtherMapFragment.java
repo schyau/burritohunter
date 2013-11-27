@@ -377,7 +377,7 @@ public class MyOtherMapFragment extends SherlockFragment
     id = sr.id;
     title.setText( sr._name );
     desc.setText( sr.address ); //change round item according to rating
-    ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating ) );
+    ratingNumselected.setImageBitmap( Spot.ratingToHollowBitmap( sr.rating, false ) );
     MapActivity.setPaneMarkerBitmap(true);
     //MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( bmp ) );
     ImageLoader.getInstance().displayImage( sr.photoIcon, imageIcon, SomeUtil.getImageOptions() );
@@ -517,7 +517,6 @@ public class MyOtherMapFragment extends SherlockFragment
           //marker.setIcon( BitmapDescriptorFactory.fromResource( R.drawable.item_selected ) );
           MapActivity.selectedSearchResults.add( marker );
         }
-        SearchResult sr = MapActivity.currentSearchResults.get( marker );
         MapActivity.setPaneMarkerBitmap(true);
         //rm bottom: change textview with number
         //BottomPagerPanel.getInstance().setBottomPagerButtonsNumsSelectedTextView( MapActivity.selectedSearchResults

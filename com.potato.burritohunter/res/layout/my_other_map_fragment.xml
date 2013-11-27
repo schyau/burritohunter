@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_button"
         android:layout_alignParentBottom="true" 
-        android:background="@color/gray_background">
+        android:background="@color/white_color">
 
         <ImageView
             android:id="@+id/bottom_pager_marker_picture"
@@ -44,6 +44,7 @@
 
         <LinearLayout
             android:id="@+id/bottomPagerMarkerLL"
+            android:layout_marginTop="5dp"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_toLeftOf="@id/num_selectedRL"
@@ -63,6 +64,8 @@
                 android:id="@+id/bottomPagerMarkerDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="-5dp"
+                android:layout_marginLeft="5dp"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="@color/gray_desc"
@@ -129,6 +132,7 @@
             android:hint="Click to start your search"
             android:imeOptions="actionSearch"
             android:inputType="textNoSuggestions"
+            android:textColor="@color/black_color"
             android:maxLength="30" />
     </RelativeLayout>
 

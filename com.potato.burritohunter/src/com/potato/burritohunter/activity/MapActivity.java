@@ -236,7 +236,7 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
   public void subscriberWithASillyName( FoursquareExploreResult searchResult )
   {
     newPaneMarker = null;
-    List<Venue> venues = new ArrayList<Venue>();
+    final List<Venue> venues = new ArrayList<Venue>();
     Response response = searchResult.getResponse();
 
     List<Group> groups = response.getGroups();
@@ -248,16 +248,16 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
     }
     Toast.makeText( this, venues.size() + " results found", Toast.LENGTH_SHORT ).show();
 
-    /* new */
-    ArrayList<String> ids = new ArrayList<String>();
+    /* store all current ids on map */
+    final ArrayList<String> ids = new ArrayList<String>();
 
     String paneMarkerId = null;
 
     if ( MyOtherMapFragment.paneMarker != null )
     {
-      //wow race condition.  i actually saw this.
       Marker marker = MyOtherMapFragment.paneMarker;
       paneMarkerId = currentSearchResults.get( marker ).id;
+      MyOtherMapFragment.disablePane();
     }
     //get all ids
     for ( Marker m : selectedSearchResults )
@@ -277,96 +277,106 @@ public class MapActivity extends BaseActivity implements GooglePlayServicesClien
 
     final String fPaneMarkerId = paneMarkerId;
     // restore ids, repopulate currentsearchresults and slidermenuadapter
-    Object reallySadLock = new Object();
     final DatabaseHelper dbHelper = DatabaseUtil.getDatabaseHelper();
-    synchronized ( reallySadLock )
-    {
-      for ( final String id : ids )
+
+    ( new AsyncTask<Void, Void, Void>()
       {
-        ( new AsyncTask<Void, Void, Void>()
+
+
+        @Override
+        protected Void doInBackground( Void... params )
+        {
+          // revive all selected markers that were existing before
+          for ( final String id : ids )
           {
 
-            Marker marker;
-            SearchResult sr;
+           
+            Cursor c = dbHelper.retrieveSinglePoint( id );
 
-            @Override
-            protected Void doInBackground( Void... params )
-            {
-              Cursor c = dbHelper.retrieveSinglePoint( id );
-              sr = dbHelper.getSearchResult( c );
-              return null;
-            }
-
-            @Override
-            protected void onPostExecute( Void result )
-            {
-              LatLng pos = new LatLng( sr._lat, sr._lng );
-              marker = _mapFragment.getMap().addMarker( new MarkerOptions()
-                                                            .position( pos )
-                                                            .title( sr._name )
-                                                            .icon( BitmapDescriptorFactory.fromBitmap( Spot
-                                                                       .ratingToBitmap( sr.rating, false, false ) ) ) );
-              if ( sr.id.equals( fPaneMarkerId ) )
+            final SearchResult sr = dbHelper.getSearchResult( c );
+            runOnUiThread( new Runnable()
               {
-                newPaneMarker = marker;
-              }
-              //selectedSearchResults.add( marker ); // this iwll be done in changemarkerstate
-              currentSearchResults.put( marker, sr );
-              slidingMenuAdapter.add( marker );
-              MyOtherMapFragment.paneMarker = marker;
-              MyOtherMapFragment.changeMarkerState( marker );
-            }
 
-          } ).execute();
-      }
+                @Override
+                public void run()
+                {
 
-      MyOtherMapFragment.paneMarker = newPaneMarker;
-    }
-    synchronized ( reallySadLock )
-    {
-      /* end new */
-      for ( Venue venue : venues )
-      {
-        SearchResult mySearchResult = convertVenueToSearchResult( venue );
-        if ( mySearchResult == null )
-          continue;
-        //mySearchResult.photoUrl = 
-        dbHelper.insertPoint( mySearchResult );
-        if ( ids.contains( mySearchResult.id ) ) //already accounted for, // new todo: 
-        {
-          continue;
+                  LatLng pos = new LatLng( sr._lat, sr._lng );
+                  Marker marker = _mapFragment.getMap()
+                      .addMarker( new MarkerOptions()
+                                      .position( pos )
+                                      .title( sr._name )
+                                      .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, true,
+                                                                                                      false ) ) ) );
+                  if ( sr.id.equals( fPaneMarkerId ) )
+                  {
+                    newPaneMarker = marker;
+                  }
+                  currentSearchResults.put( marker, sr );
+                  selectedSearchResults.add( marker );
+                  slidingMenuAdapter.add( marker );
+                }
+              } );
+
+          }
+          return null;
         }
-        LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
 
-        // TODO make a big ass Marker class with its own onclicklistener
-        Marker marker = _mapFragment.getMap()
-            .addMarker( new MarkerOptions()
-                            .position( pos )
-                            .title( mySearchResult._name )
-                            .snippet( "Kiel is cool" )
-                            .icon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( mySearchResult.rating,
-                                                                                            false,false ) ) ) );
+        @Override
+        protected void onPostExecute( Void result )
+        {
+          //inflate all new markers from the internets
+          MyOtherMapFragment.paneMarker = newPaneMarker;
 
-        currentSearchResults.put( marker, mySearchResult );
+          /* end new */
+          for ( Venue venue : venues )
+          {
+            SearchResult mySearchResult = convertVenueToSearchResult( venue );
+            if ( mySearchResult == null )
+              continue;
+            //mySearchResult.photoUrl = 
+            dbHelper.insertPoint( mySearchResult );
+            if ( ids.contains( mySearchResult.id ) ) //already accounted for, // new todo: 
+            {
+              continue;
+            }
+            LatLng pos = new LatLng( mySearchResult._lat, mySearchResult._lng );
 
-        slidingMenuAdapter.add( marker );
-      }
-    }
-    setPaneMarkerBitmap(true);
+            // TODO make a big ass Marker class with its own onclicklistener
+            Marker marker = _mapFragment.getMap().addMarker( new MarkerOptions()
+                                                                 .position( pos )
+                                                                 .title( mySearchResult._name )
+                                                                 .snippet( "Kiel is cool" )
+                                                                 .icon( BitmapDescriptorFactory.fromBitmap( Spot
+                                                                            .ratingToBitmap( mySearchResult.rating,
+                                                                                             false, false ) ) ) );
+
+            currentSearchResults.put( marker, mySearchResult );
+
+            slidingMenuAdapter.add( marker );
+          }
+
+          setPaneMarkerBitmap( true );
+          if(MyOtherMapFragment.paneMarker!=null)
+          {
+            SearchResult sr = currentSearchResults.get( MyOtherMapFragment.paneMarker );
+            MyOtherMapFragment.enablePane( sr );
+          }
+        }
+      } ).execute();
 
   }
-  
-  public static void setPaneMarkerBitmap(boolean enabled )
+
+  public static void setPaneMarkerBitmap( boolean enabled )
   {
     if ( MyOtherMapFragment.paneMarker != null )
     {
       SearchResult sr = currentSearchResults.get( MyOtherMapFragment.paneMarker );
-      boolean selected = selectedSearchResults.contains(MyOtherMapFragment.paneMarker);
-      MyOtherMapFragment.paneMarker
-          .setIcon( BitmapDescriptorFactory.fromBitmap( Spot.ratingToBitmap( sr.rating, selected, enabled ) ) );
+      boolean selected = selectedSearchResults.contains( MyOtherMapFragment.paneMarker );
+      MyOtherMapFragment.paneMarker.setIcon( BitmapDescriptorFactory.fromBitmap( Spot
+          .ratingToBitmap( sr.rating, selected, enabled ) ) );
     }
   }
-
 
   public GoogleMap getMap()
   {

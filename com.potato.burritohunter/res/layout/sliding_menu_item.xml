@@ -2,21 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/gray_background"
-    android:paddingLeft="10dp" >
+    android:background="@color/white_color"
+    android:paddingLeft="13dp" >
 
     <ImageView
         android:id="@+id/icon_sliding"
         android:layout_width="@dimen/icon_width"
         android:layout_height="@dimen/icon_height"
         android:layout_centerVertical="true"
-        android:paddingRight="@dimen/icon_padding"
-        android:src="@drawable/rufknkddngme" />
+        android:scaleType="fitXY"
+        android:src="@drawable/rufknkddngme"
+        android:background="@drawable/border" />
 
     <RelativeLayout android:id="@+id/rating_slidingRL"
         android:layout_width="@dimen/icon_width"
         android:layout_height="@dimen/icon_height"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
          >
 
         <ImageView
@@ -30,23 +32,25 @@
             android:layout_centerInParent="true"
             android:id="@+id/rating_slidingTV"
             android:layout_width="wrap_content"
+            android:textSize="10sp"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/title"
+        android:layout_marginLeft="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/icon_sliding"
         android:layout_toLeftOf="@id/rating_slidingRL"
         android:ellipsize="end"
-        android:paddingTop="5dp"
         android:singleLine="true"
         android:textColor="@color/gray_title"
         android:textSize="@dimen/title_text_size" />
 
     <TextView
         android:id="@+id/desc"
+        android:layout_marginLeft="15dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"

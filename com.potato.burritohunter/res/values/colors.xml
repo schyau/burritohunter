@@ -6,5 +6,8 @@
    <color name="gray_title">#3F3F3F</color>
    <color name="gray_desc">#BDBDBD</color>
    <color name="gray_background">#EDEDED</color>
-   <color name="red_color">#FFEB8F8F</color>
+   <color name="red_color">#FF7ED221</color>
+   <color name="white_color">#FFFFFFFF</color>
+   <color name="black_color">#FF000000</color>
+   <color name="lightgray_border">#FFECECEC</color>
 </resources>

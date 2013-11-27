@@ -2,6 +2,7 @@
 package com.potato.burritohunter.adapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
@@ -46,11 +47,17 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     public TextView numViews;
   }
 
-  private List<String> getPhotoUrls( int position )
+  private List<SearchResult> getSearchResults( int position )
   {
     List<String> photoUrls = new ArrayList<String>();
     List<SearchResult> searchResults = DatabaseUtil.getDatabaseHelper().retrievePoints( rowItems.get( position )._id
                                                                                             + "" );
+    return searchResults;
+  }
+
+  private List<String> getPhotoUrls( List<SearchResult> searchResults )
+  {
+    List<String> photoUrls = new ArrayList<String>();
     for ( SearchResult sr : searchResults )
     {
       photoUrls.add( sr.photoIcon );
@@ -58,15 +65,15 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     return photoUrls;
   }
 
-  public void removeItem(int location)
+  public void removeItem( int location )
   {
-    if (rowItems!=null)
+    if ( rowItems != null )
     {
       rowItems.remove( location );
     }
     //else{why is this null!??}
   }
-  
+
   @Override
   public View getView( final int position, View convertView, ViewGroup parent )
   {
@@ -83,68 +90,79 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
       holder.imageView1 = (ImageView) convertView.findViewById( R.id.icon1 );
       holder.viewFlipper = (ViewFlipper) convertView.findViewById( R.id.view_flipper );
       final ViewHolder fHolder = holder;
-      (new AsyncTask<Void,Void,Void>(){
-        List<String> photoUrlsList;
-        @Override
-        protected Void doInBackground( Void... params )
+      ( new AsyncTask<Void, Void, Void>()
         {
-          photoUrlsList = getPhotoUrls( position );
-          
-          return null;
-        }
-        @Override
-        protected void onPostExecute( Void result )
-        {
-          fHolder.galleryPoiList = new GalleryPoiList( fHolder, photoUrlsList );
-          fHolder.galleryPoiList.start();
-          gallery.add( fHolder.galleryPoiList );
-          String numViewsStr = "";
-          if ( photoUrlsList == null )
+          List<String> photoUrlsList;
+          String description;
+
+          @Override
+          protected Void doInBackground( Void... params )
           {
-            numViewsStr = "0";
+            List<SearchResult> list = getSearchResults( position );
+            photoUrlsList = getPhotoUrls( list );
+            description = makeDescription( list );
+
+            return null;
           }
-          numViewsStr = ""+photoUrlsList.size();     
-         
-          fHolder.numViews.setText( numViewsStr );
-        }
-        
-      }).execute();
+
+          @Override
+          protected void onPostExecute( Void result )
+          {
+            fHolder.galleryPoiList = new GalleryPoiList( fHolder, photoUrlsList );
+            fHolder.galleryPoiList.start();
+            fHolder.txtDesc.setText( description );
+            gallery.add( fHolder.galleryPoiList );
+            String numViewsStr = "";
+            if ( photoUrlsList == null )
+            {
+              numViewsStr = "0";
+            }
+            numViewsStr = "" + photoUrlsList.size();
+
+            fHolder.numViews.setText( numViewsStr );
+          }
+
+        } ).execute();
 
       holder.numViews = (TextView) convertView.findViewById( R.id.poiCount );
-      
 
-      
       convertView.setTag( holder );
     }
     else
     {
       holder = (ViewHolder) convertView.getTag();
       final ViewHolder fHolder = holder;
-      (new AsyncTask<Void,Void,Void>()
-      {
-        List<String> photoUrlsList;
-        @Override
-        protected Void doInBackground( Void... params )
+      ( new AsyncTask<Void, Void, Void>()
         {
-          photoUrlsList = getPhotoUrls( position );
-          return null;
-        }
-        @Override
-        protected void onPostExecute( Void val )
-        {
-          fHolder.galleryPoiList.setViewsAndUrls( photoUrlsList );
-          fHolder.galleryPoiList.start();
-          String numViewsStr = "";
-          if ( photoUrlsList == null )
+          List<String> photoUrlsList;
+          String description;
+
+          @Override
+          protected Void doInBackground( Void... params )
           {
-            numViewsStr = "0";
+            List<SearchResult> list = getSearchResults( position );
+            photoUrlsList = getPhotoUrls( list );
+            description = makeDescription( list );
+            return null;
           }
-          numViewsStr = ""+photoUrlsList.size();     
-         
-          fHolder.numViews.setText( numViewsStr );
-        }
-        
-      }).execute();
+
+          @Override
+          protected void onPostExecute( Void val )
+          {
+            fHolder.galleryPoiList.setViewsAndUrls( photoUrlsList );
+            fHolder.galleryPoiList.start();
+            fHolder.txtDesc.setText( description );
+            String numViewsStr = "";
+            if ( photoUrlsList == null )
+            {
+              numViewsStr = "0";
+            }
+            numViewsStr = "" + photoUrlsList.size();
+
+            fHolder.numViews.setText( numViewsStr );
+          }
+
+        } ).execute();
 
     }
 
@@ -156,6 +174,39 @@ public class SavedListAdapter extends BaseAdapter// can practice using variant/i
     //holder.imageView.setImageResource(rowItem.getImageId());
 
     return convertView;
+  }
+
+  private String makeDescription( List<SearchResult> searchResults )
+  {
+    if ( searchResults == null || searchResults.size() == 0 )
+    {
+      return "There's nothing in this list!";
+    }
+    StringBuilder sb = new StringBuilder();
+    Iterator<SearchResult> iterator = searchResults.iterator();
+    int count = 0;
+    while ( iterator.hasNext() )
+    {
+      SearchResult sr = iterator.next();
+      if ( searchResults.size() == 1 )
+      {
+        return sr._name;
+      }
+      if ( iterator.hasNext() )
+      {
+        if(count != 0)
+        {
+          sb.append(", " );
+        }
+        sb.append( sr._name );
+      }
+      else
+      {
+        sb.append( " and " + sr._name );
+      }
+      count++;
+    }
+    return sb.toString();
   }
 
   public void whenFragmentOnStop()

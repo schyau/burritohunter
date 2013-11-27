@@ -35,7 +35,7 @@ public class SampleListFragment extends ListFragment
     super.onListItemClick( l, v, position, id );
     Marker m = (Marker) getListAdapter().getItem( position );
     MapActivity.instance.getSlidingMenu().toggle( true );
-    //MyOtherMapFragment.changeMarkerState( m );
+
     SearchResult sr = MapActivity.currentSearchResults.get( m );
     //BottomPagerPanel.getInstance().enableMarkerPanel( sr ); //makes a call to setviews too
     //rm bottom
@@ -68,7 +68,8 @@ public class SampleListFragment extends ListFragment
       TextView desc = (TextView) convertView.findViewById( R.id.desc );
       desc.setText( searchResult.address );
       ImageView ratingImage = (ImageView) convertView.findViewById( R.id.rating_slidingIV);
-      ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating ) );
+      boolean selected = MapActivity.selectedSearchResults.contains(key);
+      ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating,selected ) );
       TextView ratingText = (TextView)convertView.findViewById( R.id.rating_slidingTV );
       ratingText.setText( searchResult.rating+"" );
 
