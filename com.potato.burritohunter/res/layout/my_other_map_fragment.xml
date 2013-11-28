@@ -8,15 +8,15 @@
         android:id="@+id/bottomPanel"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_button"
-        android:layout_alignParentBottom="true" 
-        android:background="@color/white_color">
+        android:layout_alignParentBottom="true"
+        android:background="@color/white_color" >
 
         <ImageView
             android:id="@+id/bottom_pager_marker_picture"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="5dp"
             android:layout_alignParentLeft="true"
+            android:layout_margin="5dp"
             android:scaleType="fitXY"
             android:src="@drawable/rufknkddngme" />
 
@@ -27,10 +27,11 @@
             android:layout_alignParentRight="true" >
 
             <ImageView
-                android:layout_margin="5dp"
                 android:id="@+id/rating_numselected"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_margin="5dp" />
+
             <TextView
                 android:id="@+id/num_selected"
                 android:layout_width="match_parent"
@@ -44,9 +45,9 @@
 
         <LinearLayout
             android:id="@+id/bottomPagerMarkerLL"
-            android:layout_marginTop="5dp"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginTop="5dp"
             android:layout_toLeftOf="@id/num_selectedRL"
             android:layout_toRightOf="@id/bottom_pager_marker_picture"
             android:orientation="vertical" >
@@ -64,9 +65,9 @@
                 android:id="@+id/bottomPagerMarkerDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="-5dp"
                 android:layout_marginLeft="5dp"
                 android:ellipsize="end"
+                android:paddingTop="-5dp"
                 android:singleLine="true"
                 android:textColor="@color/gray_desc"
                 android:textSize="@dimen/desc_text_size" />
@@ -82,25 +83,26 @@
 
     <ImageView
         android:id="@+id/foursquare_attribution"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="241dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="-25px"
         android:layout_above="@id/bottomPanel"
         android:layout_alignParentRight="true"
-        android:background="@drawable/foursquare" />
+        android:background="@drawable/pwredbyfsq" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="40dp"
         android:layout_margin="8px"
         android:background="@drawable/rounded_search_bar"
+        android:descendantFocusability="beforeDescendants"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="top"
         android:orientation="vertical"
         android:paddingLeft="10px"
         android:paddingRight="10px"
-        android:paddingTop="10px"
-android:descendantFocusability="beforeDescendants" >
+        android:paddingTop="10px" >
 
         <ImageView
             android:id="@+id/search_cancel"
@@ -125,20 +127,20 @@ android:descendantFocusability="beforeDescendants" >
 
         <EditText
             android:id="@+id/mySearchView"
-            android:textCursorDrawable="@null"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:cursorVisible="true"
             android:layout_width="fill_parent"
             android:layout_height="34dp"
             android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@id/search_cancel"
             android:background="#00000000"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:hint="Click to start your search"
             android:imeOptions="actionSearch"
             android:inputType="textNoSuggestions"
+            android:maxLength="30"
             android:textColor="@color/black_color"
-            android:maxLength="30" />
+            android:textCursorDrawable="@null" />
     </RelativeLayout>
 
 </RelativeLayout>

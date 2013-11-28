@@ -56,6 +56,7 @@ import com.potato.burritohunter.stuff.Spot;
 // this class should contain the map logic now...
 public class MyOtherMapFragment extends SherlockFragment
 {
+  public static boolean ISRELEASE = true;
   //public static LatLng PIVOT = new LatLng( 37.798052, -122.406278 );
   public static LatLng PIVOT = new LatLng( 0, 0 );
   private SupportMapFragment mMapFragment;
@@ -340,8 +341,8 @@ public class MyOtherMapFragment extends SherlockFragment
   {
     UiSettings settings = map.getUiSettings();
     settings.setAllGesturesEnabled( true );
-    settings.setMyLocationButtonEnabled( true );
-    settings.setMyLocationButtonEnabled( true );
+    settings.setMyLocationButtonEnabled( false );
+    settings.setZoomControlsEnabled( !ISRELEASE );
     map.setOnMapLongClickListener( new OnMapLongClickListener()
       {
         @Override
