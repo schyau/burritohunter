@@ -17,4 +17,4 @@ Swipe right to access the list of places you've saved.  Select the one you'd lik
 
 
 
-As you can see, there's just a little more work to be done before it's finished, so expect an imminent (and eminent!) release. Please check back often to track the progress of BurritoHunter.
+As you can see, there's just a little more work left to be done before it's finished, so expect an imminent (and eminent!) release. Please check back often to track the progress of BurritoHunter.
