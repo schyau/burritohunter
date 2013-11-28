@@ -1,5 +1,7 @@
 package com.potato.burritohunter.fragment;
 
+import java.math.BigDecimal;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -70,7 +72,8 @@ public class SampleListFragment extends ListFragment
       boolean selected = MapActivity.selectedSearchResults.contains( key );
       ratingImage.setImageBitmap( Spot.ratingToHollowBitmap( searchResult.rating, false ) );
       TextView ratingText = (TextView) convertView.findViewById( R.id.rating_slidingTV );
-      ratingText.setText( searchResult.rating + "" );
+      double rating = round (searchResult.rating, 1);
+      ratingText.setText( rating + "" );
 
       // CheckBox checkBox = (CheckBox) convertView.findViewById( R.id.sliding_menu_checkbox );
       //checkBox.setOnCheckedChangeListener( new OnCheckedChangeListener() { 
@@ -82,6 +85,12 @@ public class SampleListFragment extends ListFragment
       //checkBox.setChecked( MapActivity.selectedSearchResults.contains( key ) );
       return convertView;
     }
+    public static double round(double value, int places) {
+      if (places < 0) throw new IllegalArgumentException();
 
+      BigDecimal bd = new BigDecimal(value);
+      bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+      return bd.doubleValue();
+  }
   }
 }

@@ -26,14 +26,18 @@ public class Attribution extends SherlockListActivity
 
   public class AttributionAdapter extends BaseAdapter
   {
+    private String[] links;
     private String[] titles;
+    private String[] licenses;
     private String[] descriptions;
 
     public AttributionAdapter( Context context )
     {
       Resources res = context.getResources();
       titles = res.getStringArray( R.array.attribution_titles );
+      links = res.getStringArray( R.array.attribution_links );
       descriptions = res.getStringArray( R.array.attribution_descriptions );
+      licenses = res.getStringArray( R.array.attribution_licenses );
     }
 
     @Override
@@ -61,6 +65,9 @@ public class Attribution extends SherlockListActivity
       {
         TextView title;
         TextView description;
+        TextView link;
+        TextView license;
+
       }
       ViewHolder holder = null;
 
@@ -71,12 +78,17 @@ public class Attribution extends SherlockListActivity
         convertView = mInflater.inflate( R.layout.attribution_row, null );
         holder.title = (TextView) convertView.findViewById( R.id.AttributionTitle );
         holder.description = (TextView) convertView.findViewById( R.id.AttributionDesc );
+        holder.link = (TextView) convertView.findViewById( R.id.AttributionLink );
+        holder.license = (TextView) convertView.findViewById( R.id.AttributionLicense );
+
         convertView.setTag( holder );
       }
 
       holder = (ViewHolder) convertView.getTag();
       holder.title.setText( titles[ position ] );
       holder.description.setText( descriptions[ position ] );
+      holder.link.setText( links[ position ] );
+      holder.license.setText( licenses[ position ] );
 
       return convertView;
     }

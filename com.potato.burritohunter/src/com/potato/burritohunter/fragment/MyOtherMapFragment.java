@@ -358,7 +358,6 @@ public class MyOtherMapFragment extends SherlockFragment
         @Override
         public void onMapClick( LatLng point )
         {
-
           MyOtherMapFragment.mySearchView.clearFocus();
           //chyauchyau -- show button screen
           //chyauchyau -- marker should not be highlighted

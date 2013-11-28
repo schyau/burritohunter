@@ -2,18 +2,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/white_color"
     android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/red_color"
+        android:gravity="center"
+        android:padding="@dimen/screen_title_margin"
+        android:text="Settings"
+        android:textColor="@color/black_color"
+        android:textSize="@dimen/screen_title_text_size" />
+
+    <View
+        android:id="@+id/list_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/tv"
+        android:background="@color/lightgray_border" />
 
     <TextView
         android:id="@+id/distancetitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black_color"
         android:text="distance" />
 
     <TextView
         android:id="@+id/distancetext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black_color"
         android:text="miles" />
 
     <RelativeLayout
@@ -33,19 +55,21 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:max="100"
             android:layout_toRightOf="@id/distanceicon"
+            android:max="100"
             android:progress="0" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/searchlimit"
+        android:textColor="@color/black_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="searchlimit" />
 
     <TextView
         android:id="@+id/searchlimitText"
+        android:textColor="@color/black_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="searches" />
@@ -73,19 +97,22 @@
     </RelativeLayout>
 
     <TextView
-        android:padding="10dp"
         android:id="@+id/open_source"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:text="Open Source"/>
-    <TextView
         android:padding="10dp"
+        android:singleLine="true"
+        android:textColor="@color/black_color"
+        android:text="Open Source" />
+
+    <TextView
         android:id="@+id/About"
+        android:textColor="@color/black_color"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:padding="10dp"
         android:singleLine="true"
         android:text="About" />
 

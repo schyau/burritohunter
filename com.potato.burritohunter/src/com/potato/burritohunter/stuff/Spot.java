@@ -174,26 +174,19 @@ public class Spot
 
   public static Bitmap ratingToHollowBitmap( double rating, boolean isSelected )
   {
-    if ( rating < RED_THRESHOLD )
+    if ( rating == 0)
     {
-      if( isSelected )
-      {
-        return spotsBmpList.get( 0 );
-      }
+      return spotsBmpHollow.get( 3 ); //return gray circle
+    }
+    else if ( rating < RED_THRESHOLD )
+    {
       return spotsBmpHollow.get( 0 );
     }
     else if ( rating < YELLOW_THRESHOLD )
     {
-      if( isSelected )
-      {
-        spotsBmpList.get( 2 );
-      }
       return spotsBmpHollow.get( 1 );
     }
-    if( isSelected )
-    {
-      spotsBmpList.get( 4 );
-    }
+    
     return spotsBmpHollow.get( 2 );
   }
 

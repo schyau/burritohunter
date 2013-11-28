@@ -22,6 +22,7 @@
     <dimen name="desc_text_size">10sp</dimen>
     <dimen name="screen_title_text_size">20sp</dimen>
     <dimen name="screen_title_margin">10dp</dimen>
+    <dimen name="slight_indent_margin">15dp</dimen>
     
     
     <dimen name="bottom_button">50dp</dimen>
